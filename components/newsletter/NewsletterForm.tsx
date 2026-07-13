@@ -162,6 +162,7 @@ export function NewsletterForm() {
             clearError();
           }}
           disabled={isLoading}
+          required
         />
         <label htmlFor="newsletter-consent">
           I agree to receive DayTradingPost emails and accept the{" "}
