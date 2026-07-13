@@ -1,27 +1,30 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AnalysisCard } from "@/components/analysis/AnalysisCard";
+import { ArticleCard } from "@/components/analysis/ArticleCard";
+import { ArticleEmptyState } from "@/components/analysis/ArticleEmptyState";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import { analysisMarkets } from "@/lib/analysis-data";
+import { getArticles } from "@/lib/sanity/client";
 
 export const metadata: Metadata = {
   title: "Market Analysis",
   description:
-    "Explore illustrative technical analysis examples for gold, the Nasdaq 100, crude oil and Bitcoin from DayTradingPost.",
+    "Read DayTradingPost technical analysis, market context, key levels and educational trading insights.",
   alternates: {
     canonical: "/analysis",
   },
   openGraph: {
     title: "Market Analysis | DayTradingPost",
     description:
-      "Illustrative technical outlooks, levels and scenarios across four actively traded markets.",
+      "Published technical outlooks, decision levels and market risk factors for active traders.",
     url: "/analysis",
     type: "website",
   },
 };
 
-export default function AnalysisPage() {
+export default async function AnalysisPage() {
+  const articles = await getArticles();
+
   return (
     <main className="analysis-page">
       <Header />
@@ -38,19 +41,18 @@ export default function AnalysisPage() {
             <span aria-current="page">Analysis</span>
           </nav>
 
-          <span className="section-kicker">Daily market intelligence</span>
+          <span className="section-kicker">Published market intelligence</span>
           <h1>Turn market structure into a clearer trading plan.</h1>
           <p>
-            Explore technical context, key levels and two-sided scenarios
-            across actively traded markets. Every page below contains
-            illustrative sample analysis—not live prices or recommendations.
+            Explore technical context, key levels and risk-aware market
+            briefings published by the DayTradingPost research desk.
           </p>
 
           <div className="sample-content-notice" role="note">
-            <strong>Sample content only</strong>
+            <strong>Educational content</strong>
             <span>
-              All prices, levels, market biases and scenarios are fictional
-              examples created to demonstrate the DayTradingPost experience.
+              Analysis is informational and time-sensitive. It is not live
+              market data, personalized advice, or a recommendation to trade.
             </span>
           </div>
         </div>
@@ -61,19 +63,23 @@ export default function AnalysisPage() {
           <div className="analysis-library-heading">
             <div>
               <span className="section-kicker">Analysis library</span>
-              <h2>Choose a market</h2>
+              <h2>Latest research</h2>
             </div>
             <p>
-              Each outlook maps the current sample structure, decision levels,
-              risk factors and planning notes in one consistent format.
+              Each article combines market context, technical levels, primary
+              risk factors and an educational planning framework.
             </p>
           </div>
 
-          <div className="analysis-market-grid">
-            {analysisMarkets.map((market) => (
-              <AnalysisCard key={market.slug} market={market} />
-            ))}
-          </div>
+          {articles.length ? (
+            <div className="analysis-market-grid">
+              {articles.map((article) => (
+                <ArticleCard key={article._id} article={article} />
+              ))}
+            </div>
+          ) : (
+            <ArticleEmptyState />
+          )}
         </div>
       </section>
 
@@ -91,8 +97,8 @@ export default function AnalysisPage() {
             </article>
             <article>
               <span>02</span>
-              <h3>Plan both outcomes</h3>
-              <p>Prepare bullish and bearish responses before volatility arrives.</p>
+              <h3>Challenge the thesis</h3>
+              <p>Identify catalysts and conditions that could change the outlook.</p>
             </article>
             <article>
               <span>03</span>

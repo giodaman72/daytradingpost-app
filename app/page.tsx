@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { ArticleCard } from "@/components/analysis/ArticleCard";
+import { ArticleEmptyState } from "@/components/analysis/ArticleEmptyState";
 import { NewsletterForm } from "@/components/newsletter/NewsletterForm";
+import { getLatestArticles } from "@/lib/sanity/client";
 
 const markets = [
   {
@@ -52,36 +55,6 @@ const markets = [
   },
 ];
 
-const analyses = [
-  {
-    category: "Commodities",
-    title: "Gold holds above key support as buyers defend the broader trend",
-    description:
-      "Technical structure, momentum signals and the price levels active traders should monitor.",
-    readTime: "5 min read",
-    accent: "gold",
-    href: "/analysis/gold",
-  },
-  {
-    category: "Indices",
-    title: "Nasdaq 100 tests resistance following renewed technology strength",
-    description:
-      "A closer look at market structure, breakout confirmation and downside risk.",
-    readTime: "4 min read",
-    accent: "blue",
-    href: "/analysis/nasdaq",
-  },
-  {
-    category: "Crypto",
-    title: "Bitcoin consolidates while traders wait for the next major catalyst",
-    description:
-      "Important support, resistance and volatility scenarios for the coming sessions.",
-    readTime: "6 min read",
-    accent: "purple",
-    href: "/analysis/bitcoin",
-  },
-];
-
 const academyTopics = [
   {
     number: "01",
@@ -103,7 +76,9 @@ const academyTopics = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const analyses = await getLatestArticles(3);
+
   return (
     <main>
       <header className="site-header">
@@ -322,37 +297,15 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="analysis-grid">
-            {analyses.map((article) => (
-              <article className="analysis-card" key={article.title}>
-                <div className={`analysis-visual ${article.accent}`}>
-                  <span>{article.category}</span>
-
-                  <div className="visual-lines">
-                    <i />
-                    <i />
-                    <i />
-                    <i />
-                  </div>
-                </div>
-
-                <div className="analysis-content">
-                  <div className="article-meta">
-                    <span>{article.category}</span>
-                    <span>{article.readTime}</span>
-                  </div>
-
-                  <h3>{article.title}</h3>
-                  <p>{article.description}</p>
-
-                  <Link href={article.href} className="card-link">
-                    Read analysis
-                    <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
+          {analyses.length ? (
+            <div className="analysis-grid">
+              {analyses.map((article) => (
+                <ArticleCard key={article._id} article={article} />
+              ))}
+            </div>
+          ) : (
+            <ArticleEmptyState compact />
+          )}
         </div>
       </section>
 

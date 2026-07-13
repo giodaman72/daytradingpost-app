@@ -1,54 +1,73 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { AnalysisDetail } from "@/components/analysis/AnalysisDetail";
-import { analysisMarkets, getAnalysisMarket } from "@/lib/analysis-data";
+import { ArticleLayout } from "@/components/analysis/ArticleLayout";
+import {
+  getArticleBySlug,
+  getArticleSlugs,
+} from "@/lib/sanity/client";
+import { getSanityImageUrl } from "@/lib/sanity/image";
 
-type AnalysisPageProps = {
+type AnalysisArticlePageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
-export function generateStaticParams() {
-  return analysisMarkets.map((market) => ({ slug: market.slug }));
+export async function generateStaticParams() {
+  return getArticleSlugs();
 }
 
 export async function generateMetadata({
   params,
-}: AnalysisPageProps): Promise<Metadata> {
+}: AnalysisArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const market = getAnalysisMarket(slug);
+  const article = await getArticleBySlug(slug);
 
-  if (!market) {
-    return {};
+  if (!article) {
+    return {
+      title: "Analysis not found",
+      robots: { index: false, follow: false },
+    };
   }
 
-  const title = `${market.name} (${market.symbol}) Technical Analysis`;
-  const description = `Illustrative ${market.name} technical analysis with sample bias, support, resistance, scenarios, risk factors and trade planning notes.`;
-  const url = `/analysis/${market.slug}`;
+  const title = article.seoTitle || article.title;
+  const description = article.seoDescription || article.excerpt;
+  const url = `/analysis/${article.slug}`;
+  const imageUrl = getSanityImageUrl(article.featuredImage, 1200, 630);
 
   return {
     title,
     description,
-    alternates: {
-      canonical: url,
-    },
+    alternates: { canonical: url },
     openGraph: {
       title: `${title} | DayTradingPost`,
       description,
       url,
       type: "article",
+      publishedTime: article.publishedAt,
+      authors: article.author?.name ? [article.author.name] : undefined,
+      images: imageUrl
+        ? [{ url: imageUrl, width: 1200, height: 630, alt: article.featuredImage?.alt || title }]
+        : undefined,
+    },
+    twitter: {
+      card: imageUrl ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: imageUrl ? [imageUrl] : undefined,
     },
   };
 }
 
-export default async function MarketAnalysisPage({ params }: AnalysisPageProps) {
+export default async function AnalysisArticlePage({
+  params,
+}: AnalysisArticlePageProps) {
   const { slug } = await params;
-  const market = getAnalysisMarket(slug);
+  const article = await getArticleBySlug(slug);
 
-  if (!market) {
+  if (!article) {
     notFound();
   }
 
-  return <AnalysisDetail market={market} />;
+  return <ArticleLayout article={article} />;
 }
