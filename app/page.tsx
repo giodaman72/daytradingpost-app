@@ -59,6 +59,7 @@ const analyses = [
       "Technical structure, momentum signals and the price levels active traders should monitor.",
     readTime: "5 min read",
     accent: "gold",
+    href: "/analysis/gold",
   },
   {
     category: "Indices",
@@ -67,6 +68,7 @@ const analyses = [
       "A closer look at market structure, breakout confirmation and downside risk.",
     readTime: "4 min read",
     accent: "blue",
+    href: "/analysis/nasdaq",
   },
   {
     category: "Crypto",
@@ -75,6 +77,7 @@ const analyses = [
       "Important support, resistance and volatility scenarios for the coming sessions.",
     readTime: "6 min read",
     accent: "purple",
+    href: "/analysis/bitcoin",
   },
 ];
 
@@ -341,7 +344,7 @@ export default function Home() {
                   <h3>{article.title}</h3>
                   <p>{article.description}</p>
 
-                  <Link href="/analysis" className="card-link">
+                  <Link href={article.href} className="card-link">
                     Read analysis
                     <span aria-hidden="true">→</span>
                   </Link>

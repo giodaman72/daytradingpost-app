@@ -9,20 +9,6 @@ export type SitePage = {
 };
 
 export const sitePages = {
-  analysis: {
-    kicker: "Market analysis",
-    title: "Decision-ready analysis is on the way.",
-    description:
-      "The editorial desk is preparing daily technical outlooks across commodities, indices, currencies and digital assets.",
-    status: "Editorial desk in development",
-    highlights: [
-      "Clear support and resistance levels",
-      "Bullish, bearish and neutral scenarios",
-      "Risk-first context for active sessions",
-    ],
-    actionHref: "/#analysis",
-    actionLabel: "Preview today’s analysis",
-  },
   academy: {
     kicker: "Trading academy",
     title: "Build a stronger trading process.",
