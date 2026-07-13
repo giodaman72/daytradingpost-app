@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NewsletterForm } from "@/components/newsletter/NewsletterForm";
 
 const markets = [
   {
@@ -461,28 +462,7 @@ export default function Home() {
             </p>
           </div>
 
-          <form className="newsletter-form">
-            <label htmlFor="newsletter-email" className="sr-only">
-              Email address
-            </label>
-
-            <input
-              id="newsletter-email"
-              name="email"
-              type="email"
-              placeholder="Enter your email address"
-              required
-            />
-
-            <button className="button" type="submit">
-              Subscribe
-            </button>
-
-            <small>
-              By subscribing, you agree to receive DayTradingPost emails. You
-              may unsubscribe at any time.
-            </small>
-          </form>
+          <NewsletterForm />
         </div>
       </section>
 

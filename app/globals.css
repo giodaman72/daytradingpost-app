@@ -1009,7 +1009,7 @@ button {
   gap: 10px;
 }
 
-.newsletter-form input {
+.newsletter-form input[type="email"] {
   min-width: 0;
   min-height: 50px;
   border: 1px solid var(--border-strong);
@@ -1023,20 +1023,107 @@ button {
     box-shadow 160ms ease;
 }
 
-.newsletter-form input::placeholder {
+.newsletter-form input[type="email"]::placeholder {
   color: var(--text-muted);
 }
 
-.newsletter-form input:focus {
+.newsletter-form input[type="email"]:focus {
   border-color: rgba(245, 185, 66, 0.55);
   box-shadow: 0 0 0 4px rgba(245, 185, 66, 0.07);
 }
 
-.newsletter-form small {
+.newsletter-form input[type="email"][aria-invalid="true"] {
+  border-color: rgba(255, 112, 112, 0.72);
+}
+
+.newsletter-form input:disabled,
+.newsletter-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+.newsletter-consent {
   grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
   color: var(--text-muted);
-  font-size: 9px;
+  font-size: 10px;
   line-height: 1.5;
+}
+
+.newsletter-consent input {
+  width: 15px;
+  height: 15px;
+  margin: 1px 0 0;
+  accent-color: var(--gold);
+  flex: 0 0 auto;
+}
+
+.newsletter-consent a {
+  color: var(--text-soft);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.newsletter-status {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.newsletter-status-error {
+  color: #ff8f8f;
+}
+
+.newsletter-status-loading {
+  color: var(--text-soft);
+}
+
+.newsletter-honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.newsletter-confirmation {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-height: 122px;
+  border: 1px solid rgba(80, 201, 145, 0.28);
+  border-radius: 14px;
+  padding: 24px;
+  background: rgba(80, 201, 145, 0.07);
+}
+
+.newsletter-confirmation-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(80, 201, 145, 0.16);
+  color: #72d9a9;
+  font-weight: 800;
+}
+
+.newsletter-confirmation strong {
+  display: block;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.newsletter-confirmation p {
+  margin: 7px 0 0;
+  color: var(--text-soft);
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .site-footer {
@@ -1508,7 +1595,8 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .newsletter-form small {
+  .newsletter-consent,
+  .newsletter-status {
     grid-column: auto;
   }
 
