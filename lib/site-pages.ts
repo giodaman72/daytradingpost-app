@@ -37,20 +37,6 @@ export const sitePages = {
     actionHref: "/#newsletter",
     actionLabel: "Get launch updates",
   },
-  login: {
-    kicker: "Member access",
-    title: "The member area is not open yet.",
-    description:
-      "Sign-in will become available when founding memberships launch. Join the market brief to hear when access opens.",
-    status: "Authentication coming with Premium",
-    highlights: [
-      "One account for briefings and academy content",
-      "Saved resources and webinar access",
-      "Secure membership management",
-    ],
-    actionHref: "/#newsletter",
-    actionLabel: "Get launch updates",
-  },
   webinars: {
     kicker: "Live education",
     title: "Market webinars built around the real session.",

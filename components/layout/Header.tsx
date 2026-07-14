@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { getCurrentUser } from "@/lib/supabase/auth";
 
-export function Header() {
+export async function Header() {
+  const user = await getCurrentUser();
+
   return (
     <header className="site-header">
       <div className="container header-inner">
@@ -20,9 +23,17 @@ export function Header() {
         </nav>
 
         <div className="header-actions">
-          <Link href="/login" className="login-link">
-            Sign in
-          </Link>
+          {user ? (
+            <Link href="/account" className="account-link" aria-label={`Account for ${user.email ?? "signed-in member"}`}>
+              <span className="account-indicator" aria-hidden="true" />
+              <span className="account-email">{user.email}</span>
+              <span>Account</span>
+            </Link>
+          ) : (
+            <Link href="/login" className="login-link">
+              Sign in
+            </Link>
+          )}
           <Link href="/premium" className="button button-small">
             Join Premium
           </Link>
