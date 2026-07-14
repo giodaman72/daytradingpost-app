@@ -1,18 +1,24 @@
+import {
+  EMAIL_MAX_LENGTH,
+  isValidEmailAddress,
+  normalizeEmailAddress,
+} from "./email";
+
 export type AuthActionState = {
-  status: "idle" | "success" | "error";
+  fieldErrors?: Partial<
+    Record<"fullName" | "email" | "password" | "confirmPassword", string>
+  >;
   message: string;
-  fieldErrors?: Partial<Record<"fullName" | "email" | "password" | "confirmPassword", string>>;
+  status: "idle" | "success" | "error";
 };
 
 export const initialAuthState: AuthActionState = {
-  status: "idle",
   message: "",
+  status: "idle",
 };
 
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export function normalizeEmail(value: FormDataEntryValue | null) {
-  return typeof value === "string" ? value.trim().toLowerCase() : "";
+  return typeof value === "string" ? normalizeEmailAddress(value) : "";
 }
 
 export function normalizeName(value: FormDataEntryValue | null) {
@@ -25,7 +31,7 @@ export function readPassword(value: FormDataEntryValue | null) {
 
 export function validateEmail(email: string) {
   if (!email) return "Enter your email address.";
-  if (email.length > 254 || !emailPattern.test(email)) {
+  if (email.length > EMAIL_MAX_LENGTH || !isValidEmailAddress(email)) {
     return "Enter a valid email address.";
   }
 }

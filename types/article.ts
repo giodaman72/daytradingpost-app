@@ -1,17 +1,17 @@
 import type { PortableTextBlock } from "@portabletext/react";
+import type { MarketBias } from "./market";
 
-export type MarketBias = "Bullish" | "Neutral" | "Bearish";
 export type ArticleAccessLevel = "free" | "premium";
 
 export type SanityImage = {
   _key?: string;
   _type: "image";
   alt?: string;
-  caption?: string;
   asset?: {
     _ref?: string;
     _type?: "reference";
   };
+  caption?: string;
   crop?: {
     _type?: "sanity.imageCrop";
     bottom: number;
@@ -50,17 +50,15 @@ export type ArticleSummary = {
   instrumentSymbol: string;
   marketBias: MarketBias;
   publishedAt: string;
-  slug: string;
-  title: string;
   seoDescription?: string;
   seoTitle?: string;
+  slug: string;
+  title: string;
 };
 
 export type Article = ArticleSummary & {
   body: Array<PortableTextBlock | SanityImage>;
   resistanceLevels: string[];
   riskFactors: string[];
-  seoDescription?: string;
-  seoTitle?: string;
   supportLevels: string[];
 };

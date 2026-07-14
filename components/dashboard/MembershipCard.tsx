@@ -1,11 +1,8 @@
 import Link from "next/link";
 import { Check, Crown } from "lucide-react";
-import type { BillingProfile } from "@/lib/membership/types";
+import { formatDisplayLabel } from "@/lib/utils";
+import type { BillingProfile } from "@/types/profile";
 import { DashboardPanel } from "./DashboardPanel";
-
-function formatLabel(value: string | null | undefined) {
-  return (value || "free").replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
 
 export function MembershipCard({
   hasPremiumAccess,
@@ -30,8 +27,8 @@ export function MembershipCard({
       <div className={`dashboard-membership-card ${hasPremiumAccess ? "active" : "free"}`}>
         <div className="dashboard-membership-topline">
           <span><Crown size={22} aria-hidden="true" /></span>
-          <div><strong>{membershipTitle}</strong><p>{formatLabel(profile?.membership_plan)} plan</p></div>
-          <b>{formatLabel(accessStatus)}</b>
+          <div><strong>{membershipTitle}</strong><p>{formatDisplayLabel(profile?.membership_plan, "Free")} plan</p></div>
+          <b>{formatDisplayLabel(accessStatus, "Free")}</b>
         </div>
         <ul>
           <li><Check size={15} aria-hidden="true" />Personal trader dashboard</li>

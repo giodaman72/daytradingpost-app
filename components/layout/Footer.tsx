@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { FOOTER_NAVIGATION } from "@/constants/navigation";
+import { ROUTES } from "@/constants/routes";
 
 export function Footer() {
   return (
@@ -6,7 +8,7 @@ export function Footer() {
       <div className="container">
         <div className="footer-top">
           <div className="footer-brand-column">
-            <Link href="/" className="brand">
+            <Link href={ROUTES.home} className="brand">
               <span className="brand-mark">DTP</span>
               <span className="brand-name">
                 DayTrading<span>Post</span>
@@ -20,29 +22,14 @@ export function Footer() {
           </div>
 
           <div className="footer-links">
-            <div>
-              <h3>Markets</h3>
-              <Link href="/markets/gold">Gold</Link>
-              <Link href="/markets/indices">Indices</Link>
-              <Link href="/markets/forex">Forex</Link>
-              <Link href="/markets/crypto">Crypto</Link>
-            </div>
-
-            <div>
-              <h3>Learn</h3>
-              <Link href="/academy">Trading Academy</Link>
-              <Link href="/analysis">Market Analysis</Link>
-              <Link href="/webinars">Webinars</Link>
-              <Link href="/premium">Premium</Link>
-            </div>
-
-            <div>
-              <h3>Company</h3>
-              <Link href="/about">About</Link>
-              <Link href="/contact">Contact</Link>
-              <Link href="/privacy">Privacy</Link>
-              <Link href="/terms">Terms</Link>
-            </div>
+            {FOOTER_NAVIGATION.map((group) => (
+              <div key={group.title}>
+                <h3>{group.title}</h3>
+                {group.links.map((link) => (
+                  <Link href={link.href} key={link.href}>{link.label}</Link>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
 

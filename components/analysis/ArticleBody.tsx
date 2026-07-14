@@ -5,7 +5,7 @@ import {
   type PortableTextTypeComponentProps,
 } from "@portabletext/react";
 import { getSanityImageUrl } from "@/lib/sanity/image";
-import type { Article, SanityImage } from "@/lib/sanity/types";
+import type { Article, SanityImage } from "@/types/article";
 
 function PortableImage({ value }: PortableTextTypeComponentProps<SanityImage>) {
   const imageUrl = getSanityImageUrl(value, 1400, 840);

@@ -1,15 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { getSafeNextPath } from "@/lib/auth/redirects";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
-
-function safeNextPath(value: string | null) {
-  return value?.startsWith("/") && !value.startsWith("//") ? value : "/account";
-}
 
 export async function GET(request: NextRequest) {
   const redirectUrl = request.nextUrl.clone();
   const code = redirectUrl.searchParams.get("code");
-  const next = safeNextPath(redirectUrl.searchParams.get("next"));
+  const next = getSafeNextPath(redirectUrl.searchParams.get("next"));
   redirectUrl.search = "";
 
   if (code && isSupabaseAuthConfigured()) {

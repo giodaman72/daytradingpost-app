@@ -1,6 +1,6 @@
 import { createImageUrlBuilder } from "@sanity/image-url";
 import { sanityDataset, sanityProjectId } from "@/sanity/env";
-import type { SanityImage } from "./types";
+import type { SanityImage } from "@/types/article";
 
 export function getSanityImageUrl(
   image: SanityImage | null | undefined,

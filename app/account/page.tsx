@@ -3,9 +3,11 @@ import { redirect } from "next/navigation";
 import { AccountNavigation } from "@/components/account/AccountNavigation";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import { getCurrentUser } from "@/lib/supabase/auth";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
+import { formatDate, formatDisplayLabel } from "@/lib/utils";
+import type { Profile } from "@/types/profile";
 
 export const metadata: Metadata = {
   title: "Your account",
@@ -13,25 +15,17 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-type Profile = {
-  full_name: string | null;
-  email: string;
-  membership_status: string;
-  membership_plan: string;
-  created_at: string;
-};
-
-function displayMembership(value: string | null | undefined) {
-  if (!value) return "Free";
-  return value.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
+type AccountProfile = Pick<
+  Profile,
+  "created_at" | "email" | "full_name" | "membership_plan" | "membership_status"
+>;
 
 export default async function AccountPage() {
   if (!isSupabaseAuthConfigured()) {
     redirect("/login");
   }
 
-  const user = await getCurrentUser();
+  const user = await getAuthenticatedUser();
   if (!user) redirect("/login");
 
   const supabase = await createClient();
@@ -39,7 +33,7 @@ export default async function AccountPage() {
     .from("profiles")
     .select("full_name, email, membership_status, membership_plan, created_at")
     .eq("id", user.id)
-    .maybeSingle<Profile>();
+    .maybeSingle<AccountProfile>();
 
   const fullName = data?.full_name || user.user_metadata.full_name || "DayTradingPost member";
   const email = data?.email || user.email || "Email unavailable";
@@ -69,12 +63,12 @@ export default async function AccountPage() {
             <div className="account-stat-grid">
               <article>
                 <span>Membership status</span>
-                <strong>{displayMembership(data?.membership_status)}</strong>
+                <strong>{formatDisplayLabel(data?.membership_status, "Free")}</strong>
                 <p>Access is checked securely on the server.</p>
               </article>
               <article>
                 <span>Membership plan</span>
-                <strong>{displayMembership(data?.membership_plan)}</strong>
+                <strong>{formatDisplayLabel(data?.membership_plan, "Free")}</strong>
                 <p>Manage Revolut payment status from your billing page.</p>
               </article>
             </div>
@@ -86,7 +80,7 @@ export default async function AccountPage() {
                 <div><dt>Email</dt><dd>{email}</dd></div>
                 <div>
                   <dt>Member since</dt>
-                  <dd>{data?.created_at ? new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(new Date(data.created_at)) : "Profile setup pending"}</dd>
+                  <dd>{formatDate(data?.created_at, { fallback: "Profile setup pending" })}</dd>
                 </div>
               </dl>
             </section>

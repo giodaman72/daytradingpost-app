@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getSafeNextPath } from "@/lib/auth/redirects";
 import {
   normalizeEmail,
   normalizeName,
@@ -9,7 +10,7 @@ import {
   validateEmail,
   validatePassword,
   type AuthActionState,
-} from "@/lib/auth-validation";
+} from "@/lib/validation/auth";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -19,18 +20,6 @@ function configurationError(): AuthActionState {
     message:
       "Member access is not configured yet. Add the Supabase publishable key and restart the server.",
   };
-}
-
-function getSafeNextPath(value: FormDataEntryValue | null) {
-  if (
-    typeof value !== "string" ||
-    !value.startsWith("/") ||
-    value.startsWith("//")
-  ) {
-    return "/account";
-  }
-
-  return value;
 }
 
 async function getRequestOrigin() {

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { getSanityImageUrl } from "@/lib/sanity/image";
-import type { Article, ArticleSummary } from "@/lib/sanity/types";
+import type { Article, ArticleSummary } from "@/types/article";
 import { ArticleBody } from "./ArticleBody";
 import { LevelList } from "./LevelList";
 

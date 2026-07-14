@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { getPlanVariationId } from "@/lib/membership/config";
-import type { MembershipPlan, MembershipStatus } from "@/lib/membership/types";
+import type { MembershipPlan, MembershipStatus } from "@/types/membership";
 import {
   getRevolutCycle,
   getRevolutSubscription,

@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { startMembershipCheckout, type CheckoutState } from "@/app/membership/actions";
-import type { MembershipPlan } from "@/lib/membership/types";
+import type { MembershipPlan } from "@/types/membership";
 
 const initialState: CheckoutState = { error: null };
 

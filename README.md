@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DayTradingPost
 
-## Getting Started
+DayTradingPost is a Next.js 16 market-intelligence and trading-education
+application with Sanity CMS, Supabase authentication and operational data,
+Revolut-compatible premium membership, and a protected trader dashboard.
 
-First, run the development server:
+## Technology
+
+- Next.js 16 App Router and React 19
+- TypeScript
+- Sanity Studio and Content Lake
+- Supabase Auth and Postgres
+- Revolut Merchant API or hosted payment links
+- Vercel deployment target
+
+## Local development
+
+Requirements:
+
+- Node.js 20.9 or newer
+- npm
+- Supabase and Sanity projects for connected features
+
+Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Copy the environment template and add local values:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Start the development server on the project’s documented local port:
 
-## Learn More
+```bash
+npm run dev -- --port 3001
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open `http://localhost:3001`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Validation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run lint
+npm run build
+```
 
-## Deploy on Vercel
+Both commands must pass before a sprint is complete.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+app/          Routes, layouts, Route Handlers, and Server Actions
+components/   Reusable feature and UI components
+constants/    Routes, navigation, design, market, and membership constants
+docs/         Product and engineering documentation
+hooks/        Opt-in client hooks
+lib/          Services, provider adapters, validation, and utilities
+providers/    Opt-in client contexts
+sanity/       Studio configuration and document schemas
+types/        Canonical TypeScript domain contracts
+```
+
+Server Components are the default. Do not add `"use client"` unless a component
+requires state, effects, event handlers, or browser APIs. Client checks never
+replace server-side authorization.
+
+## Documentation
+
+- [Roadmap](docs/ROADMAP.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Database](docs/DATABASE.md)
+- [API reference](docs/API_REFERENCE.md)
+- [Design system](docs/DESIGN_SYSTEM.md)
+- [Content guide](docs/CONTENT_GUIDE.md)
+- [Deployment](docs/DEPLOYMENT.md)
+- [Testing](docs/TESTING.md)
+- [Changelog](docs/CHANGELOG.md)
+- [Sanity setup](docs/sanity-setup.md)
+- [Revolut setup](docs/revolut-setup.md)
+
+## Security rules
+
+- Never commit `.env.local` or real credentials.
+- Never expose `SUPABASE_SERVICE_ROLE_KEY`, `SANITY_API_READ_TOKEN`,
+  `REVOLUT_API_SECRET`, or `REVOLUT_WEBHOOK_SECRET` to client code.
+- Keep premium Sanity datasets private.
+- Enforce RLS for browser-accessible Supabase data.
+- Verify authentication and premium entitlement in Server Components or Route
+  Handlers, even when proxy redirects are configured.
+
+## Git workflow
+
+Create a branch for each sprint, run validation, and open a pull request. Do not
+merge sprint work directly into `main` without review and a successful Preview
+deployment.

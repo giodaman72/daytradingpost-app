@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArticleCard } from "@/components/analysis/ArticleCard";
 import { ArticleEmptyState } from "@/components/analysis/ArticleEmptyState";
 import { NewsletterForm } from "@/components/newsletter/NewsletterForm";
-import { getLatestArticles } from "@/lib/sanity/client";
+import { getLatestArticles } from "@/lib/cms";
 
 const markets = [
   {

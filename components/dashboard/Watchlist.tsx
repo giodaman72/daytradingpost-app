@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { defaultWatchlist } from "@/lib/dashboard/data";
+import { DEFAULT_WATCHLIST } from "@/constants/markets";
 import { DashboardPanel } from "./DashboardPanel";
 
 export function Watchlist() {
   return (
     <DashboardPanel id="watchlist" eyebrow="Market monitor" title="Watchlist">
       <ul className="dashboard-watchlist">
-        {defaultWatchlist.map((item) => (
+        {DEFAULT_WATCHLIST.map((item) => (
           <li key={item.symbol}>
             <div><strong>{item.name}</strong><span>{item.symbol}</span></div>
             <span>{item.session}</span>

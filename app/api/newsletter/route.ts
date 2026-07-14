@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import {
   getNewsletterEmailError,
   normalizeNewsletterEmail,
-} from "@/lib/newsletter-validation";
+} from "@/lib/validation/newsletter";
 import { insertNewsletterSubscriber } from "@/lib/supabase-newsletter";
 
 export const runtime = "nodejs";

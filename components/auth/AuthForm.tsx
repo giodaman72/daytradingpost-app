@@ -12,7 +12,7 @@ import {
 import {
   initialAuthState,
   type AuthActionState,
-} from "@/lib/auth-validation";
+} from "@/lib/validation/auth";
 
 type AuthMode = "login" | "register" | "forgot" | "reset";
 

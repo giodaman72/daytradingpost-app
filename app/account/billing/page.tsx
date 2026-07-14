@@ -4,9 +4,11 @@ import { redirect } from "next/navigation";
 import { AccountNavigation } from "@/components/account/AccountNavigation";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import type { BillingProfile, MembershipRequest } from "@/lib/membership/types";
-import { getCurrentUser } from "@/lib/supabase/auth";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { formatDate, formatDisplayLabel } from "@/lib/utils";
+import type { MembershipRequest } from "@/types/membership";
+import type { BillingProfile } from "@/types/profile";
 
 export const metadata: Metadata = {
   title: "Billing and membership",
@@ -14,18 +16,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-function label(value: string | null | undefined) {
-  if (!value) return "Not available";
-  return value.replaceAll("_", " ").replace(/\b\w/g, (character) => character.toUpperCase());
-}
-
-function date(value: string | null | undefined) {
-  if (!value) return "Not set";
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(value));
-}
-
 export default async function AccountBillingPage() {
-  const user = await getCurrentUser();
+  const user = await getAuthenticatedUser();
   if (!user) redirect("/login?next=/account/billing");
 
   const supabase = await createClient();
@@ -64,13 +56,13 @@ export default async function AccountBillingPage() {
             <div className="account-heading">
               <div><span className="section-kicker">Billing & membership</span><h2>Your Revolut membership status.</h2></div>
               <span className={`membership-status-badge status-${profile?.membership_status || "free"}`}>
-                {label(profile?.membership_status || "free")}
+                {formatDisplayLabel(profile?.membership_status || "free")}
               </span>
             </div>
 
             <div className="account-stat-grid">
-              <article><span>Current plan</span><strong>{label(profile?.membership_plan || "free")}</strong><p>Payment provider: {label(profile?.payment_provider)}</p></article>
-              <article><span>Current period ends</span><strong>{date(profile?.current_period_end)}</strong><p>Verified: {date(profile?.payment_verified_at)}</p></article>
+              <article><span>Current plan</span><strong>{formatDisplayLabel(profile?.membership_plan || "free")}</strong><p>Payment provider: {formatDisplayLabel(profile?.payment_provider)}</p></article>
+              <article><span>Current period ends</span><strong>{formatDate(profile?.current_period_end)}</strong><p>Verified: {formatDate(profile?.payment_verified_at)}</p></article>
             </div>
 
             <section className="account-details" aria-labelledby="payment-details-title">
@@ -95,9 +87,9 @@ export default async function AccountBillingPage() {
                 <ul>
                   {requests.map((item) => (
                     <li key={item.id}>
-                      <div><strong>{label(item.membership_plan)}</strong><span>{date(item.created_at)}</span></div>
+                      <div><strong>{formatDisplayLabel(item.membership_plan)}</strong><span>{formatDate(item.created_at)}</span></div>
                       <code>{item.payment_reference}</code>
-                      <span className={`membership-status-badge status-${item.status}`}>{label(item.status)}</span>
+                      <span className={`membership-status-badge status-${item.status}`}>{formatDisplayLabel(item.status)}</span>
                     </li>
                   ))}
                 </ul>

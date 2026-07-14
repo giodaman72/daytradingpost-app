@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArticleLayout } from "@/components/analysis/ArticleLayout";
-import { getMembershipAccess } from "@/lib/membership/access";
 import {
   getArticleBySlug,
   getArticleSummaryBySlug,
   getArticleSlugs,
-} from "@/lib/sanity/client";
-import { getSanityImageUrl } from "@/lib/sanity/image";
+  getSanityImageUrl,
+} from "@/lib/cms";
+import { getMembershipAccess } from "@/lib/payments";
 
 type AnalysisArticlePageProps = {
   params: Promise<{ slug: string }>;

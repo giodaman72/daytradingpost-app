@@ -15,7 +15,7 @@ import {
   articlesQuery,
   latestArticlesQuery,
 } from "./queries";
-import type { Article, ArticleSummary } from "./types";
+import type { Article, ArticleSummary } from "@/types/article";
 
 let sanityClient: ReturnType<typeof createClient> | null = null;
 

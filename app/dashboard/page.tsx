@@ -11,8 +11,8 @@ import { Watchlist } from "@/components/dashboard/Watchlist";
 import { WebinarWidget } from "@/components/dashboard/WebinarWidget";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import { getMembershipAccess } from "@/lib/membership/access";
-import { getLatestArticles } from "@/lib/sanity/client";
+import { getLatestArticles } from "@/lib/cms";
+import { getMembershipAccess } from "@/lib/payments";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 
 export const metadata: Metadata = {

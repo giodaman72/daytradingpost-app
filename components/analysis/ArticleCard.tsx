@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getSanityImageUrl } from "@/lib/sanity/image";
-import type { ArticleSummary } from "@/lib/sanity/types";
+import type { ArticleSummary } from "@/types/article";
 
 type ArticleCardProps = {
   article: ArticleSummary;

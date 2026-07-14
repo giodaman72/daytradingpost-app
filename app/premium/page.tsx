@@ -3,20 +3,14 @@ import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { MembershipCheckoutForm } from "@/components/membership/MembershipCheckoutForm";
-import { getMembershipAccess } from "@/lib/membership/access";
+import { MEMBERSHIP_PLANS, PREMIUM_BENEFITS } from "@/constants/membership";
+import { getMembershipAccess } from "@/lib/payments";
 import { getPaymentProviderMode } from "@/lib/membership/config";
 
 export const metadata: Metadata = {
   title: "Premium membership",
   description: "Choose a monthly or annual DayTradingPost premium membership secured by Revolut.",
 };
-
-const benefits = [
-  "Full premium market analysis",
-  "Detailed scenarios and technical levels",
-  "Member-only risk and planning notes",
-  "Server-protected premium access",
-];
 
 export default async function PremiumPage() {
   const { user, hasPremiumAccess } = await getMembershipAccess();
@@ -49,11 +43,11 @@ export default async function PremiumPage() {
           <div className="membership-plan-grid">
             {(["monthly", "annual"] as const).map((plan) => (
               <article className="membership-plan-card" key={plan}>
-                <span className="pricing-label">{plan} membership</span>
-                <h2>{plan === "monthly" ? "Flexible monthly access" : "One annual membership"}</h2>
+                <span className="pricing-label">{MEMBERSHIP_PLANS[plan].label}</span>
+                <h2>{MEMBERSHIP_PLANS[plan].name}</h2>
                 <p className="membership-price-note">Final price and currency are shown securely by Revolut.</p>
                 <ul className="premium-list">
-                  {benefits.map((benefit) => (
+                  {PREMIUM_BENEFITS.map((benefit) => (
                     <li key={benefit}><span aria-hidden="true">✓</span>{benefit}</li>
                   ))}
                 </ul>

@@ -8,8 +8,7 @@ import {
   getPlanVariationId,
   getSiteUrl,
 } from "@/lib/membership/config";
-import { hasActiveMembership } from "@/lib/membership/access";
-import type { MembershipPlan } from "@/lib/membership/types";
+import { hasActiveMembership } from "@/lib/payments/membershipStatus";
 import {
   createRevolutCustomer,
   createRevolutSubscription,
@@ -17,6 +16,7 @@ import {
 } from "@/lib/revolut/client";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import type { MembershipPlan } from "@/types/membership";
 
 export type CheckoutState = { error: string | null };
 

@@ -7,7 +7,7 @@ import {
   getNewsletterEmailError,
   NEWSLETTER_EMAIL_MAX_LENGTH,
   normalizeNewsletterEmail,
-} from "@/lib/newsletter-validation";
+} from "@/lib/validation/newsletter";
 
 type FormStatus =
   | { type: "idle"; message: "" }

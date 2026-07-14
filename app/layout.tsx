@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { APP_CONFIG } from "@/lib/config";
 import "./globals.css";
 
 // The header is personalized from the verified Supabase session on every request.
@@ -16,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://daytradingpost.com"),
+  metadataBase: new URL(APP_CONFIG.siteUrl),
   title: {
     default: "DayTradingPost | Market Intelligence for Active Traders",
     template: "%s | DayTradingPost",
@@ -53,10 +54,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      data-scroll-behavior="smooth"
+      lang="en"
+    >
+      <body className="antialiased">
         {children}
       </body>
     </html>

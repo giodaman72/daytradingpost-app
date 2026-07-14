@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BellRing, CircleCheck, Newspaper } from "lucide-react";
+import { formatDisplayLabel } from "@/lib/utils";
 import { DashboardPanel } from "./DashboardPanel";
 
 export function Notifications({ articleCount, membershipStatus }: { articleCount: number; membershipStatus: string }) {
@@ -12,7 +13,7 @@ export function Notifications({ articleCount, membershipStatus }: { articleCount
     {
       icon: CircleCheck,
       title: "Secure account session",
-      detail: `Membership status: ${membershipStatus.replaceAll("_", " ")}.`,
+      detail: `Membership status: ${formatDisplayLabel(membershipStatus)}.`,
     },
     {
       icon: BellRing,

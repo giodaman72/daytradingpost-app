@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MembershipStatusPage } from "@/components/membership/MembershipStatusPage";
-import { getMembershipAccess } from "@/lib/membership/access";
+import { getMembershipAccess } from "@/lib/payments";
 
 export const metadata: Metadata = { title: "Membership pending", robots: { index: false } };
 

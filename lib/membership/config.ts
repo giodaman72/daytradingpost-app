@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { MembershipPlan, PaymentProviderMode } from "./types";
+import type { MembershipPlan, PaymentProviderMode } from "@/types/membership";
 
 export const REVOLUT_API_VERSION = "2026-04-20";
 

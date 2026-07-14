@@ -10,17 +10,19 @@ import {
   ListPlus,
   Radio,
 } from "lucide-react";
+import { DASHBOARD_NAVIGATION } from "@/constants/navigation";
+import { ROUTES } from "@/constants/routes";
 
-const dashboardLinks = [
-  { href: "#market-outlook", label: "Market outlook", icon: ChartNoAxesCombined },
-  { href: "#latest-analysis", label: "Latest analysis", icon: LayoutDashboard },
-  { href: "#economic-calendar", label: "Economic calendar", icon: CalendarDays },
-  { href: "#webinar", label: "Webinars", icon: Radio },
-  { href: "#watchlist", label: "Watchlist", icon: ListPlus },
-  { href: "#academy-progress", label: "Academy", icon: BookOpen },
-  { href: "#membership", label: "Membership", icon: Crown },
-  { href: "#notifications", label: "Notifications", icon: Bell },
-] as const;
+const dashboardIcons = {
+  "academy-progress": BookOpen,
+  "economic-calendar": CalendarDays,
+  "latest-analysis": LayoutDashboard,
+  "market-outlook": ChartNoAxesCombined,
+  membership: Crown,
+  notifications: Bell,
+  watchlist: ListPlus,
+  webinar: Radio,
+} as const;
 
 export function DashboardSidebar() {
   return (
@@ -31,15 +33,18 @@ export function DashboardSidebar() {
       </div>
 
       <nav aria-label="Dashboard sections">
-        {dashboardLinks.map(({ href, icon: Icon, label }) => (
-          <Link href={href} key={href}>
-            <Icon size={17} strokeWidth={1.8} aria-hidden="true" />
-            <span>{label}</span>
-          </Link>
-        ))}
+        {DASHBOARD_NAVIGATION.map(({ href, id, label }) => {
+          const Icon = dashboardIcons[id];
+          return (
+            <Link href={href} key={href}>
+              <Icon size={17} strokeWidth={1.8} aria-hidden="true" />
+              <span>{label}</span>
+            </Link>
+          );
+        })}
       </nav>
 
-      <Link href="/account" className="dashboard-sidebar-account">
+      <Link href={ROUTES.account} className="dashboard-sidebar-account">
         <CircleUserRound size={18} aria-hidden="true" />
         Account settings
       </Link>

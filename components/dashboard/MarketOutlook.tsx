@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ArticleSummary } from "@/lib/sanity/types";
+import type { ArticleSummary } from "@/types/article";
 import { DashboardEmptyState } from "./DashboardEmptyState";
 import { DashboardPanel } from "./DashboardPanel";
 

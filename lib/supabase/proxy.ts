@@ -1,23 +1,20 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { ROUTES } from "@/constants/routes";
+import { getSafeNextPath } from "@/lib/auth/redirects";
 import { isSupabaseAuthConfigured, getSupabaseAuthConfig } from "./config";
 
 const protectedPrefixes = [
-  "/account",
-  "/dashboard",
+  ROUTES.account,
+  ROUTES.dashboard,
   "/members",
-  "/membership/success",
-  "/membership/pending",
+  ROUTES.membership.success,
+  ROUTES.membership.pending,
 ];
-const guestOnlyRoutes = ["/login", "/register"];
-
-function safeNextPath(value: string | null) {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) {
-    return "/account";
-  }
-
-  return value;
-}
+const guestOnlyRoutes: readonly string[] = [
+  ROUTES.auth.login,
+  ROUTES.auth.register,
+];
 
 export async function updateSession(request: NextRequest) {
   if (!isSupabaseAuthConfigured()) {
@@ -59,7 +56,7 @@ export async function updateSession(request: NextRequest) {
     if (pathname !== "/reset-password") {
       redirectUrl.searchParams.set(
         "next",
-        safeNextPath(`${pathname}${request.nextUrl.search}`),
+        getSafeNextPath(`${pathname}${request.nextUrl.search}`),
       );
     }
     return NextResponse.redirect(redirectUrl);

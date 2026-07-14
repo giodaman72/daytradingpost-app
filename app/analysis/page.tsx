@@ -4,7 +4,7 @@ import { ArticleCard } from "@/components/analysis/ArticleCard";
 import { ArticleEmptyState } from "@/components/analysis/ArticleEmptyState";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import { getArticles } from "@/lib/sanity/client";
+import { getArticles } from "@/lib/cms";
 
 export const metadata: Metadata = {
   title: "Market Analysis",
