@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { MembershipStatusPage } from "@/components/membership/MembershipStatusPage";
 
-export const metadata: Metadata = { title: "Membership checkout cancelled", robots: { index: false } };
+export const metadata: Metadata = {
+  title: "Membership checkout cancelled",
+  robots: { index: false },
+};
 
 export default function MembershipCancelledPage() {
   return (

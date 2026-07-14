@@ -46,7 +46,9 @@ export async function startMembershipCheckout(
   try {
     const { data: profile, error: profileError } = await admin
       .from("profiles")
-      .select("email,full_name,membership_status,payment_customer_id,payment_verified_at,current_period_end")
+      .select(
+        "email,full_name,membership_status,payment_customer_id,payment_verified_at,current_period_end",
+      )
       .eq("id", user.id)
       .single();
 
@@ -82,25 +84,37 @@ export async function startMembershipCheckout(
 
       if (mode === "revolut_payment_links") {
         const paymentLink = getPaymentLink(plan);
-        if (!paymentLink) throw new Error("The selected Revolut payment link is not configured.");
+        if (!paymentLink)
+          throw new Error(
+            "The selected Revolut payment link is not configured.",
+          );
 
-        const { error } = await admin.from("profiles").update(pendingProfile).eq("id", user.id);
+        const { error } = await admin
+          .from("profiles")
+          .update(pendingProfile)
+          .eq("id", user.id);
         if (error) throw error;
         redirectTo = paymentLink;
       } else {
         const planVariationId = getPlanVariationId(plan);
-        if (!planVariationId) throw new Error("The selected Revolut plan is not configured.");
+        if (!planVariationId)
+          throw new Error("The selected Revolut plan is not configured.");
 
         let customerId = profile.payment_customer_id as string | null;
         if (!customerId) {
           const customerEmail = profile.email || user.email;
           if (!customerEmail) {
-            throw new Error("The authenticated account does not have an email address.");
+            throw new Error(
+              "The authenticated account does not have an email address.",
+            );
           }
 
           const customer = await createRevolutCustomer({
             email: customerEmail,
-            fullName: profile.full_name || user.email?.split("@")[0] || "DayTradingPost member",
+            fullName:
+              profile.full_name ||
+              user.email?.split("@")[0] ||
+              "DayTradingPost member",
           });
           customerId = customer.id;
 
@@ -124,7 +138,8 @@ export async function startMembershipCheckout(
         }
 
         const order = await getRevolutOrder(subscription.setup_order_id);
-        if (!order.checkout_url) throw new Error("Revolut did not return a checkout URL.");
+        if (!order.checkout_url)
+          throw new Error("Revolut did not return a checkout URL.");
 
         const { error: requestUpdateError } = await admin
           .from("membership_requests")
@@ -152,7 +167,10 @@ export async function startMembershipCheckout(
     );
 
     if (requestId) {
-      await admin.from("membership_requests").update({ status: "failed" }).eq("id", requestId);
+      await admin
+        .from("membership_requests")
+        .update({ status: "failed" })
+        .eq("id", requestId);
     }
 
     return {

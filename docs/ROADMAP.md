@@ -66,6 +66,14 @@ checks pass. Future scope may be refined before implementation.
 - Reduced duplicated validation, navigation, membership, and formatting logic
 - Preserved Server Component boundaries and existing visual output
 
+### Sprint 8.6 — CI and code quality
+
+- Prettier, strengthened ESLint, strict TypeScript checks, and unified local gates
+- Vitest and Testing Library foundation with validation, membership, and UI tests
+- Husky, lint-staged, Commitlint, and Conventional Commits
+- GitHub Actions for primary CI, CodeQL, and advisory Lighthouse reviews
+- Dependabot, contribution templates, repository hygiene, and security guidance
+
 ## Upcoming
 
 ### Sprint 9 — Market Intelligence Engine
@@ -122,4 +130,5 @@ checks pass. Future scope may be refined before implementation.
 3. Premium Sanity datasets remain private.
 4. Secrets never use a `NEXT_PUBLIC_` prefix.
 5. New integrations require loading, empty, error, and degraded states.
-6. Every sprint ends with lint, build, responsive, accessibility, and security checks.
+6. Every sprint ends with formatting, lint, typecheck, tests, build, responsive,
+   accessibility, and security checks.

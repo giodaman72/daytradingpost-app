@@ -9,7 +9,11 @@ export async function Header() {
   return (
     <header className="site-header">
       <div className="container header-inner">
-        <Link href={ROUTES.home} className="brand" aria-label="DayTradingPost homepage">
+        <Link
+          href={ROUTES.home}
+          className="brand"
+          aria-label="DayTradingPost homepage"
+        >
           <span className="brand-mark">DTP</span>
           <span className="brand-name">
             DayTrading<span>Post</span>
@@ -18,15 +22,23 @@ export async function Header() {
 
         <nav className="desktop-navigation" aria-label="Main navigation">
           {MAIN_NAVIGATION.map((item) =>
-            "authenticatedOnly" in item && item.authenticatedOnly && !user ? null : (
-              <Link href={item.href} key={item.href}>{item.label}</Link>
+            "authenticatedOnly" in item &&
+            item.authenticatedOnly &&
+            !user ? null : (
+              <Link href={item.href} key={item.href}>
+                {item.label}
+              </Link>
             ),
           )}
         </nav>
 
         <div className="header-actions">
           {user ? (
-            <Link href={ROUTES.account} className="account-link" aria-label={`Account for ${user.email ?? "signed-in member"}`}>
+            <Link
+              href={ROUTES.account}
+              className="account-link"
+              aria-label={`Account for ${user.email ?? "signed-in member"}`}
+            >
               <span className="account-indicator" aria-hidden="true" />
               <span className="account-email">{user.email}</span>
               <span>Account</span>

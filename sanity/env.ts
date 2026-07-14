@@ -9,5 +9,5 @@ export const sanityProjectId =
 
 export const isSanityConfigured = Boolean(
   process.env.NEXT_PUBLIC_SANITY_PROJECT_ID &&
-    process.env.NEXT_PUBLIC_SANITY_DATASET,
+  process.env.NEXT_PUBLIC_SANITY_DATASET,
 );

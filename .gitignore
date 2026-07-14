@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/daytradingpost/
 /.pnp
 .pnp.*
 .yarn/*
@@ -12,6 +13,9 @@
 
 # testing
 /coverage
+/.lighthouseci
+/test-results
+/playwright-report
 
 # next.js
 /.next/
@@ -23,6 +27,12 @@
 # misc
 .DS_Store
 *.pem
+*.key
+*.p12
+*.pfx
+.idea/
+.vscode/
+*.swp
 
 # debug
 npm-debug.log*

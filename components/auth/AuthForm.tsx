@@ -9,10 +9,7 @@ import {
   registerAction,
   resetPasswordAction,
 } from "@/app/(auth)/actions";
-import {
-  initialAuthState,
-  type AuthActionState,
-} from "@/lib/validation/auth";
+import { initialAuthState, type AuthActionState } from "@/lib/validation/auth";
 
 type AuthMode = "login" | "register" | "forgot" | "reset";
 
@@ -41,8 +38,7 @@ const modeContent = {
   reset: {
     kicker: "Secure your account",
     title: "Choose a new password.",
-    description:
-      "Use a strong password you do not reuse on another website.",
+    description: "Use a strong password you do not reuse on another website.",
     submit: "Update password",
   },
 } as const;
@@ -85,7 +81,8 @@ export function AuthForm({
   };
   const [state, formAction] = useActionState(action, formInitialState);
   const showEmail = mode !== "reset";
-  const showPassword = mode === "login" || mode === "register" || mode === "reset";
+  const showPassword =
+    mode === "login" || mode === "register" || mode === "reset";
 
   return (
     <section className="auth-card" aria-labelledby={`${mode}-title`}>
@@ -107,7 +104,9 @@ export function AuthForm({
               maxLength={100}
               required
               aria-invalid={Boolean(state.fieldErrors?.fullName)}
-              aria-describedby={state.fieldErrors?.fullName ? "fullName-error" : undefined}
+              aria-describedby={
+                state.fieldErrors?.fullName ? "fullName-error" : undefined
+              }
             />
             {state.fieldErrors?.fullName ? (
               <span id="fullName-error" className="auth-field-error">
@@ -129,7 +128,9 @@ export function AuthForm({
               maxLength={254}
               required
               aria-invalid={Boolean(state.fieldErrors?.email)}
-              aria-describedby={state.fieldErrors?.email ? `${mode}-email-error` : undefined}
+              aria-describedby={
+                state.fieldErrors?.email ? `${mode}-email-error` : undefined
+              }
             />
             {state.fieldErrors?.email ? (
               <span id={`${mode}-email-error`} className="auth-field-error">
@@ -145,18 +146,26 @@ export function AuthForm({
               <label htmlFor={`${mode}-password`}>
                 {mode === "reset" ? "New password" : "Password"}
               </label>
-              {mode === "login" ? <Link href="/forgot-password">Forgot password?</Link> : null}
+              {mode === "login" ? (
+                <Link href="/forgot-password">Forgot password?</Link>
+              ) : null}
             </div>
             <input
               id={`${mode}-password`}
               name="password"
               type="password"
-              autoComplete={mode === "login" ? "current-password" : "new-password"}
+              autoComplete={
+                mode === "login" ? "current-password" : "new-password"
+              }
               minLength={8}
               maxLength={128}
               required
               aria-invalid={Boolean(state.fieldErrors?.password)}
-              aria-describedby={state.fieldErrors?.password ? `${mode}-password-error` : undefined}
+              aria-describedby={
+                state.fieldErrors?.password
+                  ? `${mode}-password-error`
+                  : undefined
+              }
             />
             {state.fieldErrors?.password ? (
               <span id={`${mode}-password-error`} className="auth-field-error">
@@ -178,7 +187,11 @@ export function AuthForm({
               maxLength={128}
               required
               aria-invalid={Boolean(state.fieldErrors?.confirmPassword)}
-              aria-describedby={state.fieldErrors?.confirmPassword ? `${mode}-confirm-error` : undefined}
+              aria-describedby={
+                state.fieldErrors?.confirmPassword
+                  ? `${mode}-confirm-error`
+                  : undefined
+              }
             />
             {state.fieldErrors?.confirmPassword ? (
               <span id={`${mode}-confirm-error`} className="auth-field-error">
@@ -206,13 +219,20 @@ export function AuthForm({
 
       <div className="auth-card-footer">
         {mode === "login" ? (
-          <p>New to DayTradingPost? <Link href="/register">Create an account</Link></p>
+          <p>
+            New to DayTradingPost?{" "}
+            <Link href="/register">Create an account</Link>
+          </p>
         ) : null}
         {mode === "register" ? (
-          <p>Already have an account? <Link href="/login">Sign in</Link></p>
+          <p>
+            Already have an account? <Link href="/login">Sign in</Link>
+          </p>
         ) : null}
         {mode === "forgot" || mode === "reset" ? (
-          <p><Link href="/login">← Return to sign in</Link></p>
+          <p>
+            <Link href="/login">← Return to sign in</Link>
+          </p>
         ) : null}
       </div>
     </section>

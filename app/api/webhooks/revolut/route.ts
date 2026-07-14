@@ -60,8 +60,10 @@ function mapRequestStatus(state: RevolutSubscription["state"]) {
 }
 
 function getPlan(subscription: RevolutSubscription): MembershipPlan | null {
-  if (subscription.plan_variation_id === getPlanVariationId("monthly")) return "monthly";
-  if (subscription.plan_variation_id === getPlanVariationId("annual")) return "annual";
+  if (subscription.plan_variation_id === getPlanVariationId("monthly"))
+    return "monthly";
+  if (subscription.plan_variation_id === getPlanVariationId("annual"))
+    return "annual";
   return null;
 }
 
@@ -81,7 +83,8 @@ export async function POST(request: Request) {
     timestamp: request.headers.get("Revolut-Request-Timestamp"),
   });
 
-  if (!valid) return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+  if (!valid)
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
 
   let payload: Record<string, unknown>;
   try {
@@ -93,17 +96,25 @@ export async function POST(request: Request) {
   const eventType = stringValue(payload.event) || "UNKNOWN";
   const eventKey = createHash("sha256").update(rawBody).digest("hex");
   const admin = getSupabaseAdmin();
-  const { error: insertError } = await admin.from("payment_webhook_events").insert({
-    event_key: eventKey,
-    event_type: eventType,
-  });
+  const { error: insertError } = await admin
+    .from("payment_webhook_events")
+    .insert({
+      event_key: eventKey,
+      event_type: eventType,
+    });
 
   if (insertError?.code === "23505") {
     return NextResponse.json({ received: true, duplicate: true });
   }
   if (insertError) {
-    console.error("Unable to register Revolut webhook event:", insertError.message);
-    return NextResponse.json({ error: "Webhook storage unavailable" }, { status: 503 });
+    console.error(
+      "Unable to register Revolut webhook event:",
+      insertError.message,
+    );
+    return NextResponse.json(
+      { error: "Webhook storage unavailable" },
+      { status: 503 },
+    );
   }
 
   try {
@@ -116,16 +127,18 @@ export async function POST(request: Request) {
     }
 
     const subscriptionId = getSubscriptionId(payload);
-    if (!subscriptionId) throw new Error("Subscription event did not include an identifier.");
+    if (!subscriptionId)
+      throw new Error("Subscription event did not include an identifier.");
 
     const subscription = await getRevolutSubscription(subscriptionId);
-    const { data: requestBySubscription, error: subscriptionLookupError } = await admin
-      .from("membership_requests")
-      .select("id,user_id,membership_plan")
-      .eq("payment_subscription_id", subscription.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const { data: requestBySubscription, error: subscriptionLookupError } =
+      await admin
+        .from("membership_requests")
+        .select("id,user_id,membership_plan")
+        .eq("payment_subscription_id", subscription.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
     if (subscriptionLookupError) throw subscriptionLookupError;
 
@@ -143,13 +156,18 @@ export async function POST(request: Request) {
     }
 
     if (!membershipRequest) {
-      throw new Error("No membership request matches the Revolut subscription.");
+      throw new Error(
+        "No membership request matches the Revolut subscription.",
+      );
     }
 
     let currentPeriodEnd: string | null = null;
     if (subscription.current_cycle_id) {
       try {
-        const cycle = await getRevolutCycle(subscription.id, subscription.current_cycle_id);
+        const cycle = await getRevolutCycle(
+          subscription.id,
+          subscription.current_cycle_id,
+        );
         currentPeriodEnd = cycle.end_date || null;
       } catch (error) {
         console.warn(
@@ -160,8 +178,10 @@ export async function POST(request: Request) {
     }
 
     const membershipStatus = mapStatus(subscription.state);
-    const membershipPlan = getPlan(subscription) || membershipRequest.membership_plan;
-    const verifiedAt = membershipStatus === "active" ? new Date().toISOString() : null;
+    const membershipPlan =
+      getPlan(subscription) || membershipRequest.membership_plan;
+    const verifiedAt =
+      membershipStatus === "active" ? new Date().toISOString() : null;
     const { error: profileError } = await admin
       .from("profiles")
       .update({
@@ -203,7 +223,13 @@ export async function POST(request: Request) {
       "Revolut webhook processing failed:",
       error instanceof Error ? error.message : "Unknown error",
     );
-    await admin.from("payment_webhook_events").delete().eq("event_key", eventKey);
-    return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 });
+    await admin
+      .from("payment_webhook_events")
+      .delete()
+      .eq("event_key", eventKey);
+    return NextResponse.json(
+      { error: "Webhook processing failed" },
+      { status: 500 },
+    );
   }
 }

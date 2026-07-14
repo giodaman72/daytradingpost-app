@@ -1,6 +1,9 @@
 import "server-only";
 
-import { getRevolutApiConfig, REVOLUT_API_VERSION } from "@/lib/membership/config";
+import {
+  getRevolutApiConfig,
+  REVOLUT_API_VERSION,
+} from "@/lib/membership/config";
 
 type RevolutCustomer = { id: string };
 export type RevolutSubscription = {
@@ -47,7 +50,10 @@ async function revolutRequest<T>(
   return (await response.json()) as T;
 }
 
-export function createRevolutCustomer(input: { email: string; fullName: string }) {
+export function createRevolutCustomer(input: {
+  email: string;
+  fullName: string;
+}) {
   return revolutRequest<RevolutCustomer>("/customers", {
     method: "POST",
     body: JSON.stringify({ email: input.email, full_name: input.fullName }),

@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { MembershipStatusPage } from "@/components/membership/MembershipStatusPage";
 import { getMembershipAccess } from "@/lib/payments";
 
-export const metadata: Metadata = { title: "Membership pending", robots: { index: false } };
+export const metadata: Metadata = {
+  title: "Membership pending",
+  robots: { index: false },
+};
 
 export default async function MembershipPendingPage() {
   const access = await getMembershipAccess();

@@ -12,11 +12,7 @@ export type MembershipStatus =
 export type PaymentProviderMode = "revolut_api" | "revolut_payment_links";
 
 export type MembershipRequestStatus =
-  | "pending"
-  | "verified"
-  | "rejected"
-  | "cancelled"
-  | "failed";
+  "pending" | "verified" | "rejected" | "cancelled" | "failed";
 
 export type MembershipRequest = {
   created_at: string;

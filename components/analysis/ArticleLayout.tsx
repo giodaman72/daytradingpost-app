@@ -56,11 +56,16 @@ export function ArticleLayout(props: ArticleLayoutProps) {
 
               <div className="analysis-byline">
                 <span>
-                  By <strong>{article.author?.name || "DayTradingPost Research"}</strong>
+                  By{" "}
+                  <strong>
+                    {article.author?.name || "DayTradingPost Research"}
+                  </strong>
                 </span>
                 <span>{formatPublishedDate(article.publishedAt)}</span>
                 <span>{article.instrumentSymbol}</span>
-                <span className={`analysis-bias bias-${article.marketBias.toLowerCase()}`}>
+                <span
+                  className={`analysis-bias bias-${article.marketBias.toLowerCase()}`}
+                >
                   {article.marketBias} bias
                 </span>
               </div>
@@ -89,9 +94,9 @@ export function ArticleLayout(props: ArticleLayoutProps) {
           <div className="sample-content-notice" role="note">
             <strong>Educational analysis</strong>
             <span>
-              Market levels and bias reflect the author&apos;s published analysis
-              at the stated time. They are not live prices or personalized trade
-              recommendations.
+              Market levels and bias reflect the author&apos;s published
+              analysis at the stated time. They are not live prices or
+              personalized trade recommendations.
             </span>
           </div>
         </div>
@@ -101,17 +106,27 @@ export function ArticleLayout(props: ArticleLayoutProps) {
         <div className="container analysis-detail-layout">
           <article className="analysis-detail-main">
             {!fullArticle ? (
-              <section className="premium-article-gate" aria-labelledby="premium-gate-title">
+              <section
+                className="premium-article-gate"
+                aria-labelledby="premium-gate-title"
+              >
                 <span className="section-kicker">Premium preview</span>
-                <h2 id="premium-gate-title">Unlock the complete market briefing.</h2>
+                <h2 id="premium-gate-title">
+                  Unlock the complete market briefing.
+                </h2>
                 <p>
                   This preview includes the published market, bias and summary.
                   Premium members can read the complete technical analysis,
                   levels, risk factors and planning notes.
                 </p>
                 <div className="premium-gate-actions">
-                  <Link href="/premium" className="button">View premium plans</Link>
-                  <Link href={`/login?next=${encodeURIComponent(`/analysis/${article.slug}`)}`} className="text-link">
+                  <Link href="/premium" className="button">
+                    View premium plans
+                  </Link>
+                  <Link
+                    href={`/login?next=${encodeURIComponent(`/analysis/${article.slug}`)}`}
+                    className="text-link"
+                  >
                     Sign in to check access →
                   </Link>
                 </div>
@@ -144,15 +159,18 @@ export function ArticleLayout(props: ArticleLayoutProps) {
                 DayTradingPost content is provided for educational and
                 informational purposes only. It is not investment advice, a
                 solicitation, or a trade signal. Market conditions can change
-                without notice, and trading leveraged products or digital
-                assets can result in substantial losses. Verify all information
+                without notice, and trading leveraged products or digital assets
+                can result in substantial losses. Verify all information
                 independently and never risk capital you cannot afford to lose.
               </p>
             </aside>
           </article>
 
           {!fullArticle ? (
-            <aside className="analysis-levels-panel premium-preview-panel" aria-label="Premium content preview">
+            <aside
+              className="analysis-levels-panel premium-preview-panel"
+              aria-label="Premium content preview"
+            >
               <span className="panel-label">Member-only analysis</span>
               <h2>Included with Premium</h2>
               <ul>
@@ -163,14 +181,27 @@ export function ArticleLayout(props: ArticleLayoutProps) {
               </ul>
             </aside>
           ) : (
-            <aside className="analysis-levels-panel" aria-label={`${article.instrumentSymbol} key levels`}>
+            <aside
+              className="analysis-levels-panel"
+              aria-label={`${article.instrumentSymbol} key levels`}
+            >
               <div className="levels-panel-heading">
                 <span className="panel-label">Published levels</span>
                 <h2>Technical map</h2>
               </div>
-              <LevelList label="Resistance" levels={fullArticle.resistanceLevels} tone="resistance" />
-              <LevelList label="Support" levels={fullArticle.supportLevels} tone="support" />
-              <p>Published analysis · Confirm current market prices independently</p>
+              <LevelList
+                label="Resistance"
+                levels={fullArticle.resistanceLevels}
+                tone="resistance"
+              />
+              <LevelList
+                label="Support"
+                levels={fullArticle.supportLevels}
+                tone="support"
+              />
+              <p>
+                Published analysis · Confirm current market prices independently
+              </p>
             </aside>
           )}
         </div>

@@ -35,7 +35,8 @@ export default async function AccountPage() {
     .eq("id", user.id)
     .maybeSingle<AccountProfile>();
 
-  const fullName = data?.full_name || user.user_metadata.full_name || "DayTradingPost member";
+  const fullName =
+    data?.full_name || user.user_metadata.full_name || "DayTradingPost member";
   const email = data?.email || user.email || "Email unavailable";
 
   return (
@@ -63,31 +64,49 @@ export default async function AccountPage() {
             <div className="account-stat-grid">
               <article>
                 <span>Membership status</span>
-                <strong>{formatDisplayLabel(data?.membership_status, "Free")}</strong>
+                <strong>
+                  {formatDisplayLabel(data?.membership_status, "Free")}
+                </strong>
                 <p>Access is checked securely on the server.</p>
               </article>
               <article>
                 <span>Membership plan</span>
-                <strong>{formatDisplayLabel(data?.membership_plan, "Free")}</strong>
+                <strong>
+                  {formatDisplayLabel(data?.membership_plan, "Free")}
+                </strong>
                 <p>Manage Revolut payment status from your billing page.</p>
               </article>
             </div>
 
-            <section className="account-details" aria-labelledby="account-details-title">
+            <section
+              className="account-details"
+              aria-labelledby="account-details-title"
+            >
               <h2 id="account-details-title">Account details</h2>
               <dl>
-                <div><dt>Full name</dt><dd>{fullName}</dd></div>
-                <div><dt>Email</dt><dd>{email}</dd></div>
+                <div>
+                  <dt>Full name</dt>
+                  <dd>{fullName}</dd>
+                </div>
+                <div>
+                  <dt>Email</dt>
+                  <dd>{email}</dd>
+                </div>
                 <div>
                   <dt>Member since</dt>
-                  <dd>{formatDate(data?.created_at, { fallback: "Profile setup pending" })}</dd>
+                  <dd>
+                    {formatDate(data?.created_at, {
+                      fallback: "Profile setup pending",
+                    })}
+                  </dd>
                 </div>
               </dl>
             </section>
 
             {!data ? (
               <div className="account-notice" role="status">
-                Run the Supabase profile SQL to finish connecting membership data.
+                Run the Supabase profile SQL to finish connecting membership
+                data.
               </div>
             ) : null}
           </div>

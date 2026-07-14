@@ -28,7 +28,8 @@ export function formatDate(
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return fallback;
 
-  return new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeZone }).format(
-    date,
-  );
+  return new Intl.DateTimeFormat(locale, {
+    dateStyle: "medium",
+    timeZone,
+  }).format(date);
 }

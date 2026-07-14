@@ -49,7 +49,14 @@ export async function generateMetadata({
       publishedTime: article.publishedAt,
       authors: article.author?.name ? [article.author.name] : undefined,
       images: imageUrl
-        ? [{ url: imageUrl, width: 1200, height: 630, alt: article.featuredImage?.alt || title }]
+        ? [
+            {
+              url: imageUrl,
+              width: 1200,
+              height: 630,
+              alt: article.featuredImage?.alt || title,
+            },
+          ]
         : undefined,
     },
     twitter: {

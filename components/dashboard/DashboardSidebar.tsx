@@ -26,10 +26,18 @@ const dashboardIcons = {
 
 export function DashboardSidebar() {
   return (
-    <aside className="dashboard-sidebar" aria-label="Trader dashboard navigation">
+    <aside
+      className="dashboard-sidebar"
+      aria-label="Trader dashboard navigation"
+    >
       <div className="dashboard-sidebar-heading">
-        <span className="dashboard-sidebar-mark" aria-hidden="true">DTP</span>
-        <div><strong>Trader Dashboard</strong><span>Daily command center</span></div>
+        <span className="dashboard-sidebar-mark" aria-hidden="true">
+          DTP
+        </span>
+        <div>
+          <strong>Trader Dashboard</strong>
+          <span>Daily command center</span>
+        </div>
       </div>
 
       <nav aria-label="Dashboard sections">

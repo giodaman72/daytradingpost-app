@@ -22,7 +22,9 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
   return (
     <article className="analysis-card analysis-cms-card">
-      <div className={`analysis-visual bias-${article.marketBias.toLowerCase()}`}>
+      <div
+        className={`analysis-visual bias-${article.marketBias.toLowerCase()}`}
+      >
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -56,11 +58,15 @@ export function ArticleCard({ article }: ArticleCardProps) {
         <p>{article.excerpt}</p>
 
         <div className="analysis-card-footer">
-          <span className={`analysis-bias bias-${article.marketBias.toLowerCase()}`}>
+          <span
+            className={`analysis-bias bias-${article.marketBias.toLowerCase()}`}
+          >
             {article.marketBias}
           </span>
           <Link href={`/analysis/${article.slug}`} className="card-link">
-            {article.accessLevel === "premium" ? "Preview analysis" : "Read analysis"}
+            {article.accessLevel === "premium"
+              ? "Preview analysis"
+              : "Read analysis"}
             <span aria-hidden="true">→</span>
           </Link>
         </div>

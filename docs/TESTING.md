@@ -1,15 +1,84 @@
 # Testing strategy
 
-## Current automated gates
+## Local setup
+
+Use Node.js 24 from `.nvmrc`:
 
 ```bash
-npm run lint
-npm run build
+nvm use
+npm ci
 ```
 
-`npm run lint` runs ESLint across the project. `npm run build` performs the
-optimized Next.js build, TypeScript checking, page-data collection, and route
-generation. Both must pass before a sprint is complete.
+`npm ci` reproduces the committed lockfile and is used by CI. Use `npm install`
+only when deliberately adding, removing, or updating a package.
+
+## Automated quality scripts
+
+| Command                 | Purpose                                                              |
+| ----------------------- | -------------------------------------------------------------------- |
+| `npm run format`        | Apply Prettier to supported source and documentation                 |
+| `npm run format:check`  | Verify formatting without changing files                             |
+| `npm run lint`          | Run Next.js, TypeScript, hooks, accessibility, and unused-code rules |
+| `npm run lint:fix`      | Apply safe ESLint fixes                                              |
+| `npm run typecheck`     | Run strict `tsc --noEmit` validation                                 |
+| `npm test`              | Start Vitest in watch mode for local development                     |
+| `npm run test:run`      | Run the deterministic test suite once                                |
+| `npm run test:coverage` | Run tests with text, JSON, and HTML coverage reports                 |
+| `npm run build`         | Create the optimized Next.js production build                        |
+| `npm run check`         | Run format, lint, typecheck, tests, and build in order               |
+
+Coverage reporting is configured without an artificial global threshold. Add
+targeted thresholds when Sprint 9 introduces the market-intelligence domain.
+
+Tests must not call live Supabase, Sanity, Revolut, or other external services.
+Mock provider boundaries and keep domain tests deterministic.
+
+## Git hooks
+
+The `prepare` script installs Husky after dependency installation.
+
+- `pre-commit` runs lint-staged: ESLint fixes and Prettier only on staged files.
+- `commit-msg` validates Conventional Commits through Commitlint.
+- Full tests and production builds are intentionally left to `npm run check` and
+  CI so commits remain fast and unrelated unstaged files are unaffected.
+
+Examples:
+
+```text
+feat(dashboard): add market outlook widget
+fix(auth): preserve session during redirect
+docs: update deployment guide
+```
+
+## GitHub checks
+
+The primary workflow runs each gate as a named step after `npm ci`. CodeQL runs
+independently for JavaScript/TypeScript security analysis. Dependabot proposes
+weekly npm and GitHub Actions updates.
+
+The Lighthouse GitHub workflow builds and starts the production app locally,
+then audits `/` through the isolated Lighthouse action. The CLI is intentionally
+not a project dependency because its current dependency tree introduces a high
+severity development advisory. The workflow is initially non-blocking because
+Sanity availability and shared runner timing can affect scores. Console errors
+remain a serious assertion and reports are retained as workflow artifacts for
+14 days.
+
+## Baseline audit — 2026-07-14
+
+Before Sprint 8.6 changes:
+
+- `npm ci`, `npm run lint`, and `npm run build` passed;
+- the remote `main` workflow ran only lint and build with Node.js 24;
+- there was no committed formatter, test runner, coverage, hooks, Commitlint,
+  Dependabot, CodeQL, or Lighthouse setup;
+- TypeScript was strict but unnecessarily allowed JavaScript;
+- npm reported a transitive Sanity/Portable Text React peer-version mismatch,
+  deprecated transitive UUID packages, install-script approval notices, and 14
+  moderate audit findings.
+
+These dependency warnings were recorded rather than hidden or force-fixed.
+Major/transitive upgrades require isolated compatibility review.
 
 There is not yet a dedicated unit, integration, or end-to-end test runner. That
 is tracked as technical debt and should be introduced with Sprint 9 domain logic.
@@ -121,22 +190,22 @@ Proxy redirect tests do not replace page-level authorization tests.
 
 ## Newsletter API testing
 
-| Case | Expected |
-| --- | --- |
-| New normalized email with consent | `201`, row inserted |
+| Case                                 | Expected                         |
+| ------------------------------------ | -------------------------------- |
+| New normalized email with consent    | `201`, row inserted              |
 | Existing email with different casing | `200`, duplicate success message |
-| Missing/false consent | `400` |
-| Invalid email | `400` |
-| Honeypot populated | Safe `200`, no row |
-| Non-JSON content type | `415` |
-| Oversized request | `413` |
-| Excess attempts | `429` with `Retry-After` |
-| Supabase unavailable | `503`, no secret details |
+| Missing/false consent                | `400`                            |
+| Invalid email                        | `400`                            |
+| Honeypot populated                   | Safe `200`, no row               |
+| Non-JSON content type                | `415`                            |
+| Oversized request                    | `413`                            |
+| Excess attempts                      | `429` with `Retry-After`         |
+| Supabase unavailable                 | `503`, no secret details         |
 
-## Recommended Sprint 9 test tooling
+## Sprint 9 test expansion
 
-- Add a fast unit runner for pure intelligence, validation, and normalization logic.
+- Add fixtures and unit suites for pure intelligence, validation, and normalization logic.
 - Add integration tests for Route Handlers with mocked provider boundaries.
 - Add Playwright for authentication redirects, premium gates, and critical pages.
-- Add CI coverage thresholds for Sprint 9 domain logic, not generated UI markup.
+- Add focused CI coverage thresholds for Sprint 9 domain logic, not generated UI markup.
 - Add fixture builders for market snapshots, articles, profiles, and membership events.

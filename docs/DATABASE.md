@@ -14,21 +14,21 @@ Names such as `articles` are logical collections in Sanity, not Postgres tables.
 
 Source: `docs/supabase-auth.sql` and `docs/supabase-revolut.sql`.
 
-| Column | Type | Rules |
-| --- | --- | --- |
-| `id` | `uuid` | Primary key; foreign key to `auth.users.id`; cascade delete |
-| `full_name` | `text` | Nullable; member-editable |
-| `email` | `text` | Required; synchronized from Auth |
-| `membership_status` | `text` | Required; `free`, `pending`, `trialing`, `active`, `past_due`, `cancelled`, or `failed` |
-| `membership_plan` | `text` | Required; `free`, `monthly`, or `annual` |
-| `payment_provider` | `text` | Nullable; currently `revolut` |
-| `payment_customer_id` | `text` | Nullable; Revolut customer identifier |
-| `payment_subscription_id` | `text` | Nullable; unique when present |
-| `payment_reference` | `uuid` | Nullable; unique when present |
-| `current_period_end` | `timestamptz` | Nullable |
-| `payment_verified_at` | `timestamptz` | Nullable; required for premium access |
-| `created_at` | `timestamptz` | Required; UTC default |
-| `updated_at` | `timestamptz` | Required; trigger maintained |
+| Column                    | Type          | Rules                                                                                   |
+| ------------------------- | ------------- | --------------------------------------------------------------------------------------- |
+| `id`                      | `uuid`        | Primary key; foreign key to `auth.users.id`; cascade delete                             |
+| `full_name`               | `text`        | Nullable; member-editable                                                               |
+| `email`                   | `text`        | Required; synchronized from Auth                                                        |
+| `membership_status`       | `text`        | Required; `free`, `pending`, `trialing`, `active`, `past_due`, `cancelled`, or `failed` |
+| `membership_plan`         | `text`        | Required; `free`, `monthly`, or `annual`                                                |
+| `payment_provider`        | `text`        | Nullable; currently `revolut`                                                           |
+| `payment_customer_id`     | `text`        | Nullable; Revolut customer identifier                                                   |
+| `payment_subscription_id` | `text`        | Nullable; unique when present                                                           |
+| `payment_reference`       | `uuid`        | Nullable; unique when present                                                           |
+| `current_period_end`      | `timestamptz` | Nullable                                                                                |
+| `payment_verified_at`     | `timestamptz` | Nullable; required for premium access                                                   |
+| `created_at`              | `timestamptz` | Required; UTC default                                                                   |
+| `updated_at`              | `timestamptz` | Required; trigger maintained                                                            |
 
 Indexes:
 
@@ -52,13 +52,13 @@ Security:
 
 Source: `docs/supabase-newsletter.sql`.
 
-| Column | Type | Rules |
-| --- | --- | --- |
-| `id` | `uuid` | Primary key; generated UUID |
-| `email` | `text` | Required; 3–254 characters and basic email constraint |
-| `consent` | `boolean` | Required and must be true |
-| `source` | `text` | Required; defaults to `homepage` |
-| `created_at` | `timestamptz` | Required |
+| Column       | Type          | Rules                                                 |
+| ------------ | ------------- | ----------------------------------------------------- |
+| `id`         | `uuid`        | Primary key; generated UUID                           |
+| `email`      | `text`        | Required; 3–254 characters and basic email constraint |
+| `consent`    | `boolean`     | Required and must be true                             |
+| `source`     | `text`        | Required; defaults to `homepage`                      |
+| `created_at` | `timestamptz` | Required                                              |
 
 Indexes:
 
@@ -77,20 +77,20 @@ This is the implemented operational **memberships** workflow table. The current
 membership entitlement is stored on `profiles`; each checkout attempt or manual
 verification request is stored here.
 
-| Column | Type | Rules |
-| --- | --- | --- |
-| `id` | `uuid` | Primary key; generated UUID |
-| `user_id` | `uuid` | Required foreign key to `auth.users.id`; cascade delete |
-| `membership_plan` | `text` | `monthly` or `annual` |
-| `provider_mode` | `text` | `revolut_api` or `revolut_payment_links` |
-| `status` | `text` | `pending`, `verified`, `rejected`, `cancelled`, or `failed` |
-| `payment_reference` | `uuid` | Required and unique |
-| `payment_subscription_id` | `text` | Nullable; unique when present |
-| `verified_at` | `timestamptz` | Nullable |
-| `verified_by` | `uuid` | Nullable foreign key to `auth.users.id`; set null on delete |
-| `admin_notes` | `text` | Nullable; never exposed publicly |
-| `created_at` | `timestamptz` | Required; UTC default |
-| `updated_at` | `timestamptz` | Required; trigger maintained |
+| Column                    | Type          | Rules                                                       |
+| ------------------------- | ------------- | ----------------------------------------------------------- |
+| `id`                      | `uuid`        | Primary key; generated UUID                                 |
+| `user_id`                 | `uuid`        | Required foreign key to `auth.users.id`; cascade delete     |
+| `membership_plan`         | `text`        | `monthly` or `annual`                                       |
+| `provider_mode`           | `text`        | `revolut_api` or `revolut_payment_links`                    |
+| `status`                  | `text`        | `pending`, `verified`, `rejected`, `cancelled`, or `failed` |
+| `payment_reference`       | `uuid`        | Required and unique                                         |
+| `payment_subscription_id` | `text`        | Nullable; unique when present                               |
+| `verified_at`             | `timestamptz` | Nullable                                                    |
+| `verified_by`             | `uuid`        | Nullable foreign key to `auth.users.id`; set null on delete |
+| `admin_notes`             | `text`        | Nullable; never exposed publicly                            |
+| `created_at`              | `timestamptz` | Required; UTC default                                       |
+| `updated_at`              | `timestamptz` | Required; trigger maintained                                |
 
 Indexes:
 
@@ -107,11 +107,11 @@ Security:
 
 ### `payment_webhook_events`
 
-| Column | Type | Rules |
-| --- | --- | --- |
-| `event_key` | `text` | Primary key; SHA-256 idempotency key |
-| `event_type` | `text` | Required Revolut event name |
-| `received_at` | `timestamptz` | Required; UTC default |
+| Column         | Type          | Rules                                |
+| -------------- | ------------- | ------------------------------------ |
+| `event_key`    | `text`        | Primary key; SHA-256 idempotency key |
+| `event_type`   | `text`        | Required Revolut event name          |
+| `received_at`  | `timestamptz` | Required; UTC default                |
 | `processed_at` | `timestamptz` | Nullable until successful processing |
 
 RLS is enabled and browser roles have no privileges.
@@ -122,25 +122,25 @@ RLS is enabled and browser roles have no privileges.
 
 Sanity schema name: `article`.
 
-| Field | Type | Relationship or rule |
-| --- | --- | --- |
-| `_id` | Sanity document ID | Primary document identity |
-| `title` | string | Required, 8–120 characters |
-| `slug` | slug | Required and used by `/analysis/[slug]` |
-| `excerpt` | text | Required, 40–260 characters |
-| `featuredImage` | image | Required; hotspot and alt text |
-| `author` | reference | Required reference to `author` |
-| `category` | reference | Required reference to `category` |
-| `instrumentSymbol` | string | Required uppercase symbol |
-| `marketBias` | string | Bullish, Neutral, or Bearish |
-| `supportLevels` | string array | Required, unique, 1–8 entries |
-| `resistanceLevels` | string array | Required, unique, 1–8 entries |
-| `body` | Portable Text array | Required rich content and images |
-| `riskFactors` | string array | Required, unique, 1–10 entries |
-| `publishedAt` | datetime | Required; controls publication visibility |
-| `accessLevel` | string | `free` or `premium` |
-| `seoTitle` | string | Optional, maximum 60 characters |
-| `seoDescription` | text | Optional, maximum 160 characters |
+| Field              | Type                | Relationship or rule                      |
+| ------------------ | ------------------- | ----------------------------------------- |
+| `_id`              | Sanity document ID  | Primary document identity                 |
+| `title`            | string              | Required, 8–120 characters                |
+| `slug`             | slug                | Required and used by `/analysis/[slug]`   |
+| `excerpt`          | text                | Required, 40–260 characters               |
+| `featuredImage`    | image               | Required; hotspot and alt text            |
+| `author`           | reference           | Required reference to `author`            |
+| `category`         | reference           | Required reference to `category`          |
+| `instrumentSymbol` | string              | Required uppercase symbol                 |
+| `marketBias`       | string              | Bullish, Neutral, or Bearish              |
+| `supportLevels`    | string array        | Required, unique, 1–8 entries             |
+| `resistanceLevels` | string array        | Required, unique, 1–8 entries             |
+| `body`             | Portable Text array | Required rich content and images          |
+| `riskFactors`      | string array        | Required, unique, 1–10 entries            |
+| `publishedAt`      | datetime            | Required; controls publication visibility |
+| `accessLevel`      | string              | `free` or `premium`                       |
+| `seoTitle`         | string              | Optional, maximum 60 characters           |
+| `seoDescription`   | text                | Optional, maximum 160 characters          |
 
 Indexes are managed by Sanity. GROQ queries filter on `_type`, `slug.current`,
 and `publishedAt`, and order by `publishedAt` descending.
@@ -149,12 +149,12 @@ and `publishedAt`, and order by `publishedAt` descending.
 
 Sanity schema name: `category`.
 
-| Field | Type | Rule |
-| --- | --- | --- |
-| `_id` | Sanity document ID | Primary document identity |
-| `title` | string | Required |
-| `slug` | slug | Required |
-| `description` | text | Optional editorial description |
+| Field         | Type               | Rule                           |
+| ------------- | ------------------ | ------------------------------ |
+| `_id`         | Sanity document ID | Primary document identity      |
+| `title`       | string             | Required                       |
+| `slug`        | slug               | Required                       |
+| `description` | text               | Optional editorial description |
 
 Relationship: one category can be referenced by many articles.
 
@@ -162,14 +162,14 @@ Relationship: one category can be referenced by many articles.
 
 Sanity schema name: `author`.
 
-| Field | Type | Rule |
-| --- | --- | --- |
-| `_id` | Sanity document ID | Primary document identity |
-| `name` | string | Required |
-| `slug` | slug | Required |
-| `role` | string | Optional; defaults to market analyst |
-| `bio` | text | Optional |
-| `image` | image | Optional profile image and alt text |
+| Field   | Type               | Rule                                 |
+| ------- | ------------------ | ------------------------------------ |
+| `_id`   | Sanity document ID | Primary document identity            |
+| `name`  | string             | Required                             |
+| `slug`  | slug               | Required                             |
+| `role`  | string             | Optional; defaults to market analyst |
+| `bio`   | text               | Optional                             |
+| `image` | image              | Optional profile image and alt text  |
 
 Relationship: one author can be referenced by many articles.
 

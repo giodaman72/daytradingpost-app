@@ -20,7 +20,11 @@ export const ACCOUNT_NAVIGATION = [
 export const DASHBOARD_NAVIGATION = [
   { href: "#market-outlook", id: "market-outlook", label: "Market outlook" },
   { href: "#latest-analysis", id: "latest-analysis", label: "Latest analysis" },
-  { href: "#economic-calendar", id: "economic-calendar", label: "Economic calendar" },
+  {
+    href: "#economic-calendar",
+    id: "economic-calendar",
+    label: "Economic calendar",
+  },
   { href: "#webinar", id: "webinar", label: "Webinars" },
   { href: "#watchlist", id: "watchlist", label: "Watchlist" },
   { href: "#academy-progress", id: "academy-progress", label: "Academy" },

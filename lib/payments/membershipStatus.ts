@@ -6,10 +6,7 @@ export function hasActiveMembership(
     "current_period_end" | "membership_status" | "payment_verified_at"
   > | null,
 ) {
-  if (
-    profile?.membership_status !== "active" ||
-    !profile.payment_verified_at
-  ) {
+  if (profile?.membership_status !== "active" || !profile.payment_verified_at) {
     return false;
   }
 

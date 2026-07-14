@@ -31,8 +31,12 @@ export function MembershipStatusPage({
             </div>
           ) : null}
           <div className="membership-result-actions">
-            <Link href="/account/billing" className="button">View billing status</Link>
-            <Link href="/analysis" className="text-link">Browse analysis →</Link>
+            <Link href="/account/billing" className="button">
+              View billing status
+            </Link>
+            <Link href="/analysis" className="text-link">
+              Browse analysis →
+            </Link>
           </div>
         </div>
       </section>

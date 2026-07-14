@@ -1,6 +1,10 @@
 export default function AnalysisLoading() {
   return (
-    <main className="analysis-page" aria-busy="true" aria-label="Loading analysis">
+    <main
+      className="analysis-page"
+      aria-busy="true"
+      aria-label="Loading analysis"
+    >
       <div className="analysis-loading-header" />
       <section className="analysis-loading-shell">
         <div className="container">

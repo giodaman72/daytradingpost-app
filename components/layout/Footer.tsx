@@ -26,7 +26,9 @@ export function Footer() {
               <div key={group.title}>
                 <h3>{group.title}</h3>
                 {group.links.map((link) => (
-                  <Link href={link.href} key={link.href}>{link.label}</Link>
+                  <Link href={link.href} key={link.href}>
+                    {link.label}
+                  </Link>
                 ))}
               </div>
             ))}
@@ -36,8 +38,8 @@ export function Footer() {
         <div className="risk-warning">
           <strong>Risk warning:</strong> Trading leveraged financial products
           involves significant risk and may not be suitable for every investor.
-          DayTradingPost provides educational and informational content only
-          and does not provide personalized investment advice.
+          DayTradingPost provides educational and informational content only and
+          does not provide personalized investment advice.
         </div>
 
         <div className="footer-bottom">

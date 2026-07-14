@@ -11,7 +11,8 @@ export function getMarketBySlug(slug: string) {
 export function getMarketBySymbol(symbol: string) {
   const normalizedSymbol = symbol.trim().toUpperCase();
   return (
-    MARKETS.find((market) => market.symbol.toUpperCase() === normalizedSymbol) ??
-    null
+    MARKETS.find(
+      (market) => market.symbol.toUpperCase() === normalizedSymbol,
+    ) ?? null
   );
 }

@@ -17,15 +17,19 @@ Revolut-compatible premium membership, and a protected trader dashboard.
 
 Requirements:
 
-- Node.js 20.9 or newer
+- Node.js 24, pinned in `.nvmrc`
 - npm
 - Supabase and Sanity projects for connected features
 
 Install dependencies:
 
 ```bash
-npm install
+nvm use
+npm ci
 ```
+
+Use `npm install` only when intentionally changing dependencies and updating
+`package-lock.json`.
 
 Copy the environment template and add local values:
 
@@ -44,11 +48,11 @@ Open `http://localhost:3001`.
 ## Validation
 
 ```bash
-npm run lint
-npm run build
+npm run check
 ```
 
-Both commands must pass before a sprint is complete.
+This checks formatting, lint, TypeScript, unit/component tests, and the production
+build. See [Testing](docs/TESTING.md) for individual commands and coverage.
 
 ## Project structure
 
@@ -81,6 +85,8 @@ replace server-side authorization.
 - [Changelog](docs/CHANGELOG.md)
 - [Sanity setup](docs/sanity-setup.md)
 - [Revolut setup](docs/revolut-setup.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
 
 ## Security rules
 

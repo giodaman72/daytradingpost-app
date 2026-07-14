@@ -9,7 +9,8 @@ import { getPaymentProviderMode } from "@/lib/membership/config";
 
 export const metadata: Metadata = {
   title: "Premium membership",
-  description: "Choose a monthly or annual DayTradingPost premium membership secured by Revolut.",
+  description:
+    "Choose a monthly or annual DayTradingPost premium membership secured by Revolut.",
 };
 
 export default async function PremiumPage() {
@@ -32,7 +33,8 @@ export default async function PremiumPage() {
           </p>
           {hasPremiumAccess ? (
             <div className="membership-callout success" role="status">
-              Your premium membership is active. <Link href="/account/billing">Manage billing</Link>
+              Your premium membership is active.{" "}
+              <Link href="/account/billing">Manage billing</Link>
             </div>
           ) : null}
         </div>
@@ -43,17 +45,29 @@ export default async function PremiumPage() {
           <div className="membership-plan-grid">
             {(["monthly", "annual"] as const).map((plan) => (
               <article className="membership-plan-card" key={plan}>
-                <span className="pricing-label">{MEMBERSHIP_PLANS[plan].label}</span>
+                <span className="pricing-label">
+                  {MEMBERSHIP_PLANS[plan].label}
+                </span>
                 <h2>{MEMBERSHIP_PLANS[plan].name}</h2>
-                <p className="membership-price-note">Final price and currency are shown securely by Revolut.</p>
+                <p className="membership-price-note">
+                  Final price and currency are shown securely by Revolut.
+                </p>
                 <ul className="premium-list">
                   {PREMIUM_BENEFITS.map((benefit) => (
-                    <li key={benefit}><span aria-hidden="true">✓</span>{benefit}</li>
+                    <li key={benefit}>
+                      <span aria-hidden="true">✓</span>
+                      {benefit}
+                    </li>
                   ))}
                 </ul>
                 {!hasPremiumAccess ? (
-                  user ? <MembershipCheckoutForm plan={plan} /> : (
-                    <Link className="button button-full" href={`/login?next=${encodeURIComponent("/premium")}`}>
+                  user ? (
+                    <MembershipCheckoutForm plan={plan} />
+                  ) : (
+                    <Link
+                      className="button button-full"
+                      href={`/login?next=${encodeURIComponent("/premium")}`}
+                    >
                       Sign in to choose {plan}
                     </Link>
                   )
@@ -63,7 +77,11 @@ export default async function PremiumPage() {
           </div>
 
           <div className="membership-callout" role="note">
-            <strong>{isPaymentLinks ? "Payment-link verification" : "Revolut Merchant checkout"}</strong>
+            <strong>
+              {isPaymentLinks
+                ? "Payment-link verification"
+                : "Revolut Merchant checkout"}
+            </strong>
             <p>
               {isPaymentLinks
                 ? "A pending membership request is created before checkout. Payment does not grant access automatically; an administrator verifies it first. Keep your payment reference."

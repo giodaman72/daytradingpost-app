@@ -1,10 +1,6 @@
 export type MarketBias = "Bullish" | "Neutral" | "Bearish";
 
-export type MarketCategory =
-  | "commodity"
-  | "crypto"
-  | "forex"
-  | "index";
+export type MarketCategory = "commodity" | "crypto" | "forex" | "index";
 
 export type MarketDefinition = {
   category: MarketCategory;

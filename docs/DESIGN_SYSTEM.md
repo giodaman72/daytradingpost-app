@@ -14,11 +14,11 @@ describes it; it does not authorize visual redesign during infrastructure work.
 
 ## Typography
 
-| Role | Font | Guidance |
-| --- | --- | --- |
-| Interface and editorial | Geist Sans | Default body, headings, buttons, navigation |
-| Symbols and operational data | Geist Mono | Instrument symbols, prices, IDs, timestamps |
-| Fallback | Arial/Helvetica/system sans | Used if generated font assets are unavailable |
+| Role                         | Font                        | Guidance                                      |
+| ---------------------------- | --------------------------- | --------------------------------------------- |
+| Interface and editorial      | Geist Sans                  | Default body, headings, buttons, navigation   |
+| Symbols and operational data | Geist Mono                  | Instrument symbols, prices, IDs, timestamps   |
+| Fallback                     | Arial/Helvetica/system sans | Used if generated font assets are unavailable |
 
 Headings use tight negative letter spacing and responsive `clamp()` sizes.
 Body copy uses relaxed line height, with muted colors for secondary context.
@@ -28,21 +28,21 @@ Body copy uses relaxed line height, with muted colors for secondary context.
 Runtime CSS variables live in `app/globals.css`; TypeScript references live in
 `constants/colors.ts`.
 
-| Token | Value | Use |
-| --- | --- | --- |
-| `--background` | `#070b12` | Page background |
-| `--background-soft` | `#0b111c` | Elevated page regions |
-| `--surface` | `#101826` | Cards and panels |
-| `--surface-light` | `#162131` | Hover/elevated surfaces |
-| `--text` | `#f8fafc` | Primary text |
-| `--text-soft` | `#a5b1c2` | Supporting text |
-| `--text-muted` | `#748095` | Metadata and quiet labels |
-| `--gold` | `#f5b942` | Brand and primary action |
-| `--gold-light` | `#ffd978` | High-emphasis gold text |
-| `--green` | `#27d497` | Positive/active/bullish state |
-| `--red` | `#ff647c` | Error/risk/bearish state |
-| `--blue` | `#5c8dff` | Informational accents |
-| `--purple` | `#9c7cff` | Educational/live accents |
+| Token               | Value     | Use                           |
+| ------------------- | --------- | ----------------------------- |
+| `--background`      | `#070b12` | Page background               |
+| `--background-soft` | `#0b111c` | Elevated page regions         |
+| `--surface`         | `#101826` | Cards and panels              |
+| `--surface-light`   | `#162131` | Hover/elevated surfaces       |
+| `--text`            | `#f8fafc` | Primary text                  |
+| `--text-soft`       | `#a5b1c2` | Supporting text               |
+| `--text-muted`      | `#748095` | Metadata and quiet labels     |
+| `--gold`            | `#f5b942` | Brand and primary action      |
+| `--gold-light`      | `#ffd978` | High-emphasis gold text       |
+| `--green`           | `#27d497` | Positive/active/bullish state |
+| `--red`             | `#ff647c` | Error/risk/bearish state      |
+| `--blue`            | `#5c8dff` | Informational accents         |
+| `--purple`          | `#9c7cff` | Educational/live accents      |
 
 Never use green or red as decoration when they could be interpreted as a trade
 signal. Text or icons must accompany color-only state.
@@ -131,14 +131,14 @@ status indicators.
 The stylesheet uses content-specific breakpoints rather than a single framework
 scale. Common thresholds are:
 
-| Breakpoint | Typical change |
-| --- | --- |
-| 1100 px | Dashboard sidebar becomes horizontal section navigation |
-| 1040 px | Wide grids reduce columns |
-| 820/800 px | Two-column content stacks |
-| 760/700 px | Dashboard and analysis details become single column |
-| 640/620 px | Compact cards and typography |
-| 560/520 px | Full-width actions and simplified list columns |
+| Breakpoint | Typical change                                          |
+| ---------- | ------------------------------------------------------- |
+| 1100 px    | Dashboard sidebar becomes horizontal section navigation |
+| 1040 px    | Wide grids reduce columns                               |
+| 820/800 px | Two-column content stacks                               |
+| 760/700 px | Dashboard and analysis details become single column     |
+| 640/620 px | Compact cards and typography                            |
+| 560/520 px | Full-width actions and simplified list columns          |
 
 Test at 320, 375, 768, 1024, and 1440 px, plus zoom at 200%.
 

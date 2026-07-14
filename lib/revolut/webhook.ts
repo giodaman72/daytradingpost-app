@@ -15,7 +15,10 @@ export function verifyRevolutWebhook(input: {
   }
 
   const timestamp = Number(input.timestamp);
-  if (!Number.isSafeInteger(timestamp) || Math.abs(Date.now() - timestamp) > MAX_TIMESTAMP_AGE_MS) {
+  if (
+    !Number.isSafeInteger(timestamp) ||
+    Math.abs(Date.now() - timestamp) > MAX_TIMESTAMP_AGE_MS
+  ) {
     return false;
   }
 
@@ -26,6 +29,8 @@ export function verifyRevolutWebhook(input: {
 
   return input.signature.split(",").some((value) => {
     const received = Buffer.from(value.trim());
-    return received.length === expected.length && timingSafeEqual(received, expected);
+    return (
+      received.length === expected.length && timingSafeEqual(received, expected)
+    );
   });
 }

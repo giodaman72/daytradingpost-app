@@ -17,7 +17,8 @@ import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 
 export const metadata: Metadata = {
   title: "Trader Dashboard",
-  description: "Your private DayTradingPost market outlook, research, watchlist, education and membership dashboard.",
+  description:
+    "Your private DayTradingPost market outlook, research, watchlist, education and membership dashboard.",
   robots: { index: false, follow: false },
 };
 
@@ -76,7 +77,10 @@ export default async function DashboardPage() {
               hasPremiumAccess={hasPremiumAccess}
               profile={profile}
             />
-            <Notifications articleCount={articles.length} membershipStatus={membershipStatus} />
+            <Notifications
+              articleCount={articles.length}
+              membershipStatus={membershipStatus}
+            />
           </div>
         </div>
       </div>

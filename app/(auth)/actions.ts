@@ -199,7 +199,8 @@ export async function resetPasswordAction(
 
   return {
     status: "success",
-    message: "Your password has been updated. You can continue to your account.",
+    message:
+      "Your password has been updated. You can continue to your account.",
   };
 }
 

@@ -77,7 +77,8 @@ export function NewsletterForm() {
 
       if (!response.ok || !result.ok) {
         throw new Error(
-          result.message ?? "We couldn’t complete your signup. Please try again.",
+          result.message ??
+            "We couldn’t complete your signup. Please try again.",
         );
       }
 

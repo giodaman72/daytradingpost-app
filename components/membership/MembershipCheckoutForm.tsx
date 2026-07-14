@@ -1,13 +1,19 @@
 "use client";
 
 import { useActionState } from "react";
-import { startMembershipCheckout, type CheckoutState } from "@/app/membership/actions";
+import {
+  startMembershipCheckout,
+  type CheckoutState,
+} from "@/app/membership/actions";
 import type { MembershipPlan } from "@/types/membership";
 
 const initialState: CheckoutState = { error: null };
 
 export function MembershipCheckoutForm({ plan }: { plan: MembershipPlan }) {
-  const [state, formAction, pending] = useActionState(startMembershipCheckout, initialState);
+  const [state, formAction, pending] = useActionState(
+    startMembershipCheckout,
+    initialState,
+  );
   const statusId = `membership-${plan}-status`;
 
   return (

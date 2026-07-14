@@ -1,0 +1,17 @@
+.next/
+node_modules/
+daytradingpost/
+coverage/
+.lighthouseci/
+out/
+build/
+.vercel/
+test-results/
+playwright-report/
+package-lock.json
+next-env.d.ts
+.env
+.env.*
+!.env.example
+public/
+AGENTS.md

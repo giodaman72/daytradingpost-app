@@ -13,11 +13,22 @@ export function AuthPage({ children }: { children: React.ReactNode }) {
             <span className="section-kicker">DayTradingPost members</span>
             <h2>One secure account for your trading intelligence.</h2>
             <ul>
-              <li><span aria-hidden="true">✓</span> Manage membership access</li>
-              <li><span aria-hidden="true">✓</span> Access future member-only briefings</li>
-              <li><span aria-hidden="true">✓</span> Keep account data protected by RLS</li>
+              <li>
+                <span aria-hidden="true">✓</span> Manage membership access
+              </li>
+              <li>
+                <span aria-hidden="true">✓</span> Access future member-only
+                briefings
+              </li>
+              <li>
+                <span aria-hidden="true">✓</span> Keep account data protected by
+                RLS
+              </li>
             </ul>
-            <p>DayTradingPost never asks for brokerage credentials or trading passwords.</p>
+            <p>
+              DayTradingPost never asks for brokerage credentials or trading
+              passwords.
+            </p>
           </div>
           {children}
         </div>

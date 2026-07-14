@@ -1,6 +1,10 @@
 export default function AccountLoading() {
   return (
-    <main className="account-page" aria-busy="true" aria-label="Loading account">
+    <main
+      className="account-page"
+      aria-busy="true"
+      aria-label="Loading account"
+    >
       <div className="auth-loading-header" />
       <section className="account-shell">
         <div className="container account-layout">

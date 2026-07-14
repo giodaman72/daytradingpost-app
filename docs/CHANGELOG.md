@@ -10,6 +10,28 @@ release remain in the `0.x` line.
 
 - Sprint 9 Market Intelligence Engine
 
+## [0.8.6] — 2026-07-14
+
+### Sprint 8.6 — CI and code quality
+
+### Added
+
+- Prettier formatting and strict format checks
+- Vitest, jsdom, Testing Library, and coverage reporting
+- Starter tests for newsletter validation, premium entitlement, and reusable UI
+- Primary CI, CodeQL, and isolated advisory Lighthouse GitHub Actions workflows
+- Dependabot, Husky, lint-staged, Commitlint, pull-request and issue templates
+- Contributor and private vulnerability-reporting guidance
+
+### Changed
+
+- Pinned local and CI development to Node.js 24
+- Strengthened ESLint unused-code, explicit-any, console, hooks, accessibility,
+  Next.js, and TypeScript checks
+- Disabled unnecessary TypeScript JavaScript compilation
+- Expanded repository ignores for generated test, performance, key, editor, and
+  local duplicate-scaffold artifacts
+
 ## [0.8.5] — 2026-07-14
 
 ### Sprint 8.5 — Developer infrastructure

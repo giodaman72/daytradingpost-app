@@ -205,7 +205,11 @@ export default async function Home() {
                       x2="0"
                       y2="1"
                     >
-                      <stop offset="0%" stopColor="#f5b942" stopOpacity="0.35" />
+                      <stop
+                        offset="0%"
+                        stopColor="#f5b942"
+                        stopOpacity="0.35"
+                      />
                       <stop offset="100%" stopColor="#f5b942" stopOpacity="0" />
                     </linearGradient>
                   </defs>
@@ -262,7 +266,9 @@ export default async function Home() {
                     className={
                       market.positive ? "market-arrow up" : "market-arrow down"
                     }
-                    aria-label={market.positive ? "Price higher" : "Price lower"}
+                    aria-label={
+                      market.positive ? "Price higher" : "Price lower"
+                    }
                   >
                     {market.positive ? "↗" : "↘"}
                   </span>
@@ -432,8 +438,8 @@ export default async function Home() {
               </Link>
 
               <p>
-                Independent market intelligence and trading education for
-                active traders.
+                Independent market intelligence and trading education for active
+                traders.
               </p>
             </div>
 

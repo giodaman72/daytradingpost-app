@@ -43,14 +43,14 @@ Success response (`201` for new, `200` for duplicate):
 
 Errors:
 
-| Status | Meaning |
-| --- | --- |
-| `400` | Invalid JSON, email, or missing consent |
-| `403` | Explicit cross-site browser request |
-| `413` | Body exceeds 4,096 bytes |
-| `415` | Content type is not JSON |
-| `429` | More than five attempts in ten minutes for the local limiter key |
-| `503` | Subscriber storage unavailable |
+| Status | Meaning                                                          |
+| ------ | ---------------------------------------------------------------- |
+| `400`  | Invalid JSON, email, or missing consent                          |
+| `403`  | Explicit cross-site browser request                              |
+| `413`  | Body exceeds 4,096 bytes                                         |
+| `415`  | Content type is not JSON                                         |
+| `429`  | More than five attempts in ten minutes for the local limiter key |
+| `503`  | Subscriber storage unavailable                                   |
 
 The in-memory limiter is best-effort per function instance. A distributed rate
 limiter is recommended before high-volume production traffic.
@@ -152,12 +152,12 @@ events return `200` with `ignored: true`.
 
 Errors:
 
-| Status | Meaning |
-| --- | --- |
-| `400` | Invalid JSON payload |
-| `401` | Invalid signature or timestamp |
-| `500` | Verified event could not be processed; event lock is released for retry |
-| `503` | Webhook secret or idempotency storage unavailable |
+| Status | Meaning                                                                 |
+| ------ | ----------------------------------------------------------------------- |
+| `400`  | Invalid JSON payload                                                    |
+| `401`  | Invalid signature or timestamp                                          |
+| `500`  | Verified event could not be processed; event lock is released for retry |
+| `503`  | Webhook secret or idempotency storage unavailable                       |
 
 ## CMS service API
 
@@ -177,15 +177,15 @@ then request the full body.
 
 The following examples from the long-term architecture are **not implemented**:
 
-| Route | Planned responsibility | Target sprint |
-| --- | --- | --- |
-| `/api/articles` | Programmatic article read/search if a non-Next client requires it | Define when needed |
-| `/api/revolut` | No generic endpoint planned; use narrow checkout actions and webhook route | N/A |
-| `/api/market-intelligence` | Normalized intelligence outputs | Sprint 9 |
-| `/api/market-data` | Licensed quote and session data | Sprint 10 |
-| `/api/economic-calendar` | Normalized calendar data | Sprint 11 |
-| `/api/watchlists` | Authenticated CRUD with RLS | Sprint 12 |
-| `/api/notifications` | Authenticated notification reads/updates | Future |
+| Route                      | Planned responsibility                                                     | Target sprint      |
+| -------------------------- | -------------------------------------------------------------------------- | ------------------ |
+| `/api/articles`            | Programmatic article read/search if a non-Next client requires it          | Define when needed |
+| `/api/revolut`             | No generic endpoint planned; use narrow checkout actions and webhook route | N/A                |
+| `/api/market-intelligence` | Normalized intelligence outputs                                            | Sprint 9           |
+| `/api/market-data`         | Licensed quote and session data                                            | Sprint 10          |
+| `/api/economic-calendar`   | Normalized calendar data                                                   | Sprint 11          |
+| `/api/watchlists`          | Authenticated CRUD with RLS                                                | Sprint 12          |
+| `/api/notifications`       | Authenticated notification reads/updates                                   | Future             |
 
 Do not create generic pass-through APIs merely to hide a provider URL. Add an
 HTTP route only when an external client, webhook, cache boundary, or streaming

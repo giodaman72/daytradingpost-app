@@ -2,7 +2,11 @@ import Link from "next/link";
 import { logoutAction } from "@/app/(auth)/actions";
 import { ACCOUNT_NAVIGATION } from "@/constants/navigation";
 
-export function AccountNavigation({ current = "overview" }: { current?: "overview" | "billing" }) {
+export function AccountNavigation({
+  current = "overview",
+}: {
+  current?: "overview" | "billing";
+}) {
   return (
     <nav className="account-navigation" aria-label="Account navigation">
       {ACCOUNT_NAVIGATION.map((item) => (

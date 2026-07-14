@@ -28,6 +28,7 @@ app/                    App Router pages, layouts, actions, and Route Handlers
 components/             Reusable presentation components by feature
 constants/              Stable routes, navigation, markets, colors, membership data
 docs/                   Product and engineering documentation
+.github/                CI, CodeQL, performance, dependency, and contribution automation
 hooks/                  Opt-in client hooks
 lib/                    Integration adapters, validation, services, and utilities
 providers/              Opt-in client contexts; not mounted globally by default
@@ -141,13 +142,13 @@ inventing duplicate REST endpoints. See `API_REFERENCE.md`.
 
 ## Caching strategy
 
-| Data | Strategy |
-| --- | --- |
-| Personalized Supabase data | Dynamic request-time read; never shared across users |
-| Sanity published articles | Next.js revalidation every 60 seconds with `sanity` and `article` tags |
-| Newsletter and webhooks | `no-store`; mutations must never be cached |
-| Static assets | Hashed immutable assets managed by Next.js |
-| Placeholder constants | Module constants with no network request |
+| Data                       | Strategy                                                               |
+| -------------------------- | ---------------------------------------------------------------------- |
+| Personalized Supabase data | Dynamic request-time read; never shared across users                   |
+| Sanity published articles  | Next.js revalidation every 60 seconds with `sanity` and `article` tags |
+| Newsletter and webhooks    | `no-store`; mutations must never be cached                             |
+| Static assets              | Hashed immutable assets managed by Next.js                             |
+| Placeholder constants      | Module constants with no network request                               |
 
 Future market data must define a short provider-specific freshness window and
 must expose stale timestamps in the UI.
@@ -173,8 +174,13 @@ The intended production target is Vercel:
 
 ```text
 GitHub branch/PR
-    → Vercel preview deployment
-    → lint/build acceptance
+    ├── GitHub Actions quality checks
+    │     ├── format and lint
+    │     ├── typecheck and Vitest
+    │     └── production build
+    ├── CodeQL JavaScript/TypeScript analysis
+    ├── optional Lighthouse homepage review
+    └── Vercel preview deployment
     → merge to main
     → Vercel production deployment
         ├── Next.js Functions and Route Handlers
@@ -186,6 +192,29 @@ GitHub branch/PR
 Environment variables are configured separately for local, Preview, and
 Production environments. Production webhook and callback URLs must use the
 canonical HTTPS origin.
+
+GitHub Actions validates source code but never calls the Vercel CLI or deploys
+artifacts. The Vercel GitHub integration remains the sole deployment owner:
+feature branches and pull requests receive Preview deployments, while accepted
+changes on `main` produce Production deployments.
+
+## Quality architecture
+
+- Node.js 24 is pinned in `.nvmrc` and used by GitHub Actions.
+- Prettier owns formatting; ESLint owns correctness, React hooks, accessibility,
+  Next.js, TypeScript, and unused-code checks.
+- Vitest uses jsdom for pure domain and focused component tests. External
+  Supabase, Sanity, and Revolut boundaries are not contacted.
+- Husky runs lint-staged before commits and Commitlint for commit messages.
+- The primary CI workflow runs deterministic local gates after `npm ci`.
+- CodeQL performs semantic JavaScript/TypeScript security analysis. Repository
+  default setup must be disabled if it conflicts with this advanced workflow;
+  only one CodeQL setup should run.
+- Dependabot groups compatible minor and patch updates while leaving majors for
+  individual review.
+- Lighthouse runs separately against the locally built public homepage. It is
+  initially advisory because CMS content, runner variance, and cold-start timing
+  can affect scores.
 
 ## Architectural boundaries
 

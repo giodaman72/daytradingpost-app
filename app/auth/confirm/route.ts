@@ -23,6 +23,9 @@ export async function GET(request: NextRequest) {
   }
 
   redirectUrl.pathname = "/login";
-  redirectUrl.searchParams.set("error", "The confirmation link is invalid or expired.");
+  redirectUrl.searchParams.set(
+    "error",
+    "The confirmation link is invalid or expired.",
+  );
   return NextResponse.redirect(redirectUrl);
 }

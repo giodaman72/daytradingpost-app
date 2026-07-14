@@ -3,11 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import {
-  isSitePagePath,
-  sitePagePaths,
-  sitePages,
-} from "@/lib/site-pages";
+import { isSitePagePath, sitePagePaths, sitePages } from "@/lib/site-pages";
 
 type PageProps = {
   params: Promise<{ slug: string[] }>;

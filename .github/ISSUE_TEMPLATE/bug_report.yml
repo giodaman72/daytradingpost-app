@@ -1,0 +1,42 @@
+name: Bug report
+description: Report a reproducible problem in DayTradingPost.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve DayTradingPost. Do not include passwords, API keys, payment details, or personal data.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Problem summary
+      description: Describe what went wrong.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide the smallest reliable sequence that demonstrates the problem.
+      placeholder: |
+        1. Open ...
+        2. Select ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and device
+      placeholder: Safari 19 on macOS, or Chrome on Android
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add sanitized logs or screenshots only when they contain no sensitive information.

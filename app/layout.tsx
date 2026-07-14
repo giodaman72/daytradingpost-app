@@ -59,9 +59,7 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       lang="en"
     >
-      <body className="antialiased">
-        {children}
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

@@ -19,7 +19,10 @@ function getSupabaseConfig() {
   const isLocalSupabase =
     url.hostname === "localhost" || url.hostname === "127.0.0.1";
 
-  if (url.protocol !== "https:" && !(isLocalSupabase && url.protocol === "http:")) {
+  if (
+    url.protocol !== "https:" &&
+    !(isLocalSupabase && url.protocol === "http:")
+  ) {
     throw new Error("The Supabase URL must use HTTPS.");
   }
 

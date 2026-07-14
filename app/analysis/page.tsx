@@ -93,17 +93,24 @@ export default async function AnalysisPage() {
             <article>
               <span>01</span>
               <h3>Read the structure</h3>
-              <p>Define trend, range conditions and the levels controlling price.</p>
+              <p>
+                Define trend, range conditions and the levels controlling price.
+              </p>
             </article>
             <article>
               <span>02</span>
               <h3>Challenge the thesis</h3>
-              <p>Identify catalysts and conditions that could change the outlook.</p>
+              <p>
+                Identify catalysts and conditions that could change the outlook.
+              </p>
             </article>
             <article>
               <span>03</span>
               <h3>Define invalidation</h3>
-              <p>Let risk and position sizing determine whether a setup is viable.</p>
+              <p>
+                Let risk and position sizing determine whether a setup is
+                viable.
+              </p>
             </article>
           </div>
         </div>
