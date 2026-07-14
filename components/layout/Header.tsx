@@ -17,6 +17,7 @@ export async function Header() {
         <nav className="desktop-navigation" aria-label="Main navigation">
           <Link href="/#markets">Markets</Link>
           <Link href="/analysis">Analysis</Link>
+          {user ? <Link href="/dashboard">Dashboard</Link> : null}
           <Link href="/academy">Academy</Link>
           <Link href="/premium">Premium</Link>
           <Link href="/#newsletter">Newsletter</Link>

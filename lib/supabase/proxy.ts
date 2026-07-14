@@ -4,6 +4,7 @@ import { isSupabaseAuthConfigured, getSupabaseAuthConfig } from "./config";
 
 const protectedPrefixes = [
   "/account",
+  "/dashboard",
   "/members",
   "/membership/success",
   "/membership/pending",
