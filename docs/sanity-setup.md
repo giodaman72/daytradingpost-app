@@ -40,8 +40,10 @@ SANITY_API_READ_TOKEN=your-viewer-token
 - `SANITY_API_READ_TOKEN` is server-only. Never expose it in client components,
   commit it, or rename it with a `NEXT_PUBLIC_` prefix.
 
-For a public dataset, published content can be read without a token. A Viewer
-token is still recommended when the dataset is private. Create one under
+For a production site with premium articles, the `production` dataset must be
+**private**; otherwise its documents can be queried directly outside this
+application and no Next.js membership check can protect them. A Viewer token is
+therefore required for the server. Create one under
 **Project settings → API → Tokens → Add API token**, choose the **Viewer** role,
 and copy it immediately into `.env.local`.
 
@@ -136,5 +138,8 @@ Then verify:
 - The Studio configuration contains only public project and dataset identifiers.
 - The Viewer token is imported only by `lib/sanity/client.ts`, which is marked
   `server-only`.
+- Keep any dataset containing premium article bodies private. The application
+  fetches only article summaries until server-side Supabase authorization has
+  confirmed active, payment-verified membership.
 - Use the least-privileged token role required for published reads.
 - Never commit `.env.local` or paste private tokens into issues, logs, or chat.

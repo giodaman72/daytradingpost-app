@@ -2,7 +2,12 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isSupabaseAuthConfigured, getSupabaseAuthConfig } from "./config";
 
-const protectedPrefixes = ["/account", "/members"];
+const protectedPrefixes = [
+  "/account",
+  "/members",
+  "/membership/success",
+  "/membership/pending",
+];
 const guestOnlyRoutes = ["/login", "/register"];
 
 function safeNextPath(value: string | null) {

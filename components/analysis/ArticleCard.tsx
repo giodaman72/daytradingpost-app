@@ -60,7 +60,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
             {article.marketBias}
           </span>
           <Link href={`/analysis/${article.slug}`} className="card-link">
-            Read analysis
+            {article.accessLevel === "premium" ? "Preview analysis" : "Read analysis"}
             <span aria-hidden="true">→</span>
           </Link>
         </div>

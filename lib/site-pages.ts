@@ -23,20 +23,6 @@ export const sitePages = {
     actionHref: "/#academy",
     actionLabel: "Preview the curriculum",
   },
-  premium: {
-    kicker: "DayTradingPost Premium",
-    title: "A deeper daily market briefing.",
-    description:
-      "Premium membership will bring together detailed trade scenarios, technical levels, webinars and member-only learning resources.",
-    status: "Founding enrollment opening soon",
-    highlights: [
-      "Daily multi-asset technical outlooks",
-      "Detailed scenarios and invalidation levels",
-      "Live educational sessions and replays",
-    ],
-    actionHref: "/#newsletter",
-    actionLabel: "Get launch updates",
-  },
   webinars: {
     kicker: "Live education",
     title: "Market webinars built around the real session.",

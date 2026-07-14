@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArticleLayout } from "@/components/analysis/ArticleLayout";
+import { getMembershipAccess } from "@/lib/membership/access";
 import {
   getArticleBySlug,
+  getArticleSummaryBySlug,
   getArticleSlugs,
 } from "@/lib/sanity/client";
 import { getSanityImageUrl } from "@/lib/sanity/image";
@@ -21,7 +23,7 @@ export async function generateMetadata({
   params,
 }: AnalysisArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const article = await getArticleSummaryBySlug(slug);
 
   if (!article) {
     return {
@@ -63,11 +65,21 @@ export default async function AnalysisArticlePage({
   params,
 }: AnalysisArticlePageProps) {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const summary = await getArticleSummaryBySlug(slug);
 
-  if (!article) {
+  if (!summary) {
     notFound();
   }
+
+  if (summary.accessLevel === "premium") {
+    const access = await getMembershipAccess();
+    if (!access.hasPremiumAccess) {
+      return <ArticleLayout article={summary} locked />;
+    }
+  }
+
+  const article = await getArticleBySlug(slug);
+  if (!article) notFound();
 
   return <ArticleLayout article={article} />;
 }

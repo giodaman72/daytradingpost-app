@@ -79,6 +79,19 @@ export const articleBySlugQuery = defineQuery(`
   }
 `);
 
+export const articleSummaryBySlugQuery = defineQuery(`
+  *[
+    _type == "article" &&
+    slug.current == $slug &&
+    defined(publishedAt) &&
+    publishedAt <= now()
+  ][0] {
+    ${articleCardProjection},
+    seoTitle,
+    seoDescription
+  }
+`);
+
 export const articleSlugsQuery = defineQuery(`
   *[
     _type == "article" &&

@@ -3,13 +3,13 @@ import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { getSanityImageUrl } from "@/lib/sanity/image";
-import type { Article } from "@/lib/sanity/types";
+import type { Article, ArticleSummary } from "@/lib/sanity/types";
 import { ArticleBody } from "./ArticleBody";
 import { LevelList } from "./LevelList";
 
-type ArticleLayoutProps = {
-  article: Article;
-};
+type ArticleLayoutProps =
+  | { article: Article; locked?: false }
+  | { article: ArticleSummary; locked: true };
 
 function formatPublishedDate(value: string) {
   return new Intl.DateTimeFormat("en-US", {
@@ -20,7 +20,9 @@ function formatPublishedDate(value: string) {
   }).format(new Date(value));
 }
 
-export function ArticleLayout({ article }: ArticleLayoutProps) {
+export function ArticleLayout(props: ArticleLayoutProps) {
+  const article = props.article;
+  const fullArticle = props.locked ? null : props.article;
   const imageUrl = getSanityImageUrl(article.featuredImage, 1600, 900);
   const category = article.category?.title || "Market analysis";
 
@@ -98,23 +100,43 @@ export function ArticleLayout({ article }: ArticleLayoutProps) {
       <section className="analysis-detail-body">
         <div className="container analysis-detail-layout">
           <article className="analysis-detail-main">
-            <ArticleBody body={article.body} />
+            {!fullArticle ? (
+              <section className="premium-article-gate" aria-labelledby="premium-gate-title">
+                <span className="section-kicker">Premium preview</span>
+                <h2 id="premium-gate-title">Unlock the complete market briefing.</h2>
+                <p>
+                  This preview includes the published market, bias and summary.
+                  Premium members can read the complete technical analysis,
+                  levels, risk factors and planning notes.
+                </p>
+                <div className="premium-gate-actions">
+                  <Link href="/premium" className="button">View premium plans</Link>
+                  <Link href={`/login?next=${encodeURIComponent(`/analysis/${article.slug}`)}`} className="text-link">
+                    Sign in to check access →
+                  </Link>
+                </div>
+              </section>
+            ) : (
+              <>
+                <ArticleBody body={fullArticle.body} />
 
-            <section className="analysis-content-section analysis-risk-section">
-              <span className="analysis-section-number">!</span>
-              <div>
-                <span className="section-kicker">Primary risk factors</span>
-                <h2>What could change the outlook</h2>
-                <ul className="analysis-checklist risk-factor-list">
-                  {article.riskFactors.map((factor) => (
-                    <li key={factor}>
-                      <span aria-hidden="true">!</span>
-                      {factor}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </section>
+                <section className="analysis-content-section analysis-risk-section">
+                  <span className="analysis-section-number">!</span>
+                  <div>
+                    <span className="section-kicker">Primary risk factors</span>
+                    <h2>What could change the outlook</h2>
+                    <ul className="analysis-checklist risk-factor-list">
+                      {fullArticle.riskFactors.map((factor) => (
+                        <li key={factor}>
+                          <span aria-hidden="true">!</span>
+                          {factor}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </section>
+              </>
+            )}
 
             <aside className="analysis-risk-disclaimer">
               <span>Educational risk disclaimer</span>
@@ -129,26 +151,28 @@ export function ArticleLayout({ article }: ArticleLayoutProps) {
             </aside>
           </article>
 
-          <aside
-            className="analysis-levels-panel"
-            aria-label={`${article.instrumentSymbol} key levels`}
-          >
-            <div className="levels-panel-heading">
-              <span className="panel-label">Published levels</span>
-              <h2>Technical map</h2>
-            </div>
-            <LevelList
-              label="Resistance"
-              levels={article.resistanceLevels}
-              tone="resistance"
-            />
-            <LevelList
-              label="Support"
-              levels={article.supportLevels}
-              tone="support"
-            />
-            <p>Published analysis · Confirm current market prices independently</p>
-          </aside>
+          {!fullArticle ? (
+            <aside className="analysis-levels-panel premium-preview-panel" aria-label="Premium content preview">
+              <span className="panel-label">Member-only analysis</span>
+              <h2>Included with Premium</h2>
+              <ul>
+                <li>Support and resistance map</li>
+                <li>Full technical overview</li>
+                <li>Primary risk factors</li>
+                <li>Trade-planning context</li>
+              </ul>
+            </aside>
+          ) : (
+            <aside className="analysis-levels-panel" aria-label={`${article.instrumentSymbol} key levels`}>
+              <div className="levels-panel-heading">
+                <span className="panel-label">Published levels</span>
+                <h2>Technical map</h2>
+              </div>
+              <LevelList label="Resistance" levels={fullArticle.resistanceLevels} tone="resistance" />
+              <LevelList label="Support" levels={fullArticle.supportLevels} tone="support" />
+              <p>Published analysis · Confirm current market prices independently</p>
+            </aside>
+          )}
         </div>
       </section>
 

@@ -10,6 +10,7 @@ import {
 } from "@/sanity/env";
 import {
   articleBySlugQuery,
+  articleSummaryBySlugQuery,
   articleSlugsQuery,
   articlesQuery,
   latestArticlesQuery,
@@ -74,6 +75,10 @@ export function getLatestArticles(limit = 3) {
 
 export const getArticleBySlug = cache((slug: string) =>
   safeFetch<Article | null>(articleBySlugQuery, null, { slug }),
+);
+
+export const getArticleSummaryBySlug = cache((slug: string) =>
+  safeFetch<ArticleSummary | null>(articleSummaryBySlugQuery, null, { slug }),
 );
 
 export async function getArticleSlugs() {

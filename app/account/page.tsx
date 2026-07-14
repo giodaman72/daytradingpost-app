@@ -75,7 +75,7 @@ export default async function AccountPage() {
               <article>
                 <span>Membership plan</span>
                 <strong>{displayMembership(data?.membership_plan)}</strong>
-                <p>Premium plan management will be added in a future sprint.</p>
+                <p>Manage Revolut payment status from your billing page.</p>
               </article>
             </div>
 

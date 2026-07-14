@@ -52,6 +52,8 @@ export type ArticleSummary = {
   publishedAt: string;
   slug: string;
   title: string;
+  seoDescription?: string;
+  seoTitle?: string;
 };
 
 export type Article = ArticleSummary & {
