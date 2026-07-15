@@ -206,3 +206,16 @@ Success responses include `meta.generatedAt` and `sampleData: false`. Errors use
 IDs, drafts, secrets, or administrative fields. CDN caching uses 60-second
 freshness plus stale-while-revalidate; rate-limit responses use `429` and
 `Retry-After`.
+
+## Market data (read only)
+
+| Method | Route                           | Notes                                                 |
+| ------ | ------------------------------- | ----------------------------------------------------- |
+| GET    | `/api/market-data`              | Optional `instruments` CSV; registry only; maximum 10 |
+| GET    | `/api/market-data/[instrument]` | One internal slug or normalized symbol                |
+| GET    | `/api/market-data/health`       | Provider configuration/health without credentials     |
+
+Responses use `{ data: MarketQuote[], meta }`; metadata includes generation
+time, provider, delayed, and simulated status. Quotes carry freshness and a
+provider timestamp. Errors use `{ "error": string, "details"?: string[] }`.
+CDN caching is 30 seconds plus 60 seconds stale-while-revalidate.

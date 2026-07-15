@@ -9,6 +9,7 @@ import {
 } from "@/lib/cms";
 import { getMembershipAccess } from "@/lib/payments";
 import { getMarketIntelligenceByInstrument } from "@/lib/market/marketIntelligenceService";
+import { getQuoteByInstrument } from "@/lib/market-data/marketDataService";
 
 type AnalysisArticlePageProps = {
   params: Promise<{ slug: string }>;
@@ -79,15 +80,24 @@ export default async function AnalysisArticlePage({
     notFound();
   }
 
+  const [intelligenceBySlug, quote] = await Promise.all([
+    getMarketIntelligenceByInstrument(slug),
+    getQuoteByInstrument(summary.instrumentSymbol),
+  ]);
   const intelligence =
-    (await getMarketIntelligenceByInstrument(slug)) ??
+    intelligenceBySlug ??
     (await getMarketIntelligenceByInstrument(summary.instrumentSymbol));
 
   if (summary.accessLevel === "premium") {
     const access = await getMembershipAccess();
     if (!access.hasPremiumAccess) {
       return (
-        <ArticleLayout article={summary} intelligence={intelligence} locked />
+        <ArticleLayout
+          article={summary}
+          intelligence={intelligence}
+          marketQuote={quote}
+          locked
+        />
       );
     }
   }
@@ -95,5 +105,11 @@ export default async function AnalysisArticlePage({
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
-  return <ArticleLayout article={article} intelligence={intelligence} />;
+  return (
+    <ArticleLayout
+      article={article}
+      intelligence={intelligence}
+      marketQuote={quote}
+    />
+  );
 }

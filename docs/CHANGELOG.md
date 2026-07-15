@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0] — 2026-07-14
+
+### Sprint 10 — Market Data Service
+
+- Added a server-only provider abstraction, instrument mappings, deterministic
+  local fixtures, generic HTTP adapter foundation, cache, and resilience
+- Added normalized quote APIs, optional RLS-protected Supabase snapshots, and
+  separated price snapshots across homepage, dashboard, and analysis pages
+- Added disclosures, accessibility states, deterministic tests, and production
+  guidance without enabling fabricated production prices
+
 ## [0.9.0] — 2026-07-14
 
 ### Sprint 9 — Market Intelligence Engine

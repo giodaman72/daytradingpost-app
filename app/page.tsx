@@ -6,7 +6,9 @@ import { EmptyMarketState } from "@/components/market-intelligence/EmptyMarketSt
 import { MarketOutlookCard } from "@/components/market-intelligence/MarketOutlookCard";
 import { MarketOutlookGrid } from "@/components/market-intelligence/MarketOutlookGrid";
 import { NewsletterForm } from "@/components/newsletter/NewsletterForm";
+import { MarketDataGrid } from "@/components/market-data/MarketDataGrid";
 import { getLatestArticles } from "@/lib/cms";
+import { getHomepageQuotes } from "@/lib/market-data/marketDataService";
 import { getFeaturedMarketIntelligence } from "@/lib/market/marketIntelligenceService";
 
 const academyTopics = [
@@ -31,9 +33,10 @@ const academyTopics = [
 ];
 
 export default async function Home() {
-  const [analyses, outlooks] = await Promise.all([
+  const [analyses, outlooks, quotes] = await Promise.all([
     getLatestArticles(3),
     getFeaturedMarketIntelligence(),
+    getHomepageQuotes(),
   ]);
 
   return (
@@ -112,6 +115,25 @@ export default async function Home() {
 
       <section className="market-strip" id="markets">
         <div className="container">
+          <div className="market-data-heading">
+            <div>
+              <span className="section-kicker">Market data</span>
+              <h2>Provider quote snapshot</h2>
+            </div>
+            <p>Prices are informational and may be delayed or simulated.</p>
+          </div>
+          <MarketDataGrid quotes={quotes} compact />
+        </div>
+      </section>
+
+      <section className="section editorial-outlooks-section">
+        <div className="container">
+          <div className="section-heading">
+            <div>
+              <span className="section-kicker">Editorial intelligence</span>
+              <h2>Structured market outlooks</h2>
+            </div>
+          </div>
           <MarketOutlookGrid outlooks={outlooks} />
         </div>
       </section>

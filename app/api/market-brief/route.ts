@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { getLatestMarketIntelligence } from "@/lib/market/marketIntelligenceService";
 import { buildMarketBrief } from "@/lib/market/marketIntelligenceTransforms";
-import { checkMarketApiRateLimit } from "@/lib/market/marketIntelligenceRateLimit";
+import { checkPublicApiRateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
-  const retryAfter = checkMarketApiRateLimit(request);
+  const retryAfter = checkPublicApiRateLimit(request);
   if (retryAfter)
     return NextResponse.json(
       { error: "Rate limit exceeded", details: ["Try again shortly"] },

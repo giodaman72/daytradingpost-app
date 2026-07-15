@@ -211,3 +211,11 @@ Proxy redirect tests do not replace page-level authorization tests.
 - Tests do not call Supabase, Sanity, Revolut, or market providers.
 - Future work: Route Handler integration mocks and Playwright authentication,
   editor, premium-gate, and critical-page coverage.
+
+## Sprint 10 market-data tests
+
+Deterministic suites cover normalization, symbol mapping, decimal/percentage
+parsing, delayed/stale classification, cache windows, timeouts, retries, circuit
+breaking, provider-failure fallback, API envelopes, invalid instruments and
+batch limits, fixture labeling, accessible components, and separation from
+editorial bias. No test contacts Supabase or a real market-data provider.

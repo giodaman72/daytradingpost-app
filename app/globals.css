@@ -5068,3 +5068,260 @@ button {
     animation: none;
   }
 }
+
+/* Market data is intentionally styled as a distinct provider-data layer. */
+.market-data-heading,
+.analysis-market-data-heading,
+.dashboard-subheading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.market-data-heading {
+  margin-bottom: 18px;
+}
+
+.market-data-heading h2,
+.analysis-market-data-heading h2,
+.dashboard-subheading h3 {
+  margin: 4px 0 0;
+}
+
+.market-data-heading p,
+.analysis-market-data-heading p,
+.dashboard-subheading span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin: 0;
+}
+
+.md-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.md-grid-compact {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.md-card {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(14, 21, 33, 0.9);
+}
+
+.md-card header,
+.md-price,
+.md-card dl,
+.md-card dl > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.md-card header > div > span,
+.md-provider,
+.md-timestamp {
+  color: var(--text-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.67rem;
+}
+
+.md-card h3 {
+  margin: 3px 0 0;
+  font-size: 0.98rem;
+}
+
+.md-status {
+  padding: 5px 7px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  white-space: nowrap;
+}
+
+.md-status-open {
+  border-color: rgba(35, 203, 139, 0.35);
+  color: #62dfb2;
+}
+
+.md-price {
+  justify-content: flex-start;
+  margin-top: 20px;
+}
+
+.md-price strong {
+  color: var(--text-primary);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: clamp(1.35rem, 2vw, 1.85rem);
+}
+
+.md-price small {
+  color: var(--text-muted);
+}
+
+.md-change {
+  display: block;
+  margin-top: 7px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.76rem;
+}
+
+.md-change-up {
+  color: #62dfb2;
+}
+
+.md-change-down {
+  color: #ff8178;
+}
+
+.md-change-flat {
+  color: var(--text-muted);
+}
+
+.md-card dl {
+  margin: 16px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.md-card dl > div {
+  display: block;
+}
+
+.md-card dt {
+  color: var(--text-muted);
+  font-size: 0.65rem;
+}
+
+.md-card dd {
+  margin: 3px 0 0;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.78rem;
+}
+
+.md-timestamp,
+.md-provider {
+  display: block;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+
+.md-disclosure {
+  margin: 12px 0 0;
+  padding: 9px;
+  border: 1px solid rgba(244, 188, 65, 0.18);
+  border-radius: 8px;
+  background: rgba(244, 188, 65, 0.05);
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  line-height: 1.45;
+}
+
+.md-disclosure strong {
+  color: var(--gold);
+}
+
+.md-unavailable {
+  display: grid;
+  gap: 5px;
+  margin-top: 18px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.md-unavailable strong {
+  color: var(--text-primary);
+}
+
+.md-card-compact {
+  padding: 14px;
+}
+
+.md-card-compact .md-price {
+  margin-top: 14px;
+}
+
+.md-card-compact .md-price strong {
+  font-size: 1.08rem;
+}
+
+.md-card-compact .md-disclosure {
+  font-size: 0.58rem;
+}
+
+.md-skeleton {
+  min-height: 210px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(14, 21, 33, 0.9);
+}
+
+.md-skeleton span {
+  display: block;
+  width: 65%;
+  height: 14px;
+  margin-bottom: 18px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.md-skeleton span:nth-child(2) {
+  width: 85%;
+  height: 34px;
+}
+
+.analysis-market-data,
+.dashboard-market-data {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.analysis-market-data .md-card {
+  max-width: 520px;
+}
+
+.dashboard-subheading {
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.dashboard-subheading h3 {
+  font-size: 0.9rem;
+}
+
+.editorial-outlooks-section {
+  border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 1100px) {
+  .md-grid-compact {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .md-grid,
+  .md-grid-compact {
+    grid-template-columns: 1fr;
+  }
+
+  .market-data-heading,
+  .analysis-market-data-heading,
+  .dashboard-subheading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

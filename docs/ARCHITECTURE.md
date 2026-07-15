@@ -233,3 +233,11 @@ for long-form articles and media. Server-only repository/service modules publish
 small typed summaries to pages and APIs. Shared cached queries use the
 `market-intelligence` tag; authorized Server Actions invalidate that tag after a
 write. See [Market Intelligence Engine](MARKET_INTELLIGENCE.md).
+
+## Market Data Service
+
+The server-only provider-neutral service under `lib/market-data` owns quote and
+session facts. Adapters map through the centralized instrument registry and
+return normalized decimal strings. A short cache, stale fallback, timeout,
+retry limits, and circuit breaker protect rendering. Market Intelligence remains
+the independent owner of editorial judgments. See [Market Data](MARKET_DATA.md).

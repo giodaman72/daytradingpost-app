@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getInstrument, INSTRUMENTS } from "./instruments";
+import { getInstrument, getProviderSymbol, INSTRUMENTS } from "./instruments";
 
 describe("instrument registry", () => {
   it("has unique slugs and symbols", () => {
@@ -14,4 +14,13 @@ describe("instrument registry", () => {
     expect(getInstrument("XAU/USD")?.slug).toBe("gold"));
   it("returns null for unsupported instruments", () =>
     expect(getInstrument("FAKE123")).toBeNull());
+  it("maps every supported instrument to provider symbols", () => {
+    expect(INSTRUMENTS).toHaveLength(13);
+    for (const instrument of INSTRUMENTS) {
+      expect(getProviderSymbol(instrument, "development")).toBe(
+        instrument.symbol,
+      );
+      expect(instrument.decimalPrecision).toBeGreaterThanOrEqual(0);
+    }
+  });
 });
