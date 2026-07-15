@@ -254,3 +254,7 @@ RLS is enabled; browser roles have no table or sequence privileges and no write
 policies. The service-role client writes only usable non-simulated quotes.
 Indexes support instrument/provider timestamp lookup. Apply the documented
 seven-day retention job; this is not a historical market database.
+
+## Watchlists, alerts, history, and notifications
+
+`docs/supabase-watchlists-alerts.sql` creates `watchlists`, `watchlist_items`, `alerts`, `alert_history`, and `notifications`. One profile owns all private records; watchlist items store centralized instrument slugs and prevent duplicates. Alert history uses unique source deduplication keys. RLS restricts records to `auth.uid()`, while column grants prevent browsers from writing trigger state, history insertion, or notification insertion.

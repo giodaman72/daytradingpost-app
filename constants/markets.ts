@@ -1,5 +1,5 @@
 import type { MarketDefinition } from "@/types/market";
-import type { WatchlistItem } from "@/types/watchlist";
+import type { StaticWatchlistItem } from "@/types/watchlist";
 
 export const MARKETS = [
   {
@@ -32,7 +32,7 @@ export const MARKETS = [
   },
 ] as const satisfies readonly MarketDefinition[];
 
-export const DEFAULT_WATCHLIST: readonly WatchlistItem[] = MARKETS.map(
+export const DEFAULT_WATCHLIST: readonly StaticWatchlistItem[] = MARKETS.map(
   ({ name, session, symbol }) => ({ name, session, symbol }),
 );
 

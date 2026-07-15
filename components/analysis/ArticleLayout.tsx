@@ -12,6 +12,7 @@ import { summarizeMarketIntelligence } from "@/lib/market/marketIntelligenceTran
 import type { MarketIntelligenceRecord } from "@/types/market-intelligence";
 import type { MarketQuote } from "@/types/market-data";
 import { MarketDataCard } from "@/components/market-data/MarketDataCard";
+import { MarketQuickActions } from "@/components/alerts/MarketQuickActions";
 
 type ArticleLayoutProps = (
   | { article: Article; locked?: false }
@@ -134,6 +135,7 @@ export function ArticleLayout(props: ArticleLayoutProps) {
                 <MarketDataCard quote={props.marketQuote} compact />
               </section>
             ) : null}
+            <MarketQuickActions instrument={article.instrumentSymbol} />
             {props.intelligence ? (
               fullArticle ? (
                 <MarketIntelligenceSummary intelligence={props.intelligence} />

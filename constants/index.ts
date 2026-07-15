@@ -5,3 +5,4 @@ export * from "./market-bias";
 export * from "./membership";
 export * from "./navigation";
 export * from "./routes";
+export * from "./smart-alerts";

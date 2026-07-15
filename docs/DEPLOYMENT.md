@@ -95,6 +95,16 @@ The production dataset containing premium bodies must be private.
 | `ECONOMIC_DATA_PROVIDER` | Server setting; use `development` locally only |
 | `ECONOMIC_CACHE_SECONDS` | Server cache duration; defaults to 300 seconds |
 
+### Smart alerts
+
+| Variable                         | Purpose                                        |
+| -------------------------------- | ---------------------------------------------- |
+| `ALERT_CRON_SECRET`              | Server-only evaluator bearer secret            |
+| `ALERT_EVALUATION_BATCH_SIZE`    | Batch size, default 25 and maximum 100         |
+| `ALERT_DATA_MAX_AGE_SECONDS`     | Maximum accepted quote age, default 900        |
+| `ALERT_DEFAULT_COOLDOWN_MINUTES` | Default cooldown, 60 minutes                   |
+| `ALERT_EMAIL_PROVIDER`           | Keep disabled until an approved adapter exists |
+
 ## Supabase preparation
 
 For a new environment, run the SQL in this order:
@@ -103,6 +113,7 @@ For a new environment, run the SQL in this order:
 2. `docs/supabase-newsletter.sql`
 3. `docs/supabase-revolut.sql`
 4. `docs/supabase-economic.sql`
+5. `docs/supabase-watchlists-alerts.sql`
 
 Then verify:
 

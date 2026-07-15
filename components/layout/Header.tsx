@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MAIN_NAVIGATION } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
 import { getAuthenticatedUser } from "@/lib/auth";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 export async function Header() {
   const user = await getAuthenticatedUser();
@@ -34,15 +35,18 @@ export async function Header() {
 
         <div className="header-actions">
           {user ? (
-            <Link
-              href={ROUTES.account}
-              className="account-link"
-              aria-label={`Account for ${user.email ?? "signed-in member"}`}
-            >
-              <span className="account-indicator" aria-hidden="true" />
-              <span className="account-email">{user.email}</span>
-              <span>Account</span>
-            </Link>
+            <>
+              <NotificationBell />
+              <Link
+                href={ROUTES.account}
+                className="account-link"
+                aria-label={`Account for ${user.email ?? "signed-in member"}`}
+              >
+                <span className="account-indicator" aria-hidden="true" />
+                <span className="account-email">{user.email}</span>
+                <span>Account</span>
+              </Link>
+            </>
           ) : (
             <Link href={ROUTES.auth.login} className="login-link">
               Sign in

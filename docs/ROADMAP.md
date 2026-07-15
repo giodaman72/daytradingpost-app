@@ -97,10 +97,12 @@ checks pass. Future scope may be refined before implementation.
 - Timezone-aware schedules, caching, pagination, rate limiting, and tests
 - Future alert contracts without notification delivery
 
-### Sprint 12 — Watchlists
+### Sprint 12 — Watchlists and Smart Alerts
 
-- Persist member watchlists in Supabase
-- Add RLS, ordering, defaults, and instrument validation
+- Private multi-watchlist management with RLS and membership limits
+- Provider-neutral market, editorial, analysis, and economic alert evaluator
+- Trigger history, dashboard notifications, header indicator, and email adapter boundary
+- Protected scheduler endpoint, cooldowns, stale-data rejection, and idempotency
 
 ### Sprint 13 — AI Assistant
 
