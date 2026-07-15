@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import { getLatestMarketIntelligence } from "@/lib/market/marketIntelligenceService";
-import { formatMarketIntelligenceResponse } from "@/lib/market/marketIntelligenceTransforms";
-import { parseMarketIntelligenceFilters } from "@/lib/market/marketIntelligenceValidation";
+import { formatMarketDataResponse } from "@/lib/market-data/marketDataMapper";
+import { getMarketQuotes } from "@/lib/market-data/marketDataService";
+import { parseInstrumentList } from "@/lib/market-data/marketDataValidation";
 import { checkPublicApiRateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
   const retryAfter = checkPublicApiRateLimit(request);
-  if (retryAfter)
+  if (retryAfter) {
     return NextResponse.json(
       { error: "Rate limit exceeded", details: ["Try again shortly"] },
       {
@@ -19,20 +19,22 @@ export async function GET(request: Request) {
         },
       },
     );
-  const parsed = parseMarketIntelligenceFilters(
-    new URL(request.url).searchParams,
+  }
+
+  const parsed = parseInstrumentList(
+    new URL(request.url).searchParams.get("instruments"),
   );
   if (!parsed.valid) {
     return NextResponse.json(
-      { error: "Invalid query", details: parsed.errors },
+      { error: "Invalid instruments", details: parsed.errors },
       { status: 400, headers: { "Cache-Control": "no-store" } },
     );
   }
 
-  const records = await getLatestMarketIntelligence(parsed.filters);
-  return NextResponse.json(formatMarketIntelligenceResponse(records), {
+  const quotes = await getMarketQuotes(parsed.instruments);
+  return NextResponse.json(formatMarketDataResponse(quotes), {
     headers: {
-      "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+      "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
     },
   });
 }

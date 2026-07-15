@@ -229,3 +229,11 @@ profiles and creates `market_intelligence`. A partial unique index prevents two
 published rows for one instrument/date while preserving drafts. Anonymous and
 authenticated readers see published rows only; editor/admin writes remain
 role-protected. Audit user IDs reference `profiles`.
+
+## Market-data snapshots
+
+`docs/supabase-market-data.sql` creates an optional normalized snapshot cache.
+RLS is enabled; browser roles have no table or sequence privileges and no write
+policies. The service-role client writes only usable non-simulated quotes.
+Indexes support instrument/provider timestamp lookup. Apply the documented
+seven-day retention job; this is not a historical market database.

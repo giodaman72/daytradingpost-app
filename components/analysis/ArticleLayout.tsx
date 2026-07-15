@@ -10,11 +10,16 @@ import { MarketIntelligenceSummary } from "@/components/market-intelligence/Mark
 import { MarketOutlookCard } from "@/components/market-intelligence/MarketOutlookCard";
 import { summarizeMarketIntelligence } from "@/lib/market/marketIntelligenceTransforms";
 import type { MarketIntelligenceRecord } from "@/types/market-intelligence";
+import type { MarketQuote } from "@/types/market-data";
+import { MarketDataCard } from "@/components/market-data/MarketDataCard";
 
 type ArticleLayoutProps = (
   | { article: Article; locked?: false }
   | { article: ArticleSummary; locked: true }
-) & { intelligence?: MarketIntelligenceRecord | null };
+) & {
+  intelligence?: MarketIntelligenceRecord | null;
+  marketQuote?: MarketQuote | null;
+};
 
 function formatPublishedDate(value: string) {
   return new Intl.DateTimeFormat("en-US", {
@@ -110,6 +115,25 @@ export function ArticleLayout(props: ArticleLayoutProps) {
       <section className="analysis-detail-body">
         <div className="container analysis-detail-layout">
           <article className="analysis-detail-main">
+            {props.marketQuote ? (
+              <section
+                className="analysis-market-data"
+                aria-labelledby="analysis-market-data-title"
+              >
+                <div className="analysis-market-data-heading">
+                  <div>
+                    <span className="section-kicker">Market data</span>
+                    <h2 id="analysis-market-data-title">
+                      Current provider snapshot
+                    </h2>
+                  </div>
+                  <p>
+                    Separate from the author&apos;s published editorial outlook.
+                  </p>
+                </div>
+                <MarketDataCard quote={props.marketQuote} compact />
+              </section>
+            ) : null}
             {props.intelligence ? (
               fullArticle ? (
                 <MarketIntelligenceSummary intelligence={props.intelligence} />

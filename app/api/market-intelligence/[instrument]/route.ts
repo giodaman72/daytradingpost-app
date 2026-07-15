@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getInstrument } from "@/constants/instruments";
 import { getMarketIntelligenceByInstrument } from "@/lib/market/marketIntelligenceService";
 import { summarizeMarketIntelligence } from "@/lib/market/marketIntelligenceTransforms";
-import { checkMarketApiRateLimit } from "@/lib/market/marketIntelligenceRateLimit";
+import { checkPublicApiRateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
@@ -10,7 +10,7 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ instrument: string }> },
 ) {
-  const retryAfter = checkMarketApiRateLimit(request);
+  const retryAfter = checkPublicApiRateLimit(request);
   if (retryAfter)
     return NextResponse.json(
       { error: "Rate limit exceeded", details: ["Try again shortly"] },

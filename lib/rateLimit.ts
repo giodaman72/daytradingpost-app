@@ -6,7 +6,7 @@ const WINDOW_MS = 60_000;
 const MAX_REQUESTS = 60;
 const store = new Map<string, { count: number; resetAt: number }>();
 
-export function checkMarketApiRateLimit(request: Request) {
+export function checkPublicApiRateLimit(request: Request) {
   const forwarded = request.headers
     .get("x-forwarded-for")
     ?.split(",")[0]
@@ -24,8 +24,9 @@ export function checkMarketApiRateLimit(request: Request) {
     store.set(key, { count: 1, resetAt: now + WINDOW_MS });
     return null;
   }
-  if (current.count >= MAX_REQUESTS)
+  if (current.count >= MAX_REQUESTS) {
     return Math.max(1, Math.ceil((current.resetAt - now) / 1000));
+  }
   current.count += 1;
   return null;
 }

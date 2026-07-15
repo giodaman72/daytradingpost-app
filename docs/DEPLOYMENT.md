@@ -182,6 +182,10 @@ and push a new commit so concurrency cancels the obsolete run.
 - [ ] Desktop/mobile layouts and keyboard navigation pass
 - [ ] Error and empty states are understandable
 - [ ] Monitoring owner and rollback commit are identified
+- [ ] Market-data display and redistribution rights are contractually confirmed
+- [ ] Server-only market-data variables are configured; fixtures are absent
+- [ ] Quote unavailable, stale, delayed, rate-limit, and health paths are tested
+- [ ] Optional snapshot SQL and seven-day retention job are verified
 
 ## Rollback
 

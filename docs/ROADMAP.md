@@ -144,3 +144,16 @@ formatter, and economic-calendar provider contract. No live data provider.
 Add end-to-end editor/auth tests, production migration tooling, distributed API
 rate limiting, alert preference/data models, and a licensed-provider evaluation
 with provenance and stale-data requirements before any quote integration.
+
+## Sprint 10 — Market Data Service
+
+Added the provider-neutral quote boundary, centralized mappings, local fixtures,
+generic adapter foundation, caching/resilience, optional snapshots, public APIs,
+and separately labeled page integrations. Production remains blocked on a
+licensed provider and confirmed display/redistribution terms.
+
+## Recommended Sprint 11
+
+Select a licensed provider; implement its dedicated adapter and contract tests;
+add distributed limiting, observability, retention automation, Route Handler
+integration tests, and the economic-calendar service.

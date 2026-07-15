@@ -16,6 +16,7 @@ export type {
 } from "./market-intelligence";
 export type * from "./economic-calendar";
 export type * from "./membership";
+export type * from "./market-data";
 export type * from "./notification";
 export type * from "./profile";
 export type * from "./watchlist";
