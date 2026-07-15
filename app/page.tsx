@@ -1,59 +1,13 @@
 import Link from "next/link";
 import { ArticleCard } from "@/components/analysis/ArticleCard";
 import { ArticleEmptyState } from "@/components/analysis/ArticleEmptyState";
+import { Header } from "@/components/layout/Header";
+import { EmptyMarketState } from "@/components/market-intelligence/EmptyMarketState";
+import { MarketOutlookCard } from "@/components/market-intelligence/MarketOutlookCard";
+import { MarketOutlookGrid } from "@/components/market-intelligence/MarketOutlookGrid";
 import { NewsletterForm } from "@/components/newsletter/NewsletterForm";
 import { getLatestArticles } from "@/lib/cms";
-
-const markets = [
-  {
-    symbol: "XAU/USD",
-    name: "Gold",
-    price: "4,112.40",
-    change: "+0.72%",
-    direction: "Bullish",
-    positive: true,
-  },
-  {
-    symbol: "NAS100",
-    name: "Nasdaq 100",
-    price: "25,436.20",
-    change: "+0.38%",
-    direction: "Bullish",
-    positive: true,
-  },
-  {
-    symbol: "BTC/USD",
-    name: "Bitcoin",
-    price: "118,420",
-    change: "-0.41%",
-    direction: "Neutral",
-    positive: false,
-  },
-  {
-    symbol: "WTI",
-    name: "Crude Oil",
-    price: "78.64",
-    change: "+1.16%",
-    direction: "Bullish",
-    positive: true,
-  },
-  {
-    symbol: "EUR/USD",
-    name: "Euro / Dollar",
-    price: "1.1724",
-    change: "-0.18%",
-    direction: "Bearish",
-    positive: false,
-  },
-  {
-    symbol: "DJ30",
-    name: "Dow Jones",
-    price: "48,305",
-    change: "+0.24%",
-    direction: "Neutral",
-    positive: true,
-  },
-];
+import { getFeaturedMarketIntelligence } from "@/lib/market/marketIntelligenceService";
 
 const academyTopics = [
   {
@@ -77,39 +31,14 @@ const academyTopics = [
 ];
 
 export default async function Home() {
-  const analyses = await getLatestArticles(3);
+  const [analyses, outlooks] = await Promise.all([
+    getLatestArticles(3),
+    getFeaturedMarketIntelligence(),
+  ]);
 
   return (
     <main>
-      <header className="site-header">
-        <div className="container header-inner">
-          <Link href="/" className="brand" aria-label="DayTradingPost homepage">
-            <span className="brand-mark">DTP</span>
-
-            <span className="brand-name">
-              DayTrading<span>Post</span>
-            </span>
-          </Link>
-
-          <nav className="desktop-navigation" aria-label="Main navigation">
-            <Link href="#markets">Markets</Link>
-            <Link href="#analysis">Analysis</Link>
-            <Link href="#academy">Academy</Link>
-            <Link href="#premium">Premium</Link>
-            <Link href="#newsletter">Newsletter</Link>
-          </nav>
-
-          <div className="header-actions">
-            <Link href="/login" className="login-link">
-              Sign in
-            </Link>
-
-            <Link href="#premium" className="button button-small">
-              Join Premium
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <section className="hero">
         <div className="hero-grid" aria-hidden="true" />
@@ -170,122 +99,20 @@ export default async function Home() {
                 <h2>Market Intelligence</h2>
               </div>
 
-              <span className="live-indicator">
-                <span />
-                LIVE
-              </span>
+              <span className="editorial-indicator">EDITORIAL</span>
             </div>
-
-            <div className="featured-instrument">
-              <div className="instrument-heading">
-                <div>
-                  <span>XAU/USD</span>
-                  <h3>Gold</h3>
-                </div>
-
-                <span className="bias bias-bullish">Bullish bias</span>
-              </div>
-
-              <div className="price-row">
-                <strong>4,112.40</strong>
-                <span>+0.72%</span>
-              </div>
-
-              <div className="chart-placeholder" aria-label="Decorative chart">
-                <svg
-                  viewBox="0 0 600 180"
-                  role="img"
-                  aria-label="Illustrative upward market chart"
-                >
-                  <defs>
-                    <linearGradient
-                      id="chartGradient"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="0%"
-                        stopColor="#f5b942"
-                        stopOpacity="0.35"
-                      />
-                      <stop offset="100%" stopColor="#f5b942" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-
-                  <path
-                    className="chart-area"
-                    d="M0,150 C35,142 60,154 92,132 C124,110 143,121 177,103 C211,85 230,102 267,78 C301,56 325,73 354,53 C385,32 414,60 445,36 C477,14 520,40 600,10 L600,180 L0,180 Z"
-                  />
-
-                  <path
-                    className="chart-line"
-                    d="M0,150 C35,142 60,154 92,132 C124,110 143,121 177,103 C211,85 230,102 267,78 C301,56 325,73 354,53 C385,32 414,60 445,36 C477,14 520,40 600,10"
-                  />
-                </svg>
-              </div>
-
-              <div className="key-levels">
-                <div>
-                  <span>Support</span>
-                  <strong>4,075</strong>
-                </div>
-
-                <div>
-                  <span>Resistance</span>
-                  <strong>4,145</strong>
-                </div>
-
-                <div>
-                  <span>Momentum</span>
-                  <strong>Positive</strong>
-                </div>
-              </div>
-
-              <p className="market-disclaimer">
-                Illustrative market information. Prices shown are sample data.
-              </p>
-            </div>
+            {outlooks[0] ? (
+              <MarketOutlookCard outlook={outlooks[0]} />
+            ) : (
+              <EmptyMarketState />
+            )}
           </div>
         </div>
       </section>
 
       <section className="market-strip" id="markets">
         <div className="container">
-          <div className="market-grid">
-            {markets.map((market) => (
-              <article className="market-card" key={market.symbol}>
-                <div className="market-card-top">
-                  <div>
-                    <span className="market-symbol">{market.symbol}</span>
-                    <h3>{market.name}</h3>
-                  </div>
-
-                  <span
-                    className={
-                      market.positive ? "market-arrow up" : "market-arrow down"
-                    }
-                    aria-label={
-                      market.positive ? "Price higher" : "Price lower"
-                    }
-                  >
-                    {market.positive ? "↗" : "↘"}
-                  </span>
-                </div>
-
-                <div className="market-price">
-                  <strong>{market.price}</strong>
-
-                  <span className={market.positive ? "positive" : "negative"}>
-                    {market.change}
-                  </span>
-                </div>
-
-                <span className="market-direction">{market.direction}</span>
-              </article>
-            ))}
-          </div>
+          <MarketOutlookGrid outlooks={outlooks} />
         </div>
       </section>
 

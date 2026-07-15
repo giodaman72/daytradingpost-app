@@ -190,3 +190,19 @@ The following examples from the long-term architecture are **not implemented**:
 Do not create generic pass-through APIs merely to hide a provider URL. Add an
 HTTP route only when an external client, webhook, cache boundary, or streaming
 requirement needs it.
+
+## Market intelligence (read only)
+
+| Method | Route                                   | Notes                                                                   |
+| ------ | --------------------------------------- | ----------------------------------------------------------------------- |
+| GET    | `/api/market-intelligence`              | Published summaries; filters: `date`, `assetClass`, `featured`, `limit` |
+| GET    | `/api/market-intelligence/[instrument]` | Latest published supported instrument or `404`                          |
+| GET    | `/api/market-brief`                     | Daily brief and published editorial bias distribution                   |
+
+`date` uses `YYYY-MM-DD`; `assetClass` is `commodities`, `indices`,
+`forex`, or `crypto`; `featured` is `true`/`false`; `limit` is 1–50.
+Success responses include `meta.generatedAt` and `sampleData: false`. Errors use
+`{ "error": string, "details"?: string[] }`. Responses expose no audit user
+IDs, drafts, secrets, or administrative fields. CDN caching uses 60-second
+freshness plus stale-while-revalidate; rate-limit responses use `429` and
+`Retry-After`.

@@ -5,6 +5,8 @@ import { ArticleEmptyState } from "@/components/analysis/ArticleEmptyState";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { getArticles } from "@/lib/cms";
+import { MarketOutlookGrid } from "@/components/market-intelligence/MarketOutlookGrid";
+import { getLatestMarketIntelligence } from "@/lib/market/marketIntelligenceService";
 
 export const metadata: Metadata = {
   title: "Market Analysis",
@@ -23,7 +25,10 @@ export const metadata: Metadata = {
 };
 
 export default async function AnalysisPage() {
-  const articles = await getArticles();
+  const [articles, outlooks] = await Promise.all([
+    getArticles(),
+    getLatestMarketIntelligence({ limit: 8 }),
+  ]);
 
   return (
     <main className="analysis-page">
@@ -55,6 +60,22 @@ export default async function AnalysisPage() {
               market data, personalized advice, or a recommendation to trade.
             </span>
           </div>
+        </div>
+      </section>
+
+      <section className="analysis-library-section">
+        <div className="container">
+          <div className="analysis-library-heading">
+            <div>
+              <span className="section-kicker">Structured outlooks</span>
+              <h2>Latest market intelligence</h2>
+            </div>
+            <p>
+              Editorial bias, momentum and volatility without invented or
+              real-time prices.
+            </p>
+          </div>
+          <MarketOutlookGrid outlooks={outlooks} />
         </div>
       </section>
 

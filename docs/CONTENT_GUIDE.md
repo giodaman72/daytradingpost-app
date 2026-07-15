@@ -164,3 +164,11 @@ Required meaning:
 - [ ] SEO title/description fit limits
 - [ ] Educational language avoids guarantees and personalized direction
 - [ ] Mobile preview and links have been checked
+
+## Structured daily outlooks
+
+Create daily fields in `/admin/market-intelligence`; keep article narrative in
+Sanity. Use the registry symbol, select an explicit valid date, treat every level
+as an editorial snapshot, and write both bullish and bearish conditions. Link
+the Sanity slug rather than copying article body text. Never use “live,”
+“guaranteed,” or signal language for an editorial bias.

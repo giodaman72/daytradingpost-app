@@ -8,6 +8,7 @@ import {
   getSanityImageUrl,
 } from "@/lib/cms";
 import { getMembershipAccess } from "@/lib/payments";
+import { getMarketIntelligenceByInstrument } from "@/lib/market/marketIntelligenceService";
 
 type AnalysisArticlePageProps = {
   params: Promise<{ slug: string }>;
@@ -78,15 +79,21 @@ export default async function AnalysisArticlePage({
     notFound();
   }
 
+  const intelligence =
+    (await getMarketIntelligenceByInstrument(slug)) ??
+    (await getMarketIntelligenceByInstrument(summary.instrumentSymbol));
+
   if (summary.accessLevel === "premium") {
     const access = await getMembershipAccess();
     if (!access.hasPremiumAccess) {
-      return <ArticleLayout article={summary} locked />;
+      return (
+        <ArticleLayout article={summary} intelligence={intelligence} locked />
+      );
     }
   }
 
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
-  return <ArticleLayout article={article} />;
+  return <ArticleLayout article={article} intelligence={intelligence} />;
 }

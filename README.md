@@ -85,6 +85,7 @@ replace server-side authorization.
 - [Changelog](docs/CHANGELOG.md)
 - [Sanity setup](docs/sanity-setup.md)
 - [Revolut setup](docs/revolut-setup.md)
+- [Market Intelligence Engine](docs/MARKET_INTELLIGENCE.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
 

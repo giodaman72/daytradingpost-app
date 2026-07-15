@@ -1,11 +1,14 @@
 import Link from "next/link";
-import type { ArticleSummary } from "@/types/article";
+import { MarketOutlookGrid } from "@/components/market-intelligence/MarketOutlookGrid";
+import type { MarketIntelligenceSummary } from "@/types/market-intelligence";
 import { DashboardEmptyState } from "./DashboardEmptyState";
 import { DashboardPanel } from "./DashboardPanel";
 
-export function MarketOutlook({ articles }: { articles: ArticleSummary[] }) {
-  const markets = articles.slice(0, 3);
-
+export function MarketOutlook({
+  outlooks,
+}: {
+  outlooks: MarketIntelligenceSummary[];
+}) {
   return (
     <DashboardPanel
       id="market-outlook"
@@ -18,31 +21,12 @@ export function MarketOutlook({ articles }: { articles: ArticleSummary[] }) {
         </Link>
       }
     >
-      {markets.length ? (
-        <div className="dashboard-outlook-grid">
-          {markets.map((article) => (
-            <Link
-              href={`/analysis/${article.slug}`}
-              className="dashboard-outlook-card"
-              key={article._id}
-            >
-              <div>
-                <span>{article.instrumentSymbol}</span>
-                <span
-                  className={`analysis-bias bias-${article.marketBias.toLowerCase()}`}
-                >
-                  {article.marketBias}
-                </span>
-              </div>
-              <h3>{article.title}</h3>
-              <p>{article.excerpt}</p>
-            </Link>
-          ))}
-        </div>
+      {outlooks.length ? (
+        <MarketOutlookGrid outlooks={outlooks.slice(0, 3)} compact />
       ) : (
         <DashboardEmptyState
           title="No published outlook yet"
-          description="Today’s market briefings will appear here when an article is published in Sanity."
+          description="Today’s structured outlooks will appear here when the editorial desk publishes them."
           action={
             <Link href="/analysis" className="text-link">
               Browse analysis archive →

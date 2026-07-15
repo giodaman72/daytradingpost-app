@@ -204,8 +204,10 @@ Proxy redirect tests do not replace page-level authorization tests.
 
 ## Sprint 9 test expansion
 
-- Add fixtures and unit suites for pure intelligence, validation, and normalization logic.
-- Add integration tests for Route Handlers with mocked provider boundaries.
-- Add Playwright for authentication redirects, premium gates, and critical pages.
-- Add focused CI coverage thresholds for Sprint 9 domain logic, not generated UI markup.
-- Add fixture builders for market snapshots, articles, profiles, and membership events.
+- Deterministic Sprint 9 suites cover validation, normalization, the instrument
+  registry, published filtering, bias distribution, API envelopes, newsletter
+  formatting, role checks, empty states, and reusable components.
+- `test/fixtures/marketIntelligence.ts` provides non-live editorial fixture data.
+- Tests do not call Supabase, Sanity, Revolut, or market providers.
+- Future work: Route Handler integration mocks and Playwright authentication,
+  editor, premium-gate, and critical-page coverage.

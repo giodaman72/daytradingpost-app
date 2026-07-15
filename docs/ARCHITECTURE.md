@@ -225,3 +225,11 @@ changes on `main` produce Production deployments.
 - Client hooks never grant authorization; server checks remain authoritative.
 - Future integrations should be introduced behind an interface before pages
   depend on provider-specific response shapes.
+
+## Market Intelligence Engine
+
+Supabase stores structured editorial outlooks while Sanity remains responsible
+for long-form articles and media. Server-only repository/service modules publish
+small typed summaries to pages and APIs. Shared cached queries use the
+`market-intelligence` tag; authorized Server Actions invalidate that tag after a
+write. See [Market Intelligence Engine](MARKET_INTELLIGENCE.md).

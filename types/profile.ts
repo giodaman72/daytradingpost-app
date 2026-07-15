@@ -1,6 +1,7 @@
 import type { MembershipPlan, MembershipStatus } from "./membership";
 
 export type Profile = {
+  app_role: "member" | "editor" | "admin";
   created_at: string;
   current_period_end: string | null;
   email: string;

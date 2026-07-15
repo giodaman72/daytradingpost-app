@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.9.0] — 2026-07-14
+
+### Sprint 9 — Market Intelligence Engine
+
+- Added centralized Supabase-backed editorial outlooks and role-protected editor
+- Replaced hardcoded homepage/dashboard outlooks with one typed service
+- Added structured analysis integration, Daily Market Brief, read-only APIs, and newsletter formatter
+- Added economic-calendar provider foundation, RLS SQL, documentation, and deterministic tests
+
 All notable project changes are recorded here. The format follows Keep a
 Changelog concepts and semantic versioning. Versions before a public production
 release remain in the `0.x` line.

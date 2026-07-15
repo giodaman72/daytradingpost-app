@@ -221,3 +221,11 @@ profiles 1 ─── * notifications   (planned)
 - Never change membership state from a browser client.
 - Test every new RLS policy with anonymous, authenticated-owner,
   authenticated-non-owner, and service-role contexts.
+
+## Market intelligence
+
+`docs/supabase-market-intelligence.sql` adds the editorial `app_role` to
+profiles and creates `market_intelligence`. A partial unique index prevents two
+published rows for one instrument/date while preserving drafts. Anonymous and
+authenticated readers see published rows only; editor/admin writes remain
+role-protected. Audit user IDs reference `profiles`.

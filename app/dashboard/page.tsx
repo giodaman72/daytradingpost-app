@@ -12,6 +12,8 @@ import { WebinarWidget } from "@/components/dashboard/WebinarWidget";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { getLatestArticles } from "@/lib/cms";
+import { DEFAULT_WATCHLIST } from "@/constants/markets";
+import { getDashboardMarketIntelligence } from "@/lib/market/marketIntelligenceService";
 import { getMembershipAccess } from "@/lib/payments";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 
@@ -32,9 +34,12 @@ function marketDate() {
 export default async function DashboardPage() {
   if (!isSupabaseAuthConfigured()) redirect("/login?next=/dashboard");
 
-  const [access, articles] = await Promise.all([
+  const [access, articles, marketIntelligence] = await Promise.all([
     getMembershipAccess(),
     getLatestArticles(5),
+    getDashboardMarketIntelligence(
+      DEFAULT_WATCHLIST.map((item) => item.symbol),
+    ),
   ]);
   const { hasPremiumAccess, profile, user } = access;
 
@@ -67,7 +72,7 @@ export default async function DashboardPage() {
           </header>
 
           <div className="dashboard-grid">
-            <MarketOutlook articles={articles} />
+            <MarketOutlook outlooks={marketIntelligence} />
             <LatestAnalysis articles={articles} />
             <EconomicCalendar />
             <WebinarWidget />

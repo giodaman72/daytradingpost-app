@@ -132,3 +132,15 @@ checks pass. Future scope may be refined before implementation.
 5. New integrations require loading, empty, error, and degraded states.
 6. Every sprint ends with formatting, lint, typecheck, tests, build, responsive,
    accessibility, and security checks.
+
+## Sprint 9 — Market Intelligence Engine
+
+Centralize Supabase-backed editorial outlooks, editor workflow, public APIs,
+homepage/dashboard/analysis integration, Daily Market Brief, newsletter
+formatter, and economic-calendar provider contract. No live data provider.
+
+## Recommended Sprint 10
+
+Add end-to-end editor/auth tests, production migration tooling, distributed API
+rate limiting, alert preference/data models, and a licensed-provider evaluation
+with provenance and stale-data requirements before any quote integration.

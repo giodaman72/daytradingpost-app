@@ -6,10 +6,15 @@ import { getSanityImageUrl } from "@/lib/sanity/image";
 import type { Article, ArticleSummary } from "@/types/article";
 import { ArticleBody } from "./ArticleBody";
 import { LevelList } from "./LevelList";
+import { MarketIntelligenceSummary } from "@/components/market-intelligence/MarketIntelligenceSummary";
+import { MarketOutlookCard } from "@/components/market-intelligence/MarketOutlookCard";
+import { summarizeMarketIntelligence } from "@/lib/market/marketIntelligenceTransforms";
+import type { MarketIntelligenceRecord } from "@/types/market-intelligence";
 
-type ArticleLayoutProps =
+type ArticleLayoutProps = (
   | { article: Article; locked?: false }
-  | { article: ArticleSummary; locked: true };
+  | { article: ArticleSummary; locked: true }
+) & { intelligence?: MarketIntelligenceRecord | null };
 
 function formatPublishedDate(value: string) {
   return new Intl.DateTimeFormat("en-US", {
@@ -105,6 +110,15 @@ export function ArticleLayout(props: ArticleLayoutProps) {
       <section className="analysis-detail-body">
         <div className="container analysis-detail-layout">
           <article className="analysis-detail-main">
+            {props.intelligence ? (
+              fullArticle ? (
+                <MarketIntelligenceSummary intelligence={props.intelligence} />
+              ) : (
+                <MarketOutlookCard
+                  outlook={summarizeMarketIntelligence(props.intelligence)}
+                />
+              )
+            ) : null}
             {!fullArticle ? (
               <section
                 className="premium-article-gate"
