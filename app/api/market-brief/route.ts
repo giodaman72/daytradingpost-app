@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getLatestMarketIntelligence } from "@/lib/market/marketIntelligenceService";
 import { buildMarketBrief } from "@/lib/market/marketIntelligenceTransforms";
 import { checkPublicApiRateLimit } from "@/lib/rateLimit";
+import { getUpcomingEconomicEvents } from "@/lib/economic/economicService";
+import { describeEventRisk } from "@/lib/economic/economicImpact";
 
 export const runtime = "nodejs";
 
@@ -18,10 +20,27 @@ export async function GET(request: Request) {
         },
       },
     );
-  const records = await getLatestMarketIntelligence({ limit: 50 });
+  const [records, economic] = await Promise.all([
+    getLatestMarketIntelligence({ limit: 50 }),
+    getUpcomingEconomicEvents(6),
+  ]);
   return NextResponse.json(
     {
-      data: buildMarketBrief(records),
+      data: {
+        ...buildMarketBrief(records),
+        economic: {
+          topEvents: economic.events,
+          highestImpact: economic.events.filter(
+            (event) => event.impact === "high",
+          ),
+          upcomingReleases: economic.events.map((event) => ({
+            id: event.id,
+            title: event.title,
+            scheduledTime: event.scheduledTime,
+          })),
+          marketRisks: economic.events.slice(0, 3).map(describeEventRisk),
+        },
+      },
       meta: { generatedAt: new Date().toISOString(), sampleData: false },
     },
     {

@@ -88,6 +88,13 @@ The production dataset containing premium bodies must be private.
 | `NEXT_PUBLIC_REVOLUT_ANNUAL_PAYMENT_LINK`  | Public hosted URL                   |
 | `NEXT_PUBLIC_SITE_URL`                     | Public canonical application origin |
 
+### Economic intelligence
+
+| Variable                 | Exposure                                       |
+| ------------------------ | ---------------------------------------------- |
+| `ECONOMIC_DATA_PROVIDER` | Server setting; use `development` locally only |
+| `ECONOMIC_CACHE_SECONDS` | Server cache duration; defaults to 300 seconds |
+
 ## Supabase preparation
 
 For a new environment, run the SQL in this order:
@@ -95,6 +102,7 @@ For a new environment, run the SQL in this order:
 1. `docs/supabase-auth.sql`
 2. `docs/supabase-newsletter.sql`
 3. `docs/supabase-revolut.sql`
+4. `docs/supabase-economic.sql`
 
 Then verify:
 
@@ -186,6 +194,9 @@ and push a new commit so concurrency cancels the obsolete run.
 - [ ] Server-only market-data variables are configured; fixtures are absent
 - [ ] Quote unavailable, stale, delayed, rate-limit, and health paths are tested
 - [ ] Optional snapshot SQL and seven-day retention job are verified
+- [ ] Economic event RLS, indexes, and fixture rejection are verified
+- [ ] Production economic provider rights, attribution, and adapter are approved
+- [ ] Economic fixtures are disabled and calendar timezone/filter flows pass
 
 ## Rollback
 

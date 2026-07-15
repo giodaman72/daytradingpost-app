@@ -1,53 +1,69 @@
-import { developmentEconomicCalendarProvider } from "@/lib/market/economicCalendarProvider";
+import Link from "next/link";
+import { EconomicCard } from "@/components/economic/EconomicCard";
+import {
+  getEconomicToday,
+  getEconomicTomorrow,
+  getEconomicWeek,
+  getRecentEconomicReleases,
+  getUpcomingEconomicEvents,
+} from "@/lib/economic/economicService";
 import { DashboardPanel } from "./DashboardPanel";
 import { DashboardEmptyState } from "./DashboardEmptyState";
 
 export async function EconomicCalendar() {
-  const today = new Date();
-  const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
-  const events = await developmentEconomicCalendarProvider.getEvents(
-    today.toISOString(),
-    tomorrow.toISOString(),
-  );
-
+  const [today, tomorrow, week, upcoming, recent] = await Promise.all([
+    getEconomicToday(),
+    getEconomicTomorrow(),
+    getEconomicWeek(),
+    getUpcomingEconomicEvents(4),
+    getRecentEconomicReleases(4),
+  ]);
+  const groups = [
+    ["Today’s events", today.events],
+    ["Tomorrow", tomorrow.events],
+    ["This week", week.events],
+    [
+      "Upcoming high impact",
+      upcoming.events.filter((event) => event.impact === "high"),
+    ],
+    ["Recently released", recent.events],
+  ] as const;
+  const hasEvents = groups.some(([, events]) => events.length);
   return (
     <DashboardPanel
       id="economic-calendar"
-      eyebrow="Illustrative schedule"
-      title="Economic Calendar"
+      eyebrow="Scheduled market risk"
+      title="Economic Intelligence"
+      className="dashboard-panel-wide"
+      action={
+        <Link href="/economic-calendar" className="dashboard-panel-link">
+          Full calendar →
+        </Link>
+      }
     >
-      {events.length ? (
-        <>
-          <div className="dashboard-calendar-notice" role="note">
-            Development fixture data · Verify every date and time independently
-          </div>
-          <ol className="dashboard-calendar-list">
-            {events.map((item) => (
-              <li key={item.id}>
-                <time dateTime={item.scheduledAt}>
-                  {new Intl.DateTimeFormat("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    timeZone: "America/New_York",
-                  }).format(new Date(item.scheduledAt))}
-                </time>
-                <span className="dashboard-currency">{item.currency}</span>
-                <div>
-                  <strong>{item.title}</strong>
-                  <span>{item.impact} impact</span>
+      {hasEvents ? (
+        <div className="dashboard-economic-groups">
+          {groups.map(([label, events]) => (
+            <section key={label}>
+              <h3>{label}</h3>
+              {events.length ? (
+                <div className="economic-card-grid">
+                  {events
+                    .slice(0, label === "This week" ? 4 : 2)
+                    .map((event) => (
+                      <EconomicCard event={event} key={event.id} />
+                    ))}
                 </div>
-                <i
-                  className={`impact-${item.impact.toLowerCase()}`}
-                  aria-hidden="true"
-                />
-              </li>
-            ))}
-          </ol>
-        </>
+              ) : (
+                <p>No verified events.</p>
+              )}
+            </section>
+          ))}
+        </div>
       ) : (
         <DashboardEmptyState
-          title="No calendar events connected"
-          description="The normalized provider interface is ready for a future verified data source. No events are fabricated in production."
+          title="No verified economic events"
+          description="Connect a production provider or explicitly enable the simulated development calendar outside production."
         />
       )}
     </DashboardPanel>

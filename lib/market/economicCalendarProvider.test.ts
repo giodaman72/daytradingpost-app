@@ -3,14 +3,13 @@ import { developmentEconomicCalendarProvider } from "./economicCalendarProvider"
 
 describe("economic calendar provider contract", () => {
   it("returns normalized, explicitly marked development fixtures", async () => {
-    const events = await developmentEconomicCalendarProvider.getEvents(
-      "2026-07-14",
-      "2026-07-15",
-    );
+    const events = await developmentEconomicCalendarProvider.getEvents({
+      from: "2026-07-13T00:00:00.000Z",
+      to: "2026-07-19T23:59:59.999Z",
+    });
     expect(events[0]).toMatchObject({
-      currency: "USD",
-      impact: "high",
       isFixture: true,
+      source: "DayTradingPost simulated development calendar",
     });
   });
 });

@@ -3,6 +3,7 @@ import { ROUTES } from "./routes";
 export const MAIN_NAVIGATION = [
   { href: "/#markets", label: "Markets" },
   { href: ROUTES.analysis, label: "Analysis" },
+  { href: ROUTES.economicCalendar, label: "Calendar" },
   { authenticatedOnly: true, href: ROUTES.dashboard, label: "Dashboard" },
   { href: ROUTES.academy, label: "Academy" },
   { href: ROUTES.premium, label: "Premium" },
@@ -46,6 +47,7 @@ export const FOOTER_NAVIGATION = [
     links: [
       { href: ROUTES.academy, label: "Trading Academy" },
       { href: ROUTES.analysis, label: "Market Analysis" },
+      { href: ROUTES.economicCalendar, label: "Economic Calendar" },
       { href: ROUTES.webinars, label: "Webinars" },
       { href: ROUTES.premium, label: "Premium" },
     ],

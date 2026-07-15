@@ -12,7 +12,8 @@ Browser
   ├── Next.js pages and Server Components
   │     ├── Sanity Content Lake (published articles)
   │     ├── Supabase Auth (identity and sessions)
-  │     └── Supabase Postgres (profiles, newsletter, membership operations)
+  │     ├── Supabase Postgres (profiles, membership, economic events)
+  │     └── Economic Intelligence Service (normalized schedules and releases)
   │
   ├── Next.js Route Handlers
   │     ├── POST /api/newsletter
@@ -153,6 +154,11 @@ inventing duplicate REST endpoints. See `API_REFERENCE.md`.
 Future market data must define a short provider-specific freshness window and
 must expose stale timestamps in the UI.
 
+Economic schedules use a five-minute server cache by default. Public economic
+APIs use two-minute CDN freshness, bounded pagination, and a best-effort public
+rate limiter. UTC is canonical in storage; page filters compute timezone-aware
+day and week boundaries before querying.
+
 ## Image optimization
 
 - Sanity images use `next/image` and the configured `cdn.sanity.io` remote pattern.
@@ -241,3 +247,13 @@ session facts. Adapters map through the centralized instrument registry and
 return normalized decimal strings. A short cache, stale fallback, timeout,
 retry limits, and circuit breaker protect rendering. Market Intelligence remains
 the independent owner of editorial judgments. See [Market Data](MARKET_DATA.md).
+
+## Economic Intelligence System
+
+The server-only service under `lib/economic` is the central normalized boundary
+for scheduled macroeconomic events, released values, impact, expectations, and
+educational context. Production reads verified non-fixture Supabase rows. A
+deterministic development adapter is available only outside production and is
+always visibly labeled simulated. Pages, dashboard widgets, the Daily Market
+Brief, newsletter formatting, APIs, and future alert/mobile consumers share the
+same `EconomicEvent` contract. See [Economic Intelligence](ECONOMIC_SYSTEM.md).

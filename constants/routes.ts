@@ -16,6 +16,7 @@ export const ROUTES = {
   },
   billing: "/account/billing",
   dashboard: "/dashboard",
+  economicCalendar: "/economic-calendar",
   home: "/",
   membership: {
     cancelled: "/membership/cancelled",

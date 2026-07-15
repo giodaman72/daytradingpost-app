@@ -4,6 +4,12 @@ import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { isSitePagePath, sitePagePaths, sitePages } from "@/lib/site-pages";
+import { EconomicCard } from "@/components/economic/EconomicCard";
+import {
+  getRecentEconomicReleases,
+  getUpcomingEconomicEvents,
+} from "@/lib/economic/economicService";
+import { getEventsForMarket } from "@/lib/economic/economicImpact";
 
 type PageProps = {
   params: Promise<{ slug: string[] }>;
@@ -42,6 +48,21 @@ export default async function SitePage({ params }: PageProps) {
   }
 
   const page = sitePages[path];
+  const marketKey = path.startsWith("markets/") ? path.split("/")[1] : null;
+  const [upcoming, recent] = marketKey
+    ? await Promise.all([
+        getUpcomingEconomicEvents(20),
+        getRecentEconomicReleases(20),
+      ])
+    : [null, null];
+  const marketEvents =
+    marketKey && upcoming
+      ? getEventsForMarket(upcoming.events, marketKey).slice(0, 3)
+      : [];
+  const recentEvents =
+    marketKey && recent
+      ? getEventsForMarket(recent.events, marketKey).slice(0, 3)
+      : [];
 
   return (
     <main className="inner-page">
@@ -97,6 +118,58 @@ export default async function SitePage({ params }: PageProps) {
           </aside>
         </div>
       </section>
+
+      {marketKey ? (
+        <section className="section market-economic-section">
+          <div className="container">
+            <div className="section-heading">
+              <div>
+                <span className="section-kicker">Market integration</span>
+                <h2>Upcoming events for {page.kicker}</h2>
+              </div>
+              <Link href="/economic-calendar" className="text-link">
+                Full calendar →
+              </Link>
+            </div>
+            {marketEvents.length ? (
+              <div className="economic-card-grid">
+                {marketEvents.map((event) => (
+                  <EconomicCard event={event} key={event.id} />
+                ))}
+              </div>
+            ) : (
+              <div className="economic-empty" role="status">
+                <h3>No relevant verified upcoming events</h3>
+                <p>
+                  Relevant currency and high-impact releases appear after a
+                  production calendar source is connected.
+                </p>
+              </div>
+            )}
+            <div className="section-heading economic-recent-heading">
+              <div>
+                <span className="section-kicker">Recent releases</span>
+                <h2>Latest related outcomes</h2>
+              </div>
+            </div>
+            {recentEvents.length ? (
+              <div className="economic-card-grid">
+                {recentEvents.map((event) => (
+                  <EconomicCard event={event} key={event.id} />
+                ))}
+              </div>
+            ) : (
+              <p className="economic-market-note">
+                No recent verified releases are available.
+              </p>
+            )}
+            <p className="economic-market-note">
+              Relevant currency mapping is informational.{" "}
+              <Link href="/analysis">Browse related editorial analysis →</Link>
+            </p>
+          </div>
+        </section>
+      ) : null}
 
       <Footer />
     </main>

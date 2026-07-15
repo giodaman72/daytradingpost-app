@@ -1,6 +1,6 @@
-import type { EconomicEvent } from "@/types/market";
+import type { LegacyEconomicEvent } from "@/types/market";
 
-export const economicEvents: EconomicEvent[] = [
+export const economicEvents: LegacyEconomicEvent[] = [
   {
     id: "us-cpi",
     time: "08:30 ET",
