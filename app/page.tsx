@@ -6,9 +6,11 @@ import { EmptyMarketState } from "@/components/market-intelligence/EmptyMarketSt
 import { MarketOutlookCard } from "@/components/market-intelligence/MarketOutlookCard";
 import { MarketOutlookGrid } from "@/components/market-intelligence/MarketOutlookGrid";
 import { NewsletterForm } from "@/components/newsletter/NewsletterForm";
+import { EconomicCard } from "@/components/economic/EconomicCard";
 import { MarketDataGrid } from "@/components/market-data/MarketDataGrid";
 import { getLatestArticles } from "@/lib/cms";
 import { getHomepageQuotes } from "@/lib/market-data/marketDataService";
+import { getEconomicToday } from "@/lib/economic/economicService";
 import { getFeaturedMarketIntelligence } from "@/lib/market/marketIntelligenceService";
 
 const academyTopics = [
@@ -33,10 +35,11 @@ const academyTopics = [
 ];
 
 export default async function Home() {
-  const [analyses, outlooks, quotes] = await Promise.all([
+  const [analyses, outlooks, quotes, economicToday] = await Promise.all([
     getLatestArticles(3),
     getFeaturedMarketIntelligence(),
     getHomepageQuotes(),
+    getEconomicToday(),
   ]);
 
   return (
@@ -135,6 +138,42 @@ export default async function Home() {
             </div>
           </div>
           <MarketOutlookGrid outlooks={outlooks} />
+        </div>
+      </section>
+
+      <section
+        className="section section-muted homepage-economic"
+        id="economic-calendar"
+      >
+        <div className="container">
+          <div className="section-heading">
+            <div>
+              <span className="section-kicker">Economic intelligence</span>
+              <h2>Today&apos;s high-impact events</h2>
+            </div>
+            <Link href="/economic-calendar" className="text-link">
+              Open full calendar <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+          {economicToday.events.filter((event) => event.impact === "high")
+            .length ? (
+            <div className="economic-card-grid">
+              {economicToday.events
+                .filter((event) => event.impact === "high")
+                .slice(0, 3)
+                .map((event) => (
+                  <EconomicCard event={event} showCountdown key={event.id} />
+                ))}
+            </div>
+          ) : (
+            <div className="economic-empty" role="status">
+              <h3>No verified high-impact events today</h3>
+              <p>
+                Check the complete calendar for medium-impact releases and
+                upcoming events.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

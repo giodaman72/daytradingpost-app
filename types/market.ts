@@ -10,7 +10,7 @@ export type MarketDefinition = {
   symbol: string;
 };
 
-export type EconomicEvent = {
+export type LegacyEconomicEvent = {
   currency: string;
   event: string;
   id: string;

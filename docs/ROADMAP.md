@@ -88,10 +88,14 @@ checks pass. Future scope may be refined before implementation.
 - Normalize instruments, quotes, sessions, and provider errors
 - Add caching, stale-data indicators, observability, and provider failover
 
-### Sprint 11 — Economic Calendar
+### Sprint 11 — Economic Intelligence System
 
-- Replace illustrative events with a normalized calendar feed
-- Add time-zone conversion, impact filters, and source timestamps
+- Centralized provider-neutral economic event service and normalized types
+- Supabase event schema, indexes, RLS, and production fixture safeguards
+- Homepage, dashboard, market page, Market Brief, and newsletter integration
+- Filterable responsive calendar, event detail routes, statistics, and APIs
+- Timezone-aware schedules, caching, pagination, rate limiting, and tests
+- Future alert contracts without notification delivery
 
 ### Sprint 12 — Watchlists
 
@@ -152,8 +156,9 @@ generic adapter foundation, caching/resilience, optional snapshots, public APIs,
 and separately labeled page integrations. Production remains blocked on a
 licensed provider and confirmed display/redistribution terms.
 
-## Recommended Sprint 11
+## Recommended Sprint 12
 
-Select a licensed provider; implement its dedicated adapter and contract tests;
-add distributed limiting, observability, retention automation, Route Handler
-integration tests, and the economic-calendar service.
+Implement authenticated watchlists while separately evaluating licensed
+economic and market-data providers. Add distributed limiting, ingestion
+observability, migration automation, provider contract tests, and end-to-end
+Route Handler coverage before enabling production economic ingestion.

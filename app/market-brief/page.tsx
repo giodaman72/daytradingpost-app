@@ -5,6 +5,8 @@ import { Header } from "@/components/layout/Header";
 import { MarketOutlookGrid } from "@/components/market-intelligence/MarketOutlookGrid";
 import { getLatestMarketIntelligence } from "@/lib/market/marketIntelligenceService";
 import { buildMarketBrief } from "@/lib/market/marketIntelligenceTransforms";
+import { EconomicCard } from "@/components/economic/EconomicCard";
+import { getUpcomingEconomicEvents } from "@/lib/economic/economicService";
 
 export const metadata: Metadata = {
   title: "Daily Market Brief",
@@ -14,7 +16,10 @@ export const metadata: Metadata = {
 };
 
 export default async function MarketBriefPage() {
-  const records = await getLatestMarketIntelligence({ limit: 50 });
+  const [records, economic] = await Promise.all([
+    getLatestMarketIntelligence({ limit: 50 }),
+    getUpcomingEconomicEvents(6),
+  ]);
   const brief = buildMarketBrief(records);
 
   return (
@@ -59,6 +64,28 @@ export default async function MarketBriefPage() {
       </section>
       <section className="analysis-library-section">
         <div className="container">
+          <section className="market-brief-events">
+            <div className="section-heading">
+              <div>
+                <span className="section-kicker">Scheduled event risk</span>
+                <h2>Top upcoming economic releases</h2>
+              </div>
+              <Link href="/economic-calendar" className="text-link">
+                View calendar →
+              </Link>
+            </div>
+            {economic.events.length ? (
+              <div className="economic-card-grid">
+                {economic.events.slice(0, 3).map((event) => (
+                  <EconomicCard event={event} key={event.id} />
+                ))}
+              </div>
+            ) : (
+              <p className="economic-empty">
+                No verified upcoming releases are connected.
+              </p>
+            )}
+          </section>
           <MarketOutlookGrid
             outlooks={brief.outlooks.filter((outlook) => outlook.isFeatured)}
           />

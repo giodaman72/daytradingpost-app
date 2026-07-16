@@ -15,6 +15,11 @@ export type {
   MarketBias as IntelligenceMarketBias,
 } from "./market-intelligence";
 export type * from "./economic-calendar";
+export type * from "./economic-country";
+export type * from "./economic-currency";
+export type * from "./economic-event";
+export type * from "./economic-impact";
+export type * from "./economic-statistics";
 export type * from "./membership";
 export type * from "./market-data";
 export type * from "./notification";

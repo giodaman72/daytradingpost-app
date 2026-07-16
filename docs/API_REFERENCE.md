@@ -183,7 +183,6 @@ The following examples from the long-term architecture are **not implemented**:
 | `/api/revolut`             | No generic endpoint planned; use narrow checkout actions and webhook route | N/A                |
 | `/api/market-intelligence` | Normalized intelligence outputs                                            | Sprint 9           |
 | `/api/market-data`         | Licensed quote and session data                                            | Sprint 10          |
-| `/api/economic-calendar`   | Normalized calendar data                                                   | Sprint 11          |
 | `/api/watchlists`          | Authenticated CRUD with RLS                                                | Sprint 12          |
 | `/api/notifications`       | Authenticated notification reads/updates                                   | Future             |
 
@@ -219,3 +218,21 @@ Responses use `{ data: MarketQuote[], meta }`; metadata includes generation
 time, provider, delayed, and simulated status. Quotes carry freshness and a
 provider timestamp. Errors use `{ "error": string, "details"?: string[] }`.
 CDN caching is 30 seconds plus 60 seconds stale-while-revalidate.
+
+## Economic intelligence (read only)
+
+| Method | Route                      | Notes                                                          |
+| ------ | -------------------------- | -------------------------------------------------------------- |
+| GET    | `/api/economic`            | Date range, search, filters, sorting, offset/limit pagination  |
+| GET    | `/api/economic/today`      | Current calendar day in the selected IANA timezone             |
+| GET    | `/api/economic/week`       | Current calendar week in the selected IANA timezone            |
+| GET    | `/api/economic/upcoming`   | Next scheduled events; optional `limit` up to 100              |
+| GET    | `/api/economic/statistics` | High/medium impact, tomorrow/week, country and currency counts |
+
+The general route accepts `from`, `to`, `search`, `country`, `currency`,
+`impact`, `eventType`, `status`, `limit`, and `offset`. Comma-separated filters
+are normalized and unsupported values return a typed `400` response. Successful
+event responses contain `data`, `total`, `pagination`, and `meta`; `meta`
+includes generation time and the simulated-data flag. Responses are cached for
+120 seconds with stale-while-revalidate and rate-limit responses include
+`Retry-After`. No endpoint exposes provider credentials or raw provider shapes.

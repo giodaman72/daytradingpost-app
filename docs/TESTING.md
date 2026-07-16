@@ -219,3 +219,13 @@ parsing, delayed/stale classification, cache windows, timeouts, retries, circuit
 breaking, provider-failure fallback, API envelopes, invalid instruments and
 batch limits, fixture labeling, accessible components, and separation from
 editorial bias. No test contacts Supabase or a real market-data provider.
+
+## Sprint 11 economic-intelligence tests
+
+Deterministic suites cover provider normalization, filter validation, search,
+country/currency/impact filters, chronological sorting, timezone-aware day and
+week boundaries, countdown states, statistics, cache expiry, typed API envelope
+formatting, fixture labeling, and reusable table/card accessibility. Tests must
+not contact Supabase or a commercial calendar provider. Manually verify desktop
+table and mobile card layouts, keyboard filter submission, timezone changes,
+pagination, detail not-found handling, and the visible simulated-data warning.

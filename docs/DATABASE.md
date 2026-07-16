@@ -10,6 +10,23 @@ Names such as `articles` are logical collections in Sanity, not Postgres tables.
 
 ## Implemented Supabase tables
 
+### `economic_events`
+
+Source: `docs/supabase-economic.sql`.
+
+Stores normalized, verified macroeconomic schedules and released values. Core
+columns include provider identity, title, country, currency, impact,
+`scheduled_time`, forecast/previous/actual/revised values, event type, category,
+source, status, and audit timestamps. Additional JSON/text fields support
+historical values, educational context, trading considerations, and related
+markets without exposing provider payloads.
+
+Indexes cover schedule time, impact plus time, currency plus time, country plus
+time, status plus time, and unique provider/event identity. RLS is enabled,
+browser roles have no direct table privileges, and trusted service-role access
+is explicit. A check constraint rejects fixture rows so development data cannot
+be persisted as production events.
+
 ### `profiles`
 
 Source: `docs/supabase-auth.sql` and `docs/supabase-revolut.sql`.
