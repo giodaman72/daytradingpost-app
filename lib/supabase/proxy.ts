@@ -9,6 +9,8 @@ const protectedPrefixes = [
   ROUTES.dashboard,
   ROUTES.watchlists,
   ROUTES.alerts,
+  "/assistant",
+  "/admin/ai",
   "/members",
   ROUTES.membership.success,
   ROUTES.membership.pending,

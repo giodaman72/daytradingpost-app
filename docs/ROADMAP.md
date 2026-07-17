@@ -1,5 +1,12 @@
 # DayTradingPost product roadmap
 
+## Recommended follow-up after Sprint 13
+
+Add distributed rate limiting, automated retention, reviewed shared-summary
+caching, richer Academy documents, webinar transcripts, multilingual prompt
+packs, and provider-neutral read-only tools. Embeddings remain deferred until a
+substantial published long-form corpus exists.
+
 This roadmap records delivered foundations and the intended sequence for future
 work. A sprint is complete only after lint, production build, and its acceptance
 checks pass. Future scope may be refined before implementation.

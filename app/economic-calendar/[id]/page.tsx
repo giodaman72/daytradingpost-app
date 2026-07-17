@@ -11,6 +11,7 @@ import {
   getEconomicEventById,
   formatEconomicTime,
 } from "@/lib/economic/economicService";
+import { AssistantContextActions } from "@/components/assistant/AssistantContextActions";
 
 type Props = { params: Promise<{ id: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -61,6 +62,16 @@ export default async function EconomicEventPage({ params }: Props) {
       <section className="economic-detail-body">
         <div className="container">
           <EventDetails event={event} />
+          <AssistantContextActions
+            mode="economic_event"
+            event={event.id}
+            prompts={[
+              "Explain this economic event.",
+              "Why can this event affect the currency?",
+              "Compare actual versus forecast without inventing missing results.",
+              "Explain possible volatility scenarios.",
+            ]}
+          />
           <aside
             className="economic-reminders"
             aria-labelledby="event-reminders-title"

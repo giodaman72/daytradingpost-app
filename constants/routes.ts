@@ -3,6 +3,7 @@ export const ROUTES = {
   academy: "/academy",
   analysis: "/analysis",
   alerts: "/alerts",
+  assistant: "/assistant",
   api: {
     newsletter: "/api/newsletter",
     revolutWebhook: "/api/webhooks/revolut",

@@ -11,6 +11,7 @@ import {
 } from "@/lib/economic/economicService";
 import { getEventsForMarket } from "@/lib/economic/economicImpact";
 import { MarketQuickActions } from "@/components/alerts/MarketQuickActions";
+import { AssistantContextActions } from "@/components/assistant/AssistantContextActions";
 
 type PageProps = {
   params: Promise<{ slug: string[] }>;
@@ -169,6 +170,22 @@ export default async function SitePage({ params }: PageProps) {
               <Link href="/analysis">Browse related editorial analysis →</Link>
             </p>
             <MarketQuickActions instrument={marketKey} />
+          </div>
+        </section>
+      ) : null}
+
+      {path === "academy" ? (
+        <section className="section">
+          <div className="container">
+            <AssistantContextActions
+              mode="academy_tutor"
+              title="Open Academy Tutor"
+              prompts={[
+                "Explain support and resistance in simpler terms.",
+                "Create a short AI-generated practice quiz.",
+                "Explain a general risk-management checklist.",
+              ]}
+            />
           </div>
         </section>
       ) : null}

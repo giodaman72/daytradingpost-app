@@ -1,5 +1,12 @@
 # DayTradingPost design system
 
+## Assistant patterns
+
+Assistant surfaces reuse the dark navy, gold accent, restrained borders, Geist
+type, and existing controls. Answer status is conveyed by text as well as color.
+Chat, composer, stop/copy/feedback controls, history, citations, errors, and
+usage require keyboard and screen-reader labels, with reduced motion respected.
+
 The existing dark fintech appearance is the source of truth. This document
 describes it; it does not authorize visual redesign during infrastructure work.
 

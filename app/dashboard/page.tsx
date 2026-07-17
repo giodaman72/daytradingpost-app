@@ -10,6 +10,7 @@ import { Notifications } from "@/components/dashboard/Notifications";
 import { Watchlist } from "@/components/dashboard/Watchlist";
 import { SmartAlerts } from "@/components/dashboard/SmartAlerts";
 import { WebinarWidget } from "@/components/dashboard/WebinarWidget";
+import { AIAssistantWidget } from "@/components/dashboard/AIAssistantWidget";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { getLatestArticles } from "@/lib/cms";
@@ -25,6 +26,7 @@ import {
 import { getInstrument } from "@/constants/instruments";
 import { getMembershipAccess } from "@/lib/payments";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
+import { getAssistantUsage } from "@/lib/ai/assistantUsage";
 
 export const metadata: Metadata = {
   title: "Trader Dashboard",
@@ -48,14 +50,21 @@ export default async function DashboardPage() {
 
   if (!user) redirect("/login?next=/dashboard");
 
-  const [articles, watchlists, alerts, notifications, unreadCount] =
-    await Promise.all([
-      getLatestArticles(5),
-      getUserWatchlists().catch(() => []),
-      getUserAlerts(20).catch(() => []),
-      getUserNotifications(5).catch(() => []),
-      getUnreadNotificationCount().catch(() => 0),
-    ]);
+  const [
+    articles,
+    watchlists,
+    alerts,
+    notifications,
+    unreadCount,
+    assistantUsage,
+  ] = await Promise.all([
+    getLatestArticles(5),
+    getUserWatchlists().catch(() => []),
+    getUserAlerts(20).catch(() => []),
+    getUserNotifications(5).catch(() => []),
+    getUnreadNotificationCount().catch(() => 0),
+    getAssistantUsage(user.id, hasPremiumAccess).catch(() => null),
+  ]);
   const defaultWatchlist =
     watchlists.find((item) => item.isDefault) ?? watchlists[0] ?? null;
   const watchlistInstruments =
@@ -97,6 +106,10 @@ export default async function DashboardPage() {
           </header>
 
           <div className="dashboard-grid">
+            <AIAssistantWidget
+              usage={assistantUsage}
+              premium={hasPremiumAccess}
+            />
             <MarketOutlook
               outlooks={marketIntelligence}
               quotes={marketQuotes}

@@ -1,5 +1,12 @@
 # Deployment guide
 
+## AI Assistant launch
+
+Apply `docs/supabase-ai-assistant.sql`, then add server-only `AI_*` and
+`OPENAI_*` values from `.env.example` to Vercel. Never use the development
+provider in production. Review model, usage, timeout, retention, and optional
+pricing values independently per environment.
+
 ## Environments
 
 DayTradingPost uses three logical environments:

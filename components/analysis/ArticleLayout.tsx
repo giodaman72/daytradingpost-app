@@ -13,6 +13,7 @@ import type { MarketIntelligenceRecord } from "@/types/market-intelligence";
 import type { MarketQuote } from "@/types/market-data";
 import { MarketDataCard } from "@/components/market-data/MarketDataCard";
 import { MarketQuickActions } from "@/components/alerts/MarketQuickActions";
+import { AssistantContextActions } from "@/components/assistant/AssistantContextActions";
 
 type ArticleLayoutProps = (
   | { article: Article; locked?: false }
@@ -136,6 +137,17 @@ export function ArticleLayout(props: ArticleLayoutProps) {
               </section>
             ) : null}
             <MarketQuickActions instrument={article.instrumentSymbol} />
+            <AssistantContextActions
+              mode="article_explanation"
+              instrument={article.instrumentSymbol}
+              article={article.slug}
+              prompts={[
+                "Explain this analysis in simpler terms.",
+                "Explain the bullish and bearish scenarios.",
+                "Explain the support and resistance levels.",
+                "What are the key risk factors in this analysis?",
+              ]}
+            />
             {props.intelligence ? (
               fullArticle ? (
                 <MarketIntelligenceSummary intelligence={props.intelligence} />

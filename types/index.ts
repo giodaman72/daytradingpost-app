@@ -1,4 +1,10 @@
 export type * from "./academy";
+export type * from "./ai-assistant";
+export type * from "./ai-citation";
+export type * from "./ai-context";
+export type * from "./ai-feedback";
+export type * from "./ai-message";
+export type * from "./ai-usage";
 export type * from "./alert";
 export type * from "./alert-history";
 export type * from "./api";

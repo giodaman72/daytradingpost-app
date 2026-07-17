@@ -1,4 +1,5 @@
 export * from "./colors";
+export * from "./ai-assistant";
 export * from "./markets";
 export * from "./instruments";
 export * from "./market-bias";

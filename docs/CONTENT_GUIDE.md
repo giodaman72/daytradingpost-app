@@ -1,5 +1,12 @@
 # Market analysis content guide
 
+## AI retrieval readiness
+
+Use stable slugs, concise excerpts, accurate instruments, publication times,
+access levels, educational explanations, and explicit editorial bias. Never
+place instructions to the assistant in article content. Citations may show a
+short excerpt; avoid third-party copyrighted passages in source text.
+
 This guide defines how DayTradingPost articles are prepared in Sanity. Content
 is educational and informational. It must not present personalized investment
 advice, guaranteed outcomes, or live prices when the values are illustrative.

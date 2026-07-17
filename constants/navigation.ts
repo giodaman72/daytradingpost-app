@@ -5,6 +5,7 @@ export const MAIN_NAVIGATION = [
   { href: ROUTES.analysis, label: "Analysis" },
   { href: ROUTES.economicCalendar, label: "Calendar" },
   { authenticatedOnly: true, href: ROUTES.dashboard, label: "Dashboard" },
+  { authenticatedOnly: true, href: ROUTES.assistant, label: "AI Assistant" },
   { authenticatedOnly: true, href: ROUTES.watchlists, label: "Watchlists" },
   { href: ROUTES.academy, label: "Academy" },
   { href: ROUTES.premium, label: "Premium" },
@@ -13,6 +14,7 @@ export const MAIN_NAVIGATION = [
 
 export const ACCOUNT_NAVIGATION = [
   { href: ROUTES.dashboard, label: "Trader dashboard", section: "dashboard" },
+  { href: ROUTES.assistant, label: "AI Assistant", section: "assistant" },
   { href: ROUTES.account, label: "Account overview", section: "overview" },
   { href: ROUTES.billing, label: "Billing & membership", section: "billing" },
   { href: ROUTES.watchlists, label: "Watchlists", section: "watchlists" },

@@ -1,5 +1,12 @@
 # Changelog
 
+## Sprint 13 — AI Trading Assistant
+
+Added authenticated source-grounded chat, OpenAI Responses API integration,
+development fixtures, retrieval and citations, financial-safety controls,
+history, usage and feedback, dashboard/content entry points, admin metrics,
+database migration, tests, and documentation.
+
 ## Sprint 12 — Watchlists and Smart Alerts
 
 - Added authenticated watchlists, supported instruments, notes, defaults, and plan limits.

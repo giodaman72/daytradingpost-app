@@ -1,5 +1,13 @@
 # Data model and storage
 
+## AI Assistant
+
+`ai_conversations`, `ai_messages`, `ai_usage`, and `ai_feedback` are private to
+their owner under RLS. Browser clients have read-only grants; mutations and
+provider metadata use trusted server code. `ai_request_logs` contains
+aggregate-safe telemetry and is service-role only. Apply
+`supabase-ai-assistant.sql` after the authentication/profile migration.
+
 DayTradingPost uses two persistence systems:
 
 - **Supabase Postgres** for identity-linked operational data.

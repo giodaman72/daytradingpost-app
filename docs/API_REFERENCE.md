@@ -1,5 +1,17 @@
 # API and server boundary reference
 
+## AI Assistant routes
+
+- `POST /api/assistant/chat` — authenticated SSE generation stream.
+- `GET /api/assistant/conversations` — paginated owned history.
+- `GET|PATCH|DELETE /api/assistant/conversations/:id` — owned messages and
+  lifecycle.
+- `POST /api/assistant/feedback` — rate-limited structured feedback.
+- `GET /api/assistant/usage` — current user daily usage and allowance.
+
+Errors use stable public codes and never expose raw provider errors, prompts,
+retrieval context, credentials, or traces.
+
 This reference documents currently implemented HTTP routes and Server Actions.
 Future route names are clearly marked as planned.
 

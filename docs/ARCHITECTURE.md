@@ -1,5 +1,13 @@
 # DayTradingPost architecture
 
+## Sprint 13 AI boundary
+
+The authenticated `/assistant` feature uses a server-only provider abstraction,
+structured retrieval, deterministic safety controls, validated citations, and
+Supabase-owned conversation storage. OpenAI-specific code is isolated under
+`lib/ai/providers/`; public UI code receives only normalized stream events. See
+`AI_ASSISTANT.md` and `AI_SAFETY.md`.
+
 ## System overview
 
 DayTradingPost is a Next.js 16 App Router application. It combines a public

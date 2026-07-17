@@ -1,5 +1,12 @@
 # Testing strategy
 
+## AI Assistant
+
+Standard tests use deterministic fixtures and mocked boundaries; they never call
+OpenAI, Supabase, Sanity, market-data, economic-data, email, or payment
+providers. The evaluation suite covers 20 groundedness, access, data-status,
+injection, refusal, citation, fixture, validation, and limit cases.
+
 ## Local setup
 
 Use Node.js 24 from `.nvmrc`:
