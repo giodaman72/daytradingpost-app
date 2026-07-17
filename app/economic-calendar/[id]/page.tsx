@@ -61,6 +61,41 @@ export default async function EconomicEventPage({ params }: Props) {
       <section className="economic-detail-body">
         <div className="container">
           <EventDetails event={event} />
+          <aside
+            className="economic-reminders"
+            aria-labelledby="event-reminders-title"
+          >
+            <div>
+              <span className="section-kicker">Member alerts</span>
+              <h2 id="event-reminders-title">Remind me about this event</h2>
+              <p>
+                Times are shown in New York time. The evaluator reads the latest
+                provider schedule before triggering.
+              </p>
+            </div>
+            <div>
+              <Link
+                href={`/alerts/new?type=economic_event_upcoming&event=${encodeURIComponent(event.id)}&minutes=15`}
+              >
+                15 minutes before
+              </Link>
+              <Link
+                href={`/alerts/new?type=economic_event_upcoming&event=${encodeURIComponent(event.id)}&minutes=60`}
+              >
+                1 hour before
+              </Link>
+              <Link
+                href={`/alerts/new?type=economic_event_upcoming&event=${encodeURIComponent(event.id)}&minutes=1440`}
+              >
+                24 hours before
+              </Link>
+              <Link
+                href={`/alerts/new?type=economic_event_released&event=${encodeURIComponent(event.id)}`}
+              >
+                On release
+              </Link>
+            </div>
+          </aside>
           <section className="economic-history">
             <h2>Historical values</h2>
             {event.historicalValues.length ? (

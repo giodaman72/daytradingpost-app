@@ -10,6 +10,7 @@ import {
   getUpcomingEconomicEvents,
 } from "@/lib/economic/economicService";
 import { getEventsForMarket } from "@/lib/economic/economicImpact";
+import { MarketQuickActions } from "@/components/alerts/MarketQuickActions";
 
 type PageProps = {
   params: Promise<{ slug: string[] }>;
@@ -167,6 +168,7 @@ export default async function SitePage({ params }: PageProps) {
               Relevant currency mapping is informational.{" "}
               <Link href="/analysis">Browse related editorial analysis →</Link>
             </p>
+            <MarketQuickActions instrument={marketKey} />
           </div>
         </section>
       ) : null}

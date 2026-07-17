@@ -53,6 +53,12 @@ export function EconomicCard({
           verified event.
         </p>
       ) : null}
+      <Link
+        className="economic-reminder-link"
+        href={`/alerts/new?type=economic_event_upcoming&event=${encodeURIComponent(event.id)}&minutes=60`}
+      >
+        Set 1-hour reminder
+      </Link>
     </article>
   );
 }

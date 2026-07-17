@@ -236,3 +236,9 @@ event responses contain `data`, `total`, `pagination`, and `meta`; `meta`
 includes generation time and the simulated-data flag. Responses are cached for
 120 seconds with stale-while-revalidate and rate-limit responses include
 `Retry-After`. No endpoint exposes provider credentials or raw provider shapes.
+
+## Smart feature server boundaries
+
+Watchlist, alert, and notification member mutations use authenticated Server Actions under `app/watchlists/actions.ts`, `app/alerts/actions.ts`, and `app/notifications/actions.ts`. Ownership and membership limits are rechecked server-side without duplicating REST endpoints.
+
+`POST /api/internal/alerts/evaluate` requires a server-only bearer secret, accepts no browser-supplied trigger data, evaluates a bounded batch, and returns statistics. `401` means invalid scheduler authentication, `409` means the current instance is already evaluating, and `500` reports a safely contained batch failure.

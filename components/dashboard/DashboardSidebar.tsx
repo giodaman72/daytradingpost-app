@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   ListPlus,
   Radio,
+  ShieldAlert,
 } from "lucide-react";
 import { DASHBOARD_NAVIGATION } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
@@ -20,6 +21,7 @@ const dashboardIcons = {
   "market-outlook": ChartNoAxesCombined,
   membership: Crown,
   notifications: Bell,
+  "smart-alerts": ShieldAlert,
   watchlist: ListPlus,
   webinar: Radio,
 } as const;

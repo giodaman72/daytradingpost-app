@@ -229,3 +229,7 @@ formatting, fixture labeling, and reusable table/card accessibility. Tests must
 not contact Supabase or a commercial calendar provider. Manually verify desktop
 table and mobile card layouts, keyboard filter submission, timezone changes,
 pagination, detail not-found handling, and the visible simulated-data warning.
+
+## Sprint 12 watchlist and alert tests
+
+Deterministic tests cover ownership, normalization, default selection, duplicates, plan limits, alert-type validation, fixed-scale comparisons, price/percentage/bias/economic conditions, cooldowns, expiration, stale/simulated rejection, stable deduplication, scheduler authorization, bounded pagination, notification formatting, escaped email output, disabled-provider behavior, unread counts, cards, status text, and empty states. External services are not called.

@@ -1,5 +1,11 @@
 # Changelog
 
+## Sprint 12 — Watchlists and Smart Alerts
+
+- Added authenticated watchlists, supported instruments, notes, defaults, and plan limits.
+- Added smart alerts, fixed-scale evaluation, history, dashboard notifications, economic reminders, and protected scheduling.
+- Added provider-neutral email formatting with production delivery disabled until configured.
+
 ## [1.0.0] — 2026-07-14
 
 ### Sprint 10 — Market Data Service

@@ -1,4 +1,6 @@
 export type * from "./academy";
+export type * from "./alert";
+export type * from "./alert-history";
 export type * from "./api";
 export type * from "./article";
 export type * from "./market";

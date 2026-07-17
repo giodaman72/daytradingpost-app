@@ -257,3 +257,7 @@ deterministic development adapter is available only outside production and is
 always visibly labeled simulated. Pages, dashboard widgets, the Daily Market
 Brief, newsletter formatting, APIs, and future alert/mobile consumers share the
 same `EconomicEvent` contract. See [Economic Intelligence](ECONOMIC_SYSTEM.md).
+
+## Watchlists and Smart Alerts
+
+Private watchlists and alerts use server-only repositories, repeated ownership checks, and Supabase RLS. The scheduler consumes normalized Market Data, editorial Market Intelligence, Economic Intelligence, and published Sanity metadata; its pure evaluator rejects missing, stale, expired, cooling-down, or simulated sources. Trigger history is written before notification delivery. See [Watchlists and Smart Alerts](WATCHLISTS_ALERTS.md).

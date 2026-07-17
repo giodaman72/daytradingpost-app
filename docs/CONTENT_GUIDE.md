@@ -4,6 +4,10 @@ This guide defines how DayTradingPost articles are prepared in Sanity. Content
 is educational and informational. It must not present personalized investment
 advice, guaranteed outcomes, or live prices when the values are illustrative.
 
+## Alert copy
+
+Alert names and notifications must describe the configured condition without promising an outcome or recommending a trade. Always distinguish price data from editorial bias, disclose delayed data, label educational context, and never describe fixtures as real triggers. Email and dashboard messages must link to preferences and include the educational-risk disclaimer.
+
 ## Editorial workflow
 
 1. Confirm the instrument, session, source material, and publication time.
