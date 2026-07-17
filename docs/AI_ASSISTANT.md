@@ -31,6 +31,25 @@ calls an external service, refuses to activate in production, and labels every
 answer as a development fixture. Missing production configuration produces a
 clean unavailable state.
 
+### Pre-implementation audit
+
+- Supabase authentication, membership access, server/admin clients, published
+  Sanity queries, Market Intelligence, Market Data, Economic Intelligence, and
+  owner-scoped watchlist services were suitable for reuse.
+- No AI provider, assistant persistence, or OpenAI integration existed.
+- Existing short-window rate limiters are process-local; they are useful for
+  abuse friction but not a distributed production quota.
+- Existing analytics creates typed event objects but does not persist or
+  transport them. Assistant operations therefore use a separate minimal,
+  privacy-conscious request log rather than pretending that helper is durable.
+- The Academy currently exposes a static curriculum preview, not structured
+  long-form lessons. No authorized webinar transcript repository exists.
+- Published free articles and market/economic records are public source
+  candidates; premium article bodies require membership; watchlists and
+  conversations are private to their owner; operational aggregates are
+  administrator-only. Unpublished Sanity drafts and administrative database
+  metadata are never retrieval candidates.
+
 ## Retrieval and citations
 
 Structured retrieval runs before generation. Exact article, instrument, event,
