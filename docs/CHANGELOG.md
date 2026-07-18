@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased] — Sprint 15 Part 1
+
+- Added Trading Academy 2.0 Sanity course, module, lesson, instructor,
+  assessment, resource, video, certificate-template and learning-path schemas
+- Added Supabase learner-state/RLS migration and transactional enrollment/grading
+- Added LMS authorization, progress, scoring, prerequisite and certificate
+  foundations plus owner-scoped API routes
+- Added deterministic Academy backend tests and operating documentation
+
 ## Sprint 13 — AI Trading Assistant
 
 Added authenticated source-grounded chat, OpenAI Responses API integration,

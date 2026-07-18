@@ -38,7 +38,7 @@ export async function retrieveAssistantContext(
   if (allowed.has("economic_event"))
     tasks.push(retrieveEconomicEvents(request.economicEventId ?? null));
   if (allowed.has("academy"))
-    tasks.push(Promise.resolve(retrieveAcademyContent()));
+    tasks.push(retrieveAcademyContent(hasPremiumAccess));
   if (allowed.has("watchlist"))
     tasks.push(retrieveWatchlist(userId, request.watchlistId ?? null));
 

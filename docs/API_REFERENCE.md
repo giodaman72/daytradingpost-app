@@ -254,3 +254,27 @@ includes generation time and the simulated-data flag. Responses are cached for
 Watchlist, alert, and notification member mutations use authenticated Server Actions under `app/watchlists/actions.ts`, `app/alerts/actions.ts`, and `app/notifications/actions.ts`. Ownership and membership limits are rechecked server-side without duplicating REST endpoints.
 
 `POST /api/internal/alerts/evaluate` requires a server-only bearer secret, accepts no browser-supplied trigger data, evaluates a bounded batch, and returns statistics. `401` means invalid scheduler authentication, `409` means the current instance is already evaluating, and `500` reports a safely contained batch failure.
+
+## Trading Academy
+
+| Method       | Route                                                 | Access        |
+| ------------ | ----------------------------------------------------- | ------------- |
+| GET          | `/api/academy/courses`                                | Published     |
+| GET          | `/api/academy/courses/[courseSlug]`                   | Published     |
+| POST         | `/api/academy/courses/[courseId]/enroll`              | Member        |
+| GET          | `/api/academy/enrollments`                            | Owner         |
+| POST         | `/api/academy/lessons/[lessonId]/start`               | Enrolled      |
+| PATCH        | `/api/academy/lessons/[lessonId]/progress`            | Enrolled      |
+| POST         | `/api/academy/lessons/[lessonId]/complete`            | Enrolled      |
+| POST         | `/api/academy/assessments/[assessmentId]/attempts`    | Enrolled      |
+| POST         | `/api/academy/attempts/[attemptId]/submit`            | Attempt owner |
+| GET/POST     | `/api/academy/bookmarks`                              | Owner         |
+| DELETE       | `/api/academy/bookmarks/[id]`                         | Owner         |
+| GET/POST     | `/api/academy/notes`                                  | Owner         |
+| PATCH/DELETE | `/api/academy/notes/[id]`                             | Owner         |
+| GET          | `/api/academy/certificates`                           | Owner         |
+| GET          | `/api/academy/certificates/verify/[verificationCode]` | Public safe   |
+
+Mutation routes validate server-side and use typed `ACADEMY_*` error codes.
+Enrollment and submission accept an `Idempotency-Key` header. No route exposes
+draft content, answer keys, private notes from another user, or raw providers.

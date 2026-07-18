@@ -240,3 +240,27 @@ pagination, detail not-found handling, and the visible simulated-data warning.
 ## Sprint 12 watchlist and alert tests
 
 Deterministic tests cover ownership, normalization, default selection, duplicates, plan limits, alert-type validation, fixed-scale comparisons, price/percentage/bias/economic conditions, cooldowns, expiration, stale/simulated rejection, stable deduplication, scheduler authorization, bounded pagination, notification formatting, escaped email output, disabled-provider behavior, unread counts, cards, status text, and empty states. External services are not called.
+
+## Sprint 15 Academy tests
+
+Deterministic tests cover public/premium/draft access, course prerequisites,
+lesson enrollment, attempt windows/limits, required/optional progress, video
+thresholds, historical completion, deterministic randomization, six graded
+question types, explicit partial credit, unknown response rejection, decimal
+totals, prerequisite cycles, and certificate eligibility. External providers
+are not called.
+
+Manual database checklist after applying the SQL:
+
+1. With user A's authenticated client, select user A's enrollment.
+2. Confirm user B cannot select it.
+3. Confirm `anon` cannot select any Academy table.
+4. Confirm `authenticated` cannot insert/update/delete enrollment, progress,
+   attempt, response, certificate, event, or admin-audit rows.
+5. Confirm user A can read only user A's bookmark, note, and certificate.
+6. Call certificate verification through the server endpoint and confirm no
+   user ID/email is returned.
+7. Repeat enrollment/submission with the same idempotency key and confirm one
+   record/result.
+8. Verify unique active enrollment, attempt number, certificate number, and
+   verification-code constraints.

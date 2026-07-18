@@ -171,3 +171,15 @@ Implement authenticated watchlists while separately evaluating licensed
 economic and market-data providers. Add distributed limiting, ingestion
 observability, migration automation, provider contract tests, and end-to-end
 Route Handler coverage before enabling production economic ingestion.
+
+## Sprint 15 Part 1 — Trading Academy 2.0 backend
+
+Adds hybrid Sanity/Supabase LMS content and state, access/enrollment,
+progress/scoring/prerequisites, certificate verification, private learner
+utilities, API foundations, tests, and documentation.
+
+## Sprint 15 Part 2
+
+Build the responsive course catalog, lesson player, quiz experience, learning
+paths, progress dashboard, certificate UI/PDF, accessible admin tools, and
+end-to-end production integration on the Part 1 contracts.

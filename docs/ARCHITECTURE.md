@@ -269,3 +269,10 @@ same `EconomicEvent` contract. See [Economic Intelligence](ECONOMIC_SYSTEM.md).
 ## Watchlists and Smart Alerts
 
 Private watchlists and alerts use server-only repositories, repeated ownership checks, and Supabase RLS. The scheduler consumes normalized Market Data, editorial Market Intelligence, Economic Intelligence, and published Sanity metadata; its pure evaluator rejects missing, stale, expired, cooling-down, or simulated sources. Trigger history is written before notification delivery. See [Watchlists and Smart Alerts](WATCHLISTS_ALERTS.md).
+
+## Trading Academy 2.0
+
+Sanity owns published course structure and educational content. Supabase owns
+private learner state. `lib/academy` is the only authorization, enrollment,
+progress, scoring, prerequisite and certificate boundary. Browser clients never
+calculate authoritative state. See [Trading Academy LMS](TRADING_ACADEMY_LMS.md).

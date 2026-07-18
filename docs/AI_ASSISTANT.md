@@ -133,3 +133,11 @@ There is no arbitrary web browsing, upload, autonomous trading tool, broker
 access, embedding index, multilingual prompt pack, webinar transcript corpus, or
 Academy progress mutation. Future work may add reviewed read-only tools, richer
 Academy content, multilingual content, and transcript ingestion.
+
+## Academy Tutor foundation
+
+Sprint 15 replaces the hard-coded Academy source foundation with published,
+authorized course/lesson projections. Tutor context must check course and lesson
+access, omit assessment keys, cite canonical course/lesson URLs, and exclude
+private notes. It reuses the existing AI provider and is never called
+automatically during rendering. The learner Tutor experience remains Part 2.

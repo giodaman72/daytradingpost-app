@@ -266,3 +266,12 @@ seven-day retention job; this is not a historical market database.
 ## Watchlists, alerts, history, and notifications
 
 `docs/supabase-watchlists-alerts.sql` creates `watchlists`, `watchlist_items`, `alerts`, `alert_history`, and `notifications`. One profile owns all private records; watchlist items store centralized instrument slugs and prevent duplicates. Alert history uses unique source deduplication keys. RLS restricts records to `auth.uid()`, while column grants prevent browsers from writing trigger state, history insertion, or notification insertion.
+
+## Trading Academy learner state
+
+`docs/supabase-trading-academy-lms.sql` creates enrollments, lesson/module
+progress, attempts/responses, bookmarks, private notes, certificates,
+learning-path enrollments, privacy-safe events, and an admin audit log. Browser
+roles can select only their own learner state and cannot mutate calculated
+fields. Transactional service-role functions initialize enrollment and grade
+submissions. Sanity IDs and versions preserve the editorial boundary.

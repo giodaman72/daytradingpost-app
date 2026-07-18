@@ -183,3 +183,13 @@ Sanity. Use the registry symbol, select an explicit valid date, treat every leve
 as an editorial snapshot, and write both bullish and bearish conditions. Link
 the Sanity slug rather than copying article body text. Never use “live,”
 “guaranteed,” or signal language for an editorial bias.
+
+## Trading Academy content
+
+Create instructors and assessments before lessons, lessons before modules, and
+modules before courses. Use references and generated Sanity IDs. Published
+courses need objectives and at least one module; published modules need a
+lesson. Increment versions deliberately and create a new assessment version for
+answer-key or scoring changes. Never place provider secrets, embed HTML,
+personalized recommendations, fabricated credentials, or learner notes in
+Sanity. Keep the dataset private before graded assessments are published.

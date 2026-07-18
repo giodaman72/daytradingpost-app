@@ -215,6 +215,11 @@ and push a new commit so concurrency cancels the obsolete run.
 - [ ] Economic event RLS, indexes, and fixture rejection are verified
 - [ ] Production economic provider rights, attribution, and adapter are approved
 - [ ] Economic fixtures are disabled and calendar timezone/filter flows pass
+- [ ] Academy SQL is applied and every `academy_*` table has RLS enabled
+- [ ] Sanity dataset is private before graded assessments are published
+- [ ] Academy Viewer token, course projections, enrollment and grading work
+- [ ] Cross-user Academy isolation and protected calculated fields are verified
+- [ ] Academy configuration values are set for Preview and Production
 
 ## Rollback
 
