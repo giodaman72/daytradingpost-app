@@ -10,12 +10,14 @@ import {
 type AcademyViewEventProps = {
   courseId?: string;
   lessonId?: string;
+  learningPathId?: string;
   name: AcademyAnalyticsEventName;
 };
 
 export function AcademyViewEvent({
   courseId,
   lessonId,
+  learningPathId,
   name,
 }: AcademyViewEventProps) {
   const idempotencyKey = useRef<string | null>(null);
@@ -26,8 +28,9 @@ export function AcademyViewEvent({
       courseId,
       idempotencyKey: idempotencyKey.current,
       lessonId,
+      learningPathId,
       name,
     });
-  }, [courseId, lessonId, name]);
+  }, [courseId, learningPathId, lessonId, name]);
   return null;
 }

@@ -28,6 +28,18 @@ export const academyLearningPathType = defineType({
       name: "coverImage",
       type: "image",
       options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          type: "string",
+          validation: (rule) => rule.required().max(160),
+        }),
+      ],
+    }),
+    defineField({
+      name: "category",
+      type: "reference",
+      to: [{ type: "category" }],
     }),
     defineField({
       name: "targetAudience",
@@ -91,6 +103,14 @@ export const academyLearningPathType = defineType({
             return new Set(references).size === references.length
               ? true
               : "Courses cannot be duplicated";
+          })
+          .custom((items, context) => {
+            if (context.document?.status !== "published") return true;
+            return (items ?? []).some(
+              (item) => (item as { required?: boolean }).required !== false,
+            )
+              ? true
+              : "Published paths require at least one required course";
           }),
     }),
     defineField({

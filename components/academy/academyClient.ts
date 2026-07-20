@@ -41,6 +41,7 @@ export function recordAcademyClientEvent(input: {
   courseId?: string;
   idempotencyKey?: string;
   lessonId?: string;
+  learningPathId?: string;
   moduleId?: string;
   name: string;
 }) {

@@ -193,3 +193,17 @@ and progress contracts. Then add learning-path UX, certificate wallet/PDF and
 public presentation, advanced progress analytics, recommendation and
 notification interfaces, complete Academy Tutor chat, reviews, accessible admin
 course management, end-to-end browser coverage, and final launch polish.
+
+## Sprint 15 Volume 2 — learning paths
+
+Adds the published path catalog, dynamic path detail pages, authenticated path
+dashboard, idempotent server-side enrollment, required/optional progression,
+explicit course states, milestones, accessible ordered maps, explainable
+rules-based recommendations, analytics and versioning guidance.
+
+## Recommended Academy follow-up
+
+Add an administrator reconciliation workflow for material path-version changes,
+replacement-course migrations, database-emulator RLS tests, accessible browser
+automation and learning-path certificates only after a verified issuance policy
+exists.

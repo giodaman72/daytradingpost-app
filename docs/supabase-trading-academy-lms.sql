@@ -275,7 +275,9 @@ create table if not exists public.academy_events (
     'academy_assessment_failed', 'academy_course_completed',
     'academy_certificate_issued', 'academy_resource_downloaded',
     'academy_bookmark_created', 'academy_note_created',
-    'academy_learning_path_enrolled'
+    'academy_learning_path_viewed', 'academy_learning_path_enrolled',
+    'academy_learning_path_resumed', 'academy_learning_path_course_opened',
+    'academy_learning_path_completed'
   )),
   course_id text,
   module_id text,
@@ -300,7 +302,9 @@ alter table public.academy_events
     'academy_assessment_failed', 'academy_course_completed',
     'academy_certificate_issued', 'academy_resource_downloaded',
     'academy_bookmark_created', 'academy_note_created',
-    'academy_learning_path_enrolled'
+    'academy_learning_path_viewed', 'academy_learning_path_enrolled',
+    'academy_learning_path_resumed', 'academy_learning_path_course_opened',
+    'academy_learning_path_completed'
   ));
 create unique index if not exists academy_events_idempotency_unique
   on public.academy_events(user_id, idempotency_key)

@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased] — Sprint 15 Volume 2
+
+- Added public learning-path catalog and dynamic detail routes plus a protected
+  learner path dashboard
+- Added idempotent path enrollment, first-course initialization, verified
+  required/optional progress and explicit unavailable states
+- Added accessible ordered course maps, milestones, explainable
+  recommendations, analytics and responsive loading/empty/locked states
+- Documented path version changes, historical completion and remaining
+  certificate/reconciliation limitations
+
 ## [Unreleased] — Sprint 15 Part 2A
 
 - Added the public Trading Academy landing page, catalog, search and SEO course

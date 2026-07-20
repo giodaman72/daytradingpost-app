@@ -382,27 +382,92 @@ export type AcademyCertificate = {
 
 export type AcademyLearningPath = {
   accessLevel: AcademyAccessLevel;
-  courseIds: string[];
+  category: { id: string; slug: string; title: string } | null;
+  courses: AcademyLearningPathCourse[];
+  coverImage: AcademyImage | null;
+  description: unknown[];
   difficulty: AcademyDifficulty;
   durationMinutes: number;
+  featured: boolean;
   id: string;
+  publishedAt: string | null;
   prerequisitePathIds: string[];
   requiredCourseIds: string[];
   slug: string;
   status: AcademyContentStatus;
+  targetAudience: string[];
   title: string;
   version: number;
 };
 
+export type AcademyLearningPathCourse = {
+  course: Pick<
+    AcademyCourse,
+    | "accessLevel"
+    | "difficulty"
+    | "durationMinutes"
+    | "excerpt"
+    | "id"
+    | "prerequisiteCourseIds"
+    | "publishedAt"
+    | "slug"
+    | "status"
+    | "title"
+    | "version"
+  >;
+  required: boolean;
+};
+
 export type AcademyLearningPathEnrollment = {
   completedAt: string | null;
+  currentCourseId: string | null;
   enrolledAt: string;
   id: string;
   learningPathId: string;
   learningPathVersion: number;
   progressPercent: number;
+  startedAt: string | null;
   status: AcademyEnrollmentStatus;
   userId: string;
+};
+
+export type AcademyLearningPathCourseState =
+  | "available"
+  | "current"
+  | "completed"
+  | "optional"
+  | "locked"
+  | "premium"
+  | "archived"
+  | "unavailable"
+  | "access-expired";
+
+export type AcademyLearningPathNode = {
+  course: AcademyLearningPathCourse["course"];
+  lockReason: string | null;
+  required: boolean;
+  state: AcademyLearningPathCourseState;
+};
+
+export type AcademyLearningPathProgress = {
+  completedOptionalCourses: number;
+  completedRequiredCourses: number;
+  historicalCompletion: boolean;
+  nextCourse: AcademyLearningPathCourse["course"] | null;
+  nodes: AcademyLearningPathNode[];
+  progressPercent: number;
+  remainingDurationMinutes: number;
+  requiredCourses: number;
+};
+
+export type AcademyLearningPathView = {
+  authenticated: boolean;
+  canEnroll: boolean;
+  enrollment: AcademyLearningPathEnrollment | null;
+  hasPremiumAccess: boolean;
+  lockReason: string | null;
+  path: AcademyLearningPath;
+  progress: AcademyLearningPathProgress;
 };
 
 export type AcademyBookmark = {

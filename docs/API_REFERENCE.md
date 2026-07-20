@@ -262,6 +262,7 @@ Watchlist, alert, and notification member mutations use authenticated Server Act
 | GET          | `/api/academy/courses`                                | Published     |
 | GET          | `/api/academy/courses/[courseSlug]`                   | Published     |
 | POST         | `/api/academy/courses/[courseSlug]/enroll`            | Member        |
+| POST         | `/api/academy/learning-paths/[pathSlug]/enroll`       | Member        |
 | GET          | `/api/academy/enrollments`                            | Owner         |
 | POST         | `/api/academy/lessons/[lessonId]/start`               | Enrolled      |
 | PATCH        | `/api/academy/lessons/[lessonId]/progress`            | Enrolled      |
@@ -283,3 +284,8 @@ Enrollment and submission accept an `Idempotency-Key` header. No route exposes
 draft content, answer keys, private notes from another user, or raw providers.
 Full lesson bodies are loaded by authorized server components and intentionally
 have no public API endpoint.
+
+Learning-path enrollment requires JSON with an `idempotencyKey` (or the
+`Idempotency-Key` header). The server validates path publication, membership,
+prerequisite paths and ownership, then reuses an existing active enrollment or
+returns the newly created enrollment. Path progress has no browser-write API.

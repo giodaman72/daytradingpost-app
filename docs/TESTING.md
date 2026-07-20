@@ -278,3 +278,11 @@ payload normalization; public answer-key redaction; curriculum availability;
 and Academy component semantics. `npm run test:run` is the closest existing
 automated command for unit and component coverage. This repository has no
 Academy end-to-end, axe, database-emulator, RLS-test, or bundle-analysis script.
+
+Volume 2 adds deterministic coverage for published path query boundaries,
+premium and sequential locks, required versus optional counts, next-course
+selection, progress calculation, archived states, preserved enrollment
+versions, explainable non-sensitive recommendations, the ordered accessible map
+and empty states. Persistence contract tests verify active-enrollment uniqueness
+and owner scoping in both repository filters and SQL. Supabase integration still
+requires the manual owner/non-owner checklist above.

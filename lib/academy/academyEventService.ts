@@ -18,6 +18,7 @@ export async function recordAcademyEvent(input: {
   courseId?: string;
   idempotencyKey: string;
   lessonId?: string;
+  learningPathId?: string;
   moduleId?: string;
   name: string;
 }) {
@@ -44,7 +45,14 @@ export async function recordAcademyEvent(input: {
         160,
       ),
       lesson_id: identifier(input.lessonId, "lesson ID"),
-      metadata: {},
+      metadata: input.learningPathId
+        ? {
+            learningPathId: identifier(
+              input.learningPathId,
+              "learning path ID",
+            ),
+          }
+        : {},
       module_id: identifier(input.moduleId, "module ID"),
       user_id: access.userId,
     });

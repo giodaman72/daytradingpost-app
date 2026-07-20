@@ -13,6 +13,10 @@ export async function POST(request: Request) {
       courseId: typeof body.courseId === "string" ? body.courseId : undefined,
       idempotencyKey: String(body.idempotencyKey ?? ""),
       lessonId: typeof body.lessonId === "string" ? body.lessonId : undefined,
+      learningPathId:
+        typeof body.learningPathId === "string"
+          ? body.learningPathId
+          : undefined,
       moduleId: typeof body.moduleId === "string" ? body.moduleId : undefined,
       name: String(body.name ?? ""),
     });

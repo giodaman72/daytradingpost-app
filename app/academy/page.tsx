@@ -90,6 +90,12 @@ export default async function AcademyPage() {
               <Link href="/academy/courses" className="button">
                 Browse courses
               </Link>
+              <Link
+                href="/academy/learning-paths"
+                className="button button-secondary"
+              >
+                Explore learning paths
+              </Link>
               <Link href="/dashboard" className="button button-secondary">
                 Open trader dashboard
               </Link>

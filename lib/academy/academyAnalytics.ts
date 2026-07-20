@@ -25,7 +25,11 @@ export const ACADEMY_ANALYTICS_EVENTS = [
   "academy_resource_downloaded",
   "academy_bookmark_created",
   "academy_note_created",
+  "academy_learning_path_viewed",
   "academy_learning_path_enrolled",
+  "academy_learning_path_resumed",
+  "academy_learning_path_course_opened",
+  "academy_learning_path_completed",
 ] as const;
 
 export type AcademyAnalyticsEventName =
@@ -36,6 +40,7 @@ export function createAcademyAnalyticsEvent(
   identifiers: {
     assessmentId?: string;
     courseId?: string;
+    learningPathId?: string;
     lessonId?: string;
     moduleId?: string;
   },

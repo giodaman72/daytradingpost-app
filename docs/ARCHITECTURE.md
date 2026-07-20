@@ -283,3 +283,10 @@ only after server authorization. Canonical lesson and attempt routes are
 documented in [Academy learner experience](ACADEMY_LEARNER_EXPERIENCE.md).
 Assessment review policy is enforced before serialization, and protected
 resource URLs are resolved only through an authorized Route Handler.
+
+Learning paths add a composition layer without duplicating course truth.
+Published structure is projected from Sanity, learner ownership remains in
+Supabase, and `learningPathService` composes membership, path enrollment and
+course-enrollment state. `learningPathProgress` is pure and deterministic;
+Route Handlers never trust client-computed progress. See
+[Academy learning paths](ACADEMY_LEARNING_PATHS.md).

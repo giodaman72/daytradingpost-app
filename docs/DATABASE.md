@@ -275,3 +275,9 @@ learning-path enrollments, privacy-safe events, and an admin audit log. Browser
 roles can select only their own learner state and cannot mutate calculated
 fields. Transactional service-role functions initialize enrollment and grade
 submissions. Sanity IDs and versions preserve the editorial boundary.
+
+`academy_learning_path_enrollments` stores one active enrollment per user and
+Sanity path ID, the enrolled path version, current course pointer and
+server-synchronized percentage. Owner RLS is read-only for browser roles.
+Course enrollment rows remain the authoritative evidence for path completion;
+the path row is a resumable snapshot, not an independent completion grant.

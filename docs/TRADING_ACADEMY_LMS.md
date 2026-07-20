@@ -110,6 +110,15 @@ fields are removed before serialization when the Sanity policy disallows them.
 - Background reminder and reconciliation interfaces are documented but not
   scheduled in Part 1.
 
+## Guided learning paths
+
+Sprint 15 Volume 2 adds the public learning-path catalog and detail route plus a
+private path dashboard. Path access, prerequisite enforcement, idempotent
+enrollment and progress synchronization stay inside `lib/academy`. Supabase
+course enrollments—not browser state—determine required and optional progress.
+See [Academy learning paths](ACADEMY_LEARNING_PATHS.md) for the progression,
+recommendation and version-change policies.
+
 ## Manual setup
 
 1. Back up the Supabase project.

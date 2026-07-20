@@ -1,6 +1,7 @@
 export const ROUTES = {
   account: "/account",
   academy: "/academy",
+  academyLearningPaths: "/academy/learning-paths",
   analysis: "/analysis",
   alerts: "/alerts",
   assistant: "/assistant",
@@ -18,6 +19,7 @@ export const ROUTES = {
   },
   billing: "/account/billing",
   dashboard: "/dashboard",
+  dashboardLearningPaths: "/dashboard/learning/paths",
   economicCalendar: "/economic-calendar",
   home: "/",
   membership: {

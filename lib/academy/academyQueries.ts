@@ -345,12 +345,96 @@ export const academyLearningPathsQuery = defineQuery(/* groq */ `
     _id,
     title,
     "slug": slug.current,
+    description,
+    "coverImage": select(
+      defined(coverImage.asset) => {
+        "url": coverImage.asset->url,
+        "alt": coalesce(coverImage.alt, title)
+      },
+      null
+    ),
+    "category": category->{
+      "id": _id,
+      title,
+      "slug": slug.current
+    },
     difficulty,
     "durationMinutes": estimatedDurationMinutes,
-    "courseIds": courses[].course._ref,
-    "requiredCourseIds": courses[required == true].course._ref,
+    "featured": coalesce(featured, false),
+    "targetAudience": coalesce(targetAudience, []),
+    publishedAt,
+    "courses": courses[defined(course->._id)][]{
+      "required": coalesce(required, true),
+      "course": course->{
+        "id": _id,
+        title,
+        "slug": slug.current,
+        excerpt,
+        difficulty,
+        "durationMinutes": estimatedDurationMinutes,
+        "prerequisiteCourseIds": prerequisiteCourses[]._ref,
+        accessLevel,
+        status,
+        publishedAt,
+        version
+      }
+    },
+    "requiredCourseIds": courses[required != false && defined(course->._id)].course._ref,
     "prerequisitePathIds": prerequisiteLearningPaths[]._ref,
     "accessLevel": accessLevel,
+    status,
+    version
+  }
+`);
+
+export const academyLearningPathBySlugQuery = defineQuery(/* groq */ `
+  *[
+    _type == "academyLearningPath" &&
+    status == "published" &&
+    slug.current == $slug &&
+    defined(publishedAt) &&
+    publishedAt <= now()
+  ][0] {
+    _id,
+    title,
+    "slug": slug.current,
+    description,
+    "coverImage": select(
+      defined(coverImage.asset) => {
+        "url": coverImage.asset->url,
+        "alt": coalesce(coverImage.alt, title)
+      },
+      null
+    ),
+    "category": category->{
+      "id": _id,
+      title,
+      "slug": slug.current
+    },
+    difficulty,
+    "durationMinutes": estimatedDurationMinutes,
+    "featured": coalesce(featured, false),
+    "targetAudience": coalesce(targetAudience, []),
+    publishedAt,
+    "courses": courses[defined(course->._id)][]{
+      "required": coalesce(required, true),
+      "course": course->{
+        "id": _id,
+        title,
+        "slug": slug.current,
+        excerpt,
+        difficulty,
+        "durationMinutes": estimatedDurationMinutes,
+        "prerequisiteCourseIds": prerequisiteCourses[]._ref,
+        accessLevel,
+        status,
+        publishedAt,
+        version
+      }
+    },
+    "requiredCourseIds": courses[required != false && defined(course->._id)].course._ref,
+    "prerequisitePathIds": prerequisiteLearningPaths[]._ref,
+    accessLevel,
     status,
     version
   }

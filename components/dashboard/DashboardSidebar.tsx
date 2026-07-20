@@ -8,6 +8,7 @@ import {
   Crown,
   LayoutDashboard,
   ListPlus,
+  Route,
   Radio,
   ShieldAlert,
 } from "lucide-react";
@@ -18,6 +19,7 @@ const dashboardIcons = {
   "academy-progress": BookOpen,
   "economic-calendar": CalendarDays,
   "latest-analysis": LayoutDashboard,
+  "learning-paths": Route,
   "market-outlook": ChartNoAxesCombined,
   membership: Crown,
   notifications: Bell,

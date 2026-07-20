@@ -24,19 +24,44 @@ export const ACCOUNT_NAVIGATION = [
 ] as const;
 
 export const DASHBOARD_NAVIGATION = [
-  { href: "#market-outlook", id: "market-outlook", label: "Market outlook" },
-  { href: "#latest-analysis", id: "latest-analysis", label: "Latest analysis" },
   {
-    href: "#economic-calendar",
+    href: "/dashboard#market-outlook",
+    id: "market-outlook",
+    label: "Market outlook",
+  },
+  {
+    href: "/dashboard#latest-analysis",
+    id: "latest-analysis",
+    label: "Latest analysis",
+  },
+  {
+    href: "/dashboard#economic-calendar",
     id: "economic-calendar",
     label: "Economic calendar",
   },
-  { href: "#webinar", id: "webinar", label: "Webinars" },
-  { href: "#watchlist", id: "watchlist", label: "Watchlist" },
-  { href: "#smart-alerts", id: "smart-alerts", label: "Smart alerts" },
-  { href: "#academy-progress", id: "academy-progress", label: "Academy" },
-  { href: "#membership", id: "membership", label: "Membership" },
-  { href: "#notifications", id: "notifications", label: "Notifications" },
+  { href: "/dashboard#webinar", id: "webinar", label: "Webinars" },
+  { href: "/dashboard#watchlist", id: "watchlist", label: "Watchlist" },
+  {
+    href: "/dashboard#smart-alerts",
+    id: "smart-alerts",
+    label: "Smart alerts",
+  },
+  {
+    href: "/dashboard#academy-progress",
+    id: "academy-progress",
+    label: "Academy",
+  },
+  {
+    href: ROUTES.dashboardLearningPaths,
+    id: "learning-paths",
+    label: "Learning paths",
+  },
+  { href: "/dashboard#membership", id: "membership", label: "Membership" },
+  {
+    href: "/dashboard#notifications",
+    id: "notifications",
+    label: "Notifications",
+  },
 ] as const;
 
 export const FOOTER_NAVIGATION = [

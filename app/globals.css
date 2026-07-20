@@ -8920,3 +8920,509 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* Sprint 15 Volume 2: guided Academy learning paths */
+.learning-path-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.learning-path-card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(13, 20, 31, 0.84);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.14);
+  transition:
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.learning-path-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-strong);
+}
+
+.learning-path-card-media {
+  position: relative;
+  display: grid;
+  height: 210px;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 75% 20%,
+      rgba(245, 185, 66, 0.2),
+      transparent 32%
+    ),
+    linear-gradient(145deg, #131b29, #0d121c);
+  color: var(--gold);
+}
+
+.learning-path-card-media img,
+.learning-path-hero-image img {
+  object-fit: cover;
+}
+
+.learning-path-card-media .academy-access-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+}
+
+.learning-path-card-content {
+  padding: 24px;
+}
+
+.learning-path-card-content h2 {
+  margin: 18px 0 0;
+  font-size: 22px;
+  letter-spacing: -0.04em;
+}
+
+.learning-path-card-content > p {
+  min-height: 43px;
+  margin: 11px 0 17px;
+  color: var(--text-soft);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.learning-path-card-progress {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.learning-path-card-progress > span,
+.learning-path-progress-track {
+  display: block;
+  overflow: hidden;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.learning-path-card-progress > span > span,
+.learning-path-progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--gold), var(--green));
+}
+
+.learning-path-card-progress small,
+.learning-path-progress small {
+  color: var(--text-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.learning-path-reason {
+  min-height: auto !important;
+  border-left: 2px solid var(--gold);
+  padding-left: 11px;
+  color: var(--text-muted) !important;
+}
+
+.learning-path-hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  padding-block: 48px 76px;
+}
+
+.learning-path-hero nav {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 30px;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.learning-path-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  align-items: center;
+  gap: 72px;
+}
+
+.learning-path-hero h1 {
+  max-width: 880px;
+  margin: 20px 0 0;
+  font-size: clamp(44px, 6vw, 70px);
+  letter-spacing: -0.065em;
+  line-height: 1;
+}
+
+.learning-path-hero-image {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+  border: 1px solid rgba(245, 185, 66, 0.22);
+  border-radius: 22px;
+  background: var(--background-soft);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+}
+
+.learning-path-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  align-items: start;
+  gap: 80px;
+}
+
+.learning-path-enrollment > div:first-child {
+  padding: 26px;
+}
+
+.learning-path-enrollment dl {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0;
+  border-top: 1px solid var(--border);
+}
+
+.learning-path-enrollment dl div {
+  padding: 16px 12px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+}
+
+.learning-path-enrollment dl div:last-child {
+  border-right: 0;
+}
+
+.learning-path-enrollment dt {
+  color: var(--text-muted);
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
+.learning-path-enrollment dd {
+  margin: 6px 0 0;
+  font-size: 11px;
+}
+
+.learning-path-progress-section {
+  border-block: 1px solid var(--border);
+  background: rgba(245, 185, 66, 0.025);
+}
+
+.learning-path-progress {
+  display: grid;
+  gap: 20px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 28px;
+  background: rgba(13, 20, 31, 0.8);
+}
+
+.learning-path-progress h2 {
+  margin: 8px 0 0;
+  font-size: 32px;
+  letter-spacing: -0.045em;
+}
+
+.learning-path-progress p {
+  margin: 7px 0 0;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.learning-path-content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: start;
+  gap: 70px;
+}
+
+.learning-path-map ol {
+  position: relative;
+  display: grid;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.learning-path-map ol::before {
+  position: absolute;
+  top: 24px;
+  bottom: 24px;
+  left: 22px;
+  width: 1px;
+  background: var(--border-strong);
+  content: "";
+}
+
+.learning-path-node {
+  position: relative;
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 17px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  background: rgba(13, 20, 31, 0.78);
+}
+
+.learning-path-node-marker {
+  z-index: 1;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: #0b111b;
+  color: var(--text-muted);
+}
+
+.learning-path-node.state-completed .learning-path-node-marker {
+  border-color: rgba(39, 212, 151, 0.4);
+  color: var(--green);
+}
+
+.learning-path-node.state-current {
+  border-color: rgba(245, 185, 66, 0.38);
+}
+
+.learning-path-node.state-current .learning-path-node-marker {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.learning-path-node > div:last-child > span {
+  color: var(--text-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.learning-path-node h3 {
+  margin: 7px 0 0;
+  font-size: 20px;
+  letter-spacing: -0.035em;
+}
+
+.learning-path-node p {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.learning-path-state-label {
+  display: block;
+  margin-top: 13px;
+  color: var(--text-soft);
+  font-size: 9px;
+  text-transform: capitalize;
+}
+
+.learning-path-lock-reason {
+  color: #f7b4bc !important;
+}
+
+.learning-path-node .text-link {
+  display: inline-block;
+  margin-top: 14px;
+}
+
+.learning-path-milestones {
+  position: sticky;
+  top: 100px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 25px;
+  background: rgba(13, 20, 31, 0.86);
+}
+
+.learning-path-milestones h2 {
+  margin: 9px 0 20px;
+  font-size: 26px;
+  letter-spacing: -0.04em;
+}
+
+.learning-path-milestones ul {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.learning-path-milestones li {
+  display: flex;
+  gap: 11px;
+  border-top: 1px solid var(--border);
+  padding-block: 15px;
+  color: var(--text-muted);
+}
+
+.learning-path-milestones li.achieved {
+  color: var(--green);
+}
+
+.learning-path-milestones li span {
+  display: grid;
+  gap: 4px;
+  font-size: 10px;
+}
+
+.learning-path-milestones li strong {
+  color: var(--foreground);
+  font-size: 11px;
+}
+
+.learning-path-certificate-note {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+  color: var(--gold);
+}
+
+.learning-path-certificate-note p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.learning-path-skeleton {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  padding-block: 50px;
+}
+
+.learning-path-skeleton span {
+  min-height: 360px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.025) 20%,
+    rgba(255, 255, 255, 0.065) 40%,
+    rgba(255, 255, 255, 0.025) 60%
+  );
+  background-size: 200% 100%;
+  animation: academy-skeleton-pulse 1.4s linear infinite;
+}
+
+@keyframes academy-skeleton-pulse {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+.learning-path-dashboard {
+  display: grid;
+  gap: 55px;
+}
+
+.learning-path-dashboard-list {
+  display: grid;
+  gap: 18px;
+}
+
+.learning-path-dashboard-card-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.7fr) minmax(320px, 1fr);
+  align-items: center;
+  gap: 40px;
+}
+
+.learning-path-dashboard-card-grid > div:first-child h2 {
+  margin: 13px 0 0;
+  font-size: 25px;
+  letter-spacing: -0.04em;
+}
+
+.learning-path-dashboard-card-grid > div:first-child p {
+  margin: 8px 0 18px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.learning-path-dashboard .learning-path-progress {
+  padding: 20px;
+}
+
+.learning-path-recommendations {
+  padding-bottom: 35px;
+}
+
+@media (max-width: 1100px) {
+  .learning-path-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .learning-path-hero-grid,
+  .learning-path-detail-grid,
+  .learning-path-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .learning-path-hero-image {
+    max-width: 620px;
+  }
+
+  .learning-path-milestones {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .learning-path-grid,
+  .learning-path-skeleton,
+  .learning-path-dashboard-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .learning-path-hero {
+    padding-block: 38px 56px;
+  }
+
+  .learning-path-hero-grid,
+  .learning-path-detail-grid,
+  .learning-path-content-grid {
+    gap: 38px;
+  }
+
+  .learning-path-hero-image {
+    height: 230px;
+  }
+
+  .learning-path-node {
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 13px;
+    padding: 17px;
+  }
+
+  .learning-path-node-marker {
+    width: 38px;
+    height: 38px;
+  }
+
+  .learning-path-map ol::before {
+    left: 18px;
+  }
+
+  .learning-path-enrollment dl {
+    grid-template-columns: 1fr;
+  }
+
+  .learning-path-enrollment dl div {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+}

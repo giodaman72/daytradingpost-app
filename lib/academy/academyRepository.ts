@@ -14,6 +14,7 @@ import type {
   AcademyCourseDetail,
   AcademyEnrollment,
   AcademyLearningPath,
+  AcademyLearningPathEnrollment,
   AcademyLearningState,
   AcademyLesson,
   AcademyLessonProgress,
@@ -26,6 +27,7 @@ import {
   academyCourseBySlugQuery,
   academyCoursesQuery,
   academyLearningPathsQuery,
+  academyLearningPathBySlugQuery,
   academyLessonByCourseAndSlugQuery,
   academyLessonForTutorQuery,
   academyLessonStateQuery,
@@ -70,6 +72,21 @@ const mapEnrollment = (row: Record<string, unknown>): AcademyEnrollment => ({
   progressPercent: Number(row.progress_percent),
   startedAt: row.started_at as string | null,
   status: row.status as AcademyEnrollment["status"],
+  userId: String(row.user_id),
+});
+
+const mapLearningPathEnrollment = (
+  row: Record<string, unknown>,
+): AcademyLearningPathEnrollment => ({
+  completedAt: row.completed_at as string | null,
+  currentCourseId: row.current_course_id as string | null,
+  enrolledAt: String(row.enrolled_at),
+  id: String(row.id),
+  learningPathId: String(row.learning_path_id),
+  learningPathVersion: Number(row.learning_path_version),
+  progressPercent: Number(row.progress_percent),
+  startedAt: row.started_at as string | null,
+  status: row.status as AcademyLearningPathEnrollment["status"],
   userId: String(row.user_id),
 });
 
@@ -123,6 +140,19 @@ export async function listPublishedLearningPaths(limit = 20, offset = 0) {
     academyLearningPathsQuery,
     { end: offset + limit, start: offset },
     { next: { revalidate: 60, tags: ["sanity", "academy-path"] } },
+  );
+}
+
+export async function findPublishedLearningPathBySlug(slug: string) {
+  return requirePublishedClient().fetch<AcademyLearningPath | null>(
+    academyLearningPathBySlugQuery,
+    { slug },
+    {
+      next: {
+        revalidate: 60,
+        tags: ["sanity", "academy-path", slug],
+      },
+    },
   );
 }
 
@@ -248,6 +278,125 @@ export async function findEnrollmentByCourse(userId: string, courseId: string) {
       "Enrollment is unavailable.",
     );
   return data ? mapEnrollment(data) : null;
+}
+
+export async function listLearningPathEnrollments(
+  userId: string,
+  limit = 50,
+  offset = 0,
+) {
+  const { data, error } = await getSupabaseAdmin()
+    .from("academy_learning_path_enrollments")
+    .select("*")
+    .eq("user_id", userId)
+    .order("updated_at", { ascending: false })
+    .range(offset, offset + limit - 1);
+  if (error)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "Learning-path enrollments are unavailable.",
+    );
+  return (data ?? []).map(mapLearningPathEnrollment);
+}
+
+export async function findLearningPathEnrollment(
+  userId: string,
+  learningPathId: string,
+) {
+  const { data, error } = await getSupabaseAdmin()
+    .from("academy_learning_path_enrollments")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("learning_path_id", learningPathId)
+    .in("status", ["enrolled", "in_progress", "paused", "completed"])
+    .maybeSingle();
+  if (error)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "Learning-path enrollment is unavailable.",
+    );
+  return data ? mapLearningPathEnrollment(data) : null;
+}
+
+export async function insertLearningPathEnrollment(input: {
+  currentCourseId: string | null;
+  idempotencyKey: string;
+  learningPathId: string;
+  learningPathVersion: number;
+  userId: string;
+}) {
+  const { data, error } = await getSupabaseAdmin()
+    .from("academy_learning_path_enrollments")
+    .insert({
+      current_course_id: input.currentCourseId,
+      idempotency_key: input.idempotencyKey,
+      learning_path_id: input.learningPathId,
+      learning_path_version: input.learningPathVersion,
+      user_id: input.userId,
+    })
+    .select()
+    .single();
+  if (error?.code === "23505") {
+    const existing = await findLearningPathEnrollment(
+      input.userId,
+      input.learningPathId,
+    );
+    if (existing) return { created: false, enrollment: existing };
+  }
+  if (error)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "Could not create learning-path enrollment.",
+    );
+  return { created: true, enrollment: mapLearningPathEnrollment(data) };
+}
+
+export async function deleteLearningPathEnrollment(
+  userId: string,
+  enrollmentId: string,
+) {
+  const { error } = await getSupabaseAdmin()
+    .from("academy_learning_path_enrollments")
+    .delete()
+    .eq("id", enrollmentId)
+    .eq("user_id", userId);
+  if (error)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "Could not roll back learning-path enrollment.",
+    );
+}
+
+export async function updateLearningPathEnrollmentProgress(input: {
+  completed: boolean;
+  completedAt: string | null;
+  currentCourseId: string | null;
+  enrollmentId: string;
+  progressPercent: number;
+  startedAt: string | null;
+  userId: string;
+}) {
+  const now = new Date().toISOString();
+  const { data, error } = await getSupabaseAdmin()
+    .from("academy_learning_path_enrollments")
+    .update({
+      completed_at: input.completed ? (input.completedAt ?? now) : null,
+      current_course_id: input.currentCourseId,
+      progress_percent: input.progressPercent,
+      started_at: input.startedAt ?? now,
+      status: input.completed ? "completed" : "in_progress",
+      updated_at: now,
+    })
+    .eq("id", input.enrollmentId)
+    .eq("user_id", input.userId)
+    .select()
+    .single();
+  if (error)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "Learning-path progress could not be synchronized.",
+    );
+  return mapLearningPathEnrollment(data);
 }
 
 const mapLessonProgress = (
