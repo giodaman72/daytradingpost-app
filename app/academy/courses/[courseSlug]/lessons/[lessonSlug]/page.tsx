@@ -8,6 +8,7 @@ import { LessonCurriculumNavigation } from "@/components/academy/LessonCurriculu
 import { LessonProgressControls } from "@/components/academy/LessonProgressControls";
 import { LessonResources } from "@/components/academy/LessonResources";
 import { LessonTools } from "@/components/academy/LessonTools";
+import { AcademyTutorLessonActions } from "@/components/academy/tutor/AcademyTutorLessonActions";
 import { AcademyError } from "@/lib/academy/academyErrors";
 import {
   formatAcademyDuration,
@@ -151,25 +152,10 @@ export default async function LessonPage({ params }: LessonPageProps) {
               status={progress?.status ?? "available"}
             />
             {currentLesson.aiTutorEnabled ? (
-              <section className="academy-tutor-entry">
-                <div>
-                  <span className="section-kicker">
-                    Optional learning support
-                  </span>
-                  <h2>Ask the AI Assistant about this concept</h2>
-                  <p>
-                    The Assistant opens only when you choose it and uses
-                    published educational sources. It does not receive your
-                    private notes or assessment answers.
-                  </p>
-                </div>
-                <Link
-                  className="button button-secondary"
-                  href={`/assistant?mode=general_education&prompt=${encodeURIComponent(`Explain the key concepts in the Academy lesson “${currentLesson.title}”.`)}`}
-                >
-                  Ask about this lesson
-                </Link>
-              </section>
+              <AcademyTutorLessonActions
+                courseSlug={course.slug}
+                lessonSlug={currentLesson.slug}
+              />
             ) : null}
             <nav
               className="academy-lesson-pagination"

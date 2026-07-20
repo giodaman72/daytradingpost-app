@@ -34,6 +34,14 @@ const mapMessage = (row: Record<string, unknown>): AssistantMessage => ({
   safetyFlags: Array.isArray(row.safety_flags)
     ? row.safety_flags.map(String)
     : [],
+  sourceContext:
+    row.source_context && typeof row.source_context === "object"
+      ? Object.fromEntries(
+          Object.entries(row.source_context as Record<string, unknown>).map(
+            ([key, value]) => [key, value === null ? null : String(value)],
+          ),
+        )
+      : undefined,
   createdAt: String(row.created_at),
 });
 
@@ -68,14 +76,20 @@ export async function getConversation(userId: string, id: string) {
   return mapConversation(data);
 }
 
-export async function listConversations(userId: string, page = 1, limit = 20) {
+export async function listConversations(
+  userId: string,
+  page = 1,
+  limit = 20,
+  contextMode?: AssistantContextMode,
+) {
   const from = Math.max(0, page - 1) * limit;
-  const { data, error } = await getSupabaseAdmin()
+  let query = getSupabaseAdmin()
     .from("ai_conversations")
     .select()
     .eq("user_id", userId)
-    .order("updated_at", { ascending: false })
-    .range(from, from + limit - 1);
+    .order("updated_at", { ascending: false });
+  if (contextMode) query = query.eq("context_mode", contextMode);
+  const { data, error } = await query.range(from, from + limit - 1);
   if (error)
     throw new AssistantError(
       "INTERNAL_ERROR",
@@ -135,6 +149,7 @@ export async function insertMessage(input: {
   tokenUsage?: { inputTokens: number; outputTokens: number };
   safetyFlags?: string[];
   requestId: string;
+  sourceContext?: Record<string, string | null>;
 }) {
   await getConversation(input.userId, input.conversationId);
   const db = getSupabaseAdmin();
@@ -146,7 +161,10 @@ export async function insertMessage(input: {
       role: input.role,
       content: input.content,
       citations: input.citations ?? [],
-      source_context: { contextMode: input.contextMode },
+      source_context: {
+        contextMode: input.contextMode,
+        ...(input.sourceContext ?? {}),
+      },
       model: input.model ?? null,
       provider: input.provider ?? null,
       token_usage: input.tokenUsage ?? {},

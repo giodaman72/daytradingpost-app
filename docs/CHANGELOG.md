@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased] — Sprint 15 Volume 4
+
+- Added protected general, course and lesson Academy AI Tutor routes
+- Added ten Tutor learning modes, explicit lesson actions, streaming, history,
+  citations, usage, feedback, stop/copy controls and responsive states
+- Added server-authorized lesson and final-assessment-feedback retrieval with
+  premium downgrade filtering and recursive answer-key removal
+- Added deterministic assessment, certification, prompt-injection, profit and
+  locked-content safeguards plus the 15-case Tutor evaluation set
+- Added privacy-minimized provider requests with disabled provider storage and a
+  hashed safety identifier
+
 ## [Unreleased] — Sprint 15 Volume 3
 
 - Added a protected certificate wallet and private certificate detail pages

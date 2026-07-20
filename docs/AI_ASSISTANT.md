@@ -134,18 +134,14 @@ access, embedding index, multilingual prompt pack, webinar transcript corpus, or
 Academy progress mutation. Future work may add reviewed read-only tools, richer
 Academy content, multilingual content, and transcript ingestion.
 
-## Academy Tutor foundation
+## Academy Tutor
 
-Sprint 15 replaces the hard-coded Academy source foundation with published,
-authorized course/lesson projections. Tutor context must check course and lesson
-access, omit assessment keys, cite canonical course/lesson URLs, and exclude
-private notes. It reuses the existing AI provider and is never called
-automatically during rendering. The learner Tutor experience remains Part 2.
+Sprint 15 Volume 4 adds a complete learner Tutor at `/academy/tutor` and
+`/academy/courses/[courseSlug]/tutor`. It reuses this provider, conversation,
+usage, streaming, feedback and deletion stack while applying stricter
+course/lesson authorization and assessment rules. Lesson actions never call AI
+automatically. See `docs/ACADEMY_AI_TUTOR.md` for retrieval, assessment,
+privacy, entitlement and evaluation details.
 
-Part 2A adds an explicit “Ask about this lesson” entry point on authorized
-lesson pages. It navigates to the existing Assistant with a normalized
-lesson-title prompt only after the learner chooses the action. Lesson notes,
-assessment responses, answer keys, unpublished fields, and private resource
-locations are not added to the prompt. The Assistant still resolves authorized
-Academy context server-side and labels generated responses through its existing
-experience. Full inline Tutor chat remains deferred to Part 2B.
+OpenAI Responses requests set `store: false` and a stable hashed
+`safety_identifier`. The identifier contains no email or profile value.

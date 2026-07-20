@@ -15,5 +15,6 @@ export type AssistantMessage = {
   model: string | null;
   provider: string | null;
   safetyFlags: string[];
+  sourceContext?: Record<string, string | null>;
   createdAt: string;
 };

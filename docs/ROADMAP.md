@@ -124,6 +124,13 @@ checks pass. Future scope may be refined before implementation.
 
 - Moderated member discussions, profiles, reporting, and conduct controls
 
+### Sprint 15 — Trading Academy AI Tutor
+
+- Authenticated general, course and lesson Tutor workspaces
+- Published, entitlement-aware Academy retrieval with citations
+- Assessment, answer-key, certification and premium-extraction safeguards
+- Streaming, history, usage, feedback, privacy deletion and lesson actions
+
 ### Sprint 16 — PWA
 
 - Installable application shell, offline fallbacks, and safe notification opt-in

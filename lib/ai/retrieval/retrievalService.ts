@@ -6,6 +6,7 @@ import { AssistantError } from "../assistantErrors";
 import { canUseAssistantMode } from "../assistantPolicy";
 import { getAssistantConfig } from "../assistantConfig";
 import { retrieveAcademyContent } from "./academyRetriever";
+import { retrieveAcademyTutorContent } from "./academyTutorRetriever";
 import { rankAndDeduplicateDocuments } from "./contextAssembler";
 import { retrieveEconomicEvents } from "./economicRetriever";
 import { retrieveMarketData } from "./marketDataRetriever";
@@ -37,8 +38,14 @@ export async function retrieveAssistantContext(
     tasks.push(retrieveMarketData(request.instrumentSlug ?? null));
   if (allowed.has("economic_event"))
     tasks.push(retrieveEconomicEvents(request.economicEventId ?? null));
-  if (allowed.has("academy"))
-    tasks.push(retrieveAcademyContent(hasPremiumAccess));
+  if (allowed.has("academy")) {
+    if (
+      request.contextMode === "academy_tutor" &&
+      (request.academyCourseSlug || request.academyAttemptId)
+    )
+      tasks.push(Promise.resolve(await retrieveAcademyTutorContent(request)));
+    else tasks.push(retrieveAcademyContent(hasPremiumAccess));
+  }
   if (allowed.has("watchlist"))
     tasks.push(retrieveWatchlist(userId, request.watchlistId ?? null));
 

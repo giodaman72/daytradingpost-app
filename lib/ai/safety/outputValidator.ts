@@ -28,3 +28,22 @@ export function validateAssistantCitations(
     allowed.has(`${citation.sourceType}:${citation.sourceId}`),
   );
 }
+
+export function normalizeAcademyTutorSourceMarkers(
+  value: string,
+  sourceCount: number,
+) {
+  const normalized = value.replace(
+    /\[source\s+(\d+)\]/gi,
+    (marker, rawIndex: string) => {
+      const index = Number(rawIndex);
+      return index >= 1 && index <= sourceCount ? `[Source ${index}]` : "";
+    },
+  );
+  if (sourceCount === 0 || /\[Source \d+\]/.test(normalized))
+    return normalized.trim();
+  return `${normalized.trim()}\n\nSources consulted: ${Array.from(
+    { length: sourceCount },
+    (_, index) => `[Source ${index + 1}]`,
+  ).join(", ")}`;
+}

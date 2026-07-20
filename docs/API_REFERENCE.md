@@ -12,6 +12,26 @@
 Errors use stable public codes and never expose raw provider errors, prompts,
 retrieval context, credentials, or traces.
 
+Academy Tutor requests use the same chat stream with `contextMode` set to
+`academy_tutor`:
+
+```json
+{
+  "message": "Explain the key idea in this lesson.",
+  "contextMode": "academy_tutor",
+  "academyCourseSlug": "risk-foundations",
+  "academyLessonSlug": "position-sizing",
+  "academyAttemptId": null,
+  "academyTutorMode": "explain_lesson",
+  "requestId": "browser-generated-unique-id"
+}
+```
+
+Course/lesson context is optional in general Tutor mode. A lesson requires its
+course. Attempt IDs are owner-checked and active attempts are rejected. The
+server ignores client claims about enrollment, membership, publication or
+assessment status and resolves each from its source of truth.
+
 This reference documents currently implemented HTTP routes and Server Actions.
 Future route names are clearly marked as planned.
 

@@ -54,4 +54,27 @@ describe("assistant request validation", () => {
       }).reason,
     ).toBe("missing_citation");
   });
+  it("validates and normalizes Academy Tutor context", () => {
+    const request = parseAssistantRequest({
+      message: " Explain this lesson ",
+      contextMode: "academy_tutor",
+      academyCourseSlug: "risk-foundations",
+      academyLessonSlug: "position-sizing",
+      academyTutorMode: "explain_lesson",
+      requestId: "tutor-request-1",
+    });
+    expect(request.academyTutorMode).toBe("explain_lesson");
+    expect(request.academyLessonSlug).toBe("position-sizing");
+  });
+  it("rejects Academy context outside Tutor mode", () => {
+    expect(() =>
+      parseAssistantRequest({
+        message: "Explain this",
+        contextMode: "general_education",
+        academyLessonSlug: "private-lesson",
+        academyCourseSlug: "course",
+        requestId: "tutor-request-2",
+      }),
+    ).toThrow();
+  });
 });

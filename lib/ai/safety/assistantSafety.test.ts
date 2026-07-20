@@ -5,7 +5,10 @@ import {
   neutralizeRetrievedContent,
   redactObviousSecrets,
 } from "./promptInjectionDefense";
-import { sanitizeAssistantMarkdown } from "./outputValidator";
+import {
+  normalizeAcademyTutorSourceMarkers,
+  sanitizeAssistantMarkdown,
+} from "./outputValidator";
 
 describe("assistant safety", () => {
   it.each([
@@ -39,5 +42,16 @@ describe("assistant safety", () => {
     expect(value).not.toContain("<script>");
     expect(value).not.toContain("javascript:");
     expect(value).toContain("[good](/analysis)");
+  });
+  it("keeps only valid Tutor source markers and adds a disclosure fallback", () => {
+    expect(
+      normalizeAcademyTutorSourceMarkers(
+        "Support is a zone [Source 1]. Ignore [Source 99].",
+        2,
+      ),
+    ).toBe("Support is a zone [Source 1]. Ignore .");
+    expect(
+      normalizeAcademyTutorSourceMarkers("A grounded explanation.", 2),
+    ).toContain("Sources consulted: [Source 1], [Source 2]");
   });
 });

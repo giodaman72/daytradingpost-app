@@ -31,12 +31,7 @@ export async function getAcademyTutorContext(input: {
 }
 
 export function sanitizeAcademyTutorContext(lesson: Record<string, unknown>) {
-  const {
-    assessment: _assessment,
-    correctAnswer: _correctAnswer,
-    questions: _questions,
-    ...safe
-  } = lesson;
+  const safe = removeProtectedAcademyFields(lesson) as Record<string, unknown>;
   return {
     ...safe,
     citation: buildAcademyCitation(
@@ -45,6 +40,28 @@ export function sanitizeAcademyTutorContext(lesson: Record<string, unknown>) {
       String(lesson.slug ?? ""),
     ),
   };
+}
+
+const PROTECTED_KEYS = new Set([
+  "answerKey",
+  "assessment",
+  "correctAnswer",
+  "correctOptionIds",
+  "explanation",
+  "numericAnswer",
+  "numericTolerance",
+  "questions",
+  "responses",
+]);
+
+export function removeProtectedAcademyFields(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(removeProtectedAcademyFields);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>)
+      .filter(([key]) => !PROTECTED_KEYS.has(key))
+      .map(([key, child]) => [key, removeProtectedAcademyFields(child)]),
+  );
 }
 
 export function buildAcademyCitation(

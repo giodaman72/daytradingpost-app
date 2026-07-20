@@ -89,6 +89,8 @@ export class OpenAIProvider implements AIProvider {
           instructions: request.systemInstructions,
           input: input(request),
           max_output_tokens: request.maximumOutputTokens,
+          safety_identifier: request.safetyIdentifier,
+          store: false,
         },
         { signal },
       );
@@ -121,6 +123,8 @@ export class OpenAIProvider implements AIProvider {
           instructions: request.systemInstructions,
           input: input(request),
           max_output_tokens: request.maximumOutputTokens,
+          safety_identifier: request.safetyIdentifier,
+          store: false,
           stream: true,
         },
         { signal },

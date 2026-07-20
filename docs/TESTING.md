@@ -46,6 +46,26 @@ available versus locked curriculum links. Route handlers and server components
 retain the Part 1 service authorization boundary and are validated by the
 production build.
 
+Sprint 15 Volume 4 adds deterministic Tutor tests for request validation,
+recursive answer-key removal, premium-history filtering, assessment refusals,
+post-assessment allowance, source-marker validation, safe markdown links,
+stream parsing, feedback/deletion reuse and accessible context/disclaimer
+components. `academyTutorEvaluationCases.ts` records the required 15 acceptance
+cases: summary, simplify, glossary, premium, draft, answer key, active
+assessment, post-assessment feedback, injection, hidden prompt, profit promise,
+no source, provider outage, citation validity and cross-user denial.
+
+Manual Tutor checks must use two learner accounts and both free/premium states:
+
+1. Confirm anonymous routes redirect to login.
+2. Confirm unenrolled, locked, draft and premium lessons cannot be retrieved.
+3. Confirm another learner's conversation and attempt return not found/denied.
+4. Confirm lesson actions prefill without sending a network generation request.
+5. Confirm stop, retry, copy, citation links, feedback, archive and permanent
+   deletion work with keyboard and mobile layouts.
+6. Confirm active assessment and answer-key prompts receive deterministic
+   refusals while policy-permitted final feedback can be explained.
+
 ## Git hooks
 
 The `prepare` script installs Husky after dependency installation.

@@ -7,7 +7,11 @@ import type {
   AssistantFeedbackReason,
   AssistantFeedbackRating,
 } from "@/types/ai-feedback";
-import type { AssistantRequest } from "@/types/ai-assistant";
+import {
+  ACADEMY_TUTOR_MODES,
+  type AcademyTutorMode,
+  type AssistantRequest,
+} from "@/types/ai-assistant";
 import { AssistantError } from "./assistantErrors";
 
 const UUID =
@@ -63,6 +67,47 @@ export function parseAssistantRequest(
   if (instrumentSlug && !getInstrument(instrumentSlug))
     throw new AssistantError("INVALID_REQUEST", "Unsupported instrument.", 400);
 
+  const academyTutorMode = optionalId(
+    raw.academyTutorMode,
+    "Academy Tutor mode",
+  ) as AcademyTutorMode | null;
+  if (academyTutorMode && !ACADEMY_TUTOR_MODES.includes(academyTutorMode))
+    throw new AssistantError(
+      "INVALID_REQUEST",
+      "Unsupported Academy Tutor mode.",
+      400,
+    );
+  const academyCourseSlug = optionalId(raw.academyCourseSlug, "Academy course");
+  const academyLessonSlug = optionalId(raw.academyLessonSlug, "Academy lesson");
+  const academyAttemptId = optionalId(
+    raw.academyAttemptId,
+    "Academy assessment attempt",
+  );
+  if (
+    contextMode !== "academy_tutor" &&
+    (academyTutorMode ||
+      academyCourseSlug ||
+      academyLessonSlug ||
+      academyAttemptId)
+  )
+    throw new AssistantError(
+      "INVALID_REQUEST",
+      "Academy Tutor context requires Academy Tutor mode.",
+      400,
+    );
+  if (academyLessonSlug && !academyCourseSlug)
+    throw new AssistantError(
+      "INVALID_REQUEST",
+      "An Academy lesson requires its course.",
+      400,
+    );
+  if (academyAttemptId && !academyCourseSlug)
+    throw new AssistantError(
+      "INVALID_REQUEST",
+      "Assessment feedback requires its Academy course.",
+      400,
+    );
+
   return {
     message: message.replace(/\s+/g, " "),
     contextMode,
@@ -72,6 +117,10 @@ export function parseAssistantRequest(
     articleSlug: optionalId(raw.articleSlug, "article"),
     economicEventId: optionalId(raw.economicEventId, "economic event"),
     watchlistId: optionalId(raw.watchlistId, "watchlist"),
+    academyCourseSlug,
+    academyLessonSlug,
+    academyAttemptId,
+    academyTutorMode,
   };
 }
 

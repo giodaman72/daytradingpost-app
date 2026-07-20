@@ -13,6 +13,16 @@ const REFUSALS: Partial<Record<AssistantIntent, string>> = {
     "I can’t provide a personalized buy or sell recommendation. I can summarize published analysis and explain general scenarios and risks.",
   evasion:
     "I can’t help bypass financial, broker, tax, identity, or regulatory controls. I can provide general educational information about compliant market participation.",
+  academy_answer_key:
+    "I can’t provide or reconstruct answer keys. I can explain the lesson concept or generate new, ungraded practice questions.",
+  academy_active_assessment:
+    "I can’t answer an active assessment question. I can explain the surrounding lesson concept without solving the graded item.",
+  academy_assessment_completion:
+    "I can’t complete graded quizzes or assessments. I can help you study the underlying concept.",
+  academy_certification_claim:
+    "I can’t issue, bypass, or misrepresent an Academy certificate.",
+  academy_premium_extraction:
+    "I can’t expose premium, locked, draft, or unpublished Academy content.",
 };
 
 export function getSafetyRefusal(intent: AssistantIntent) {

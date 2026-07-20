@@ -1,4 +1,5 @@
 import "server-only";
+import { createHash } from "node:crypto";
 import { getAssistantLimits } from "@/constants/ai-assistant";
 import type {
   AssistantRequest,
@@ -36,9 +37,16 @@ import { classifyAssistantIntent } from "./safety/intentClassifier";
 import { redactObviousSecrets } from "./safety/promptInjectionDefense";
 import {
   sanitizeAssistantMarkdown,
+  normalizeAcademyTutorSourceMarkers,
   validateAssistantCitations,
 } from "./safety/outputValidator";
 import { safeConversationTitle } from "./assistantValidation";
+import { evaluateAcademyTutorPolicy } from "@/lib/academy/ai/academyTutorPolicy";
+import { isAcademyTutorAttemptActive } from "@/lib/academy/ai/academyTutorAssessment";
+import {
+  filterAuthorizedTutorMessages,
+  isTutorConversationContextCompatible,
+} from "@/lib/academy/ai/academyTutorMessages";
 
 async function conversationFor(
   request: AssistantRequest,
@@ -51,6 +59,12 @@ async function conversationFor(
       throw new AssistantError(
         "CONFLICT",
         "Restore this conversation before continuing it.",
+        409,
+      );
+    if (conversation.contextMode !== request.contextMode)
+      throw new AssistantError(
+        "CONFLICT",
+        "Start a new conversation when changing assistant modes.",
         409,
       );
     return conversation;
@@ -124,13 +138,55 @@ export async function* streamAssistantResponse(
       access.userId,
       access.hasPremiumAccess,
     );
+    const priorMessages =
+      request.contextMode === "academy_tutor"
+        ? await listMessages(access.userId, conversation.id, 50)
+        : [];
+    if (
+      request.contextMode === "academy_tutor" &&
+      !isTutorConversationContextCompatible(
+        priorMessages,
+        request.academyCourseSlug,
+      )
+    )
+      throw new AssistantError(
+        "CONFLICT",
+        "Start a new Tutor conversation when changing courses.",
+        409,
+      );
     yield {
       type: "start",
       requestId: request.requestId,
       conversationId: conversation.id,
     };
-    const classification = classifyAssistantIntent(request.message);
+    const activeAssessment = request.academyAttemptId
+      ? await isAcademyTutorAttemptActive(request.academyAttemptId)
+      : false;
+    const generalClassification = classifyAssistantIntent(request.message);
+    const academyDecision =
+      request.contextMode === "academy_tutor"
+        ? evaluateAcademyTutorPolicy(request.message, { activeAssessment })
+        : null;
+    const classification = academyDecision?.intent
+      ? {
+          intent: academyDecision.intent,
+          flags: [
+            ...new Set([
+              ...generalClassification.flags,
+              ...academyDecision.flags,
+            ]),
+          ],
+        }
+      : generalClassification;
     const cleanMessage = redactObviousSecrets(request.message);
+    const sourceContext =
+      request.contextMode === "academy_tutor"
+        ? {
+            academyCourseSlug: request.academyCourseSlug ?? null,
+            academyLessonSlug: request.academyLessonSlug ?? null,
+            academyTutorMode: request.academyTutorMode ?? null,
+          }
+        : undefined;
     await insertMessage({
       userId: access.userId,
       conversationId: conversation.id,
@@ -139,9 +195,11 @@ export async function* streamAssistantResponse(
       contextMode: request.contextMode,
       requestId: request.requestId,
       safetyFlags: classification.flags,
+      sourceContext,
     });
 
-    const refusal = getSafetyRefusal(classification.intent);
+    const refusal =
+      academyDecision?.refusal ?? getSafetyRefusal(classification.intent);
     if (refusal) {
       const message = await insertMessage({
         userId: access.userId,
@@ -153,6 +211,7 @@ export async function* streamAssistantResponse(
         model: "deterministic-safety-policy",
         provider: "daytradingpost",
         safetyFlags: classification.flags,
+        sourceContext,
       });
       await recordAssistantUsage(access.userId, 0, 0);
       await recordAssistantMetric({
@@ -197,17 +256,29 @@ export async function* streamAssistantResponse(
       buildAssistantCitations(retrieval.documents),
       retrieval.documents,
     );
-    const history = await listMessages(access.userId, conversation.id, 12);
+    const history = filterAuthorizedTutorMessages(
+      await listMessages(access.userId, conversation.id, 12),
+      access.hasPremiumAccess,
+      request.contextMode === "academy_tutor"
+        ? request.academyCourseSlug
+        : undefined,
+    );
     const provider = getAIProvider();
     const providerRequest = {
       messages: history.map(({ role, content }) => ({ role, content })),
-      systemInstructions: buildSystemInstructions(request.contextMode),
+      systemInstructions: buildSystemInstructions(
+        request.contextMode,
+        request.academyTutorMode,
+      ),
       retrievedContext: assembleRetrievedContext(retrieval.documents),
       userContext: { accessLevel: access.accessLevel },
       outputFormat: "markdown" as const,
       maximumOutputTokens: getAssistantConfig().maximumOutputTokens,
       temperature: 0.2,
       requestId: request.requestId,
+      safetyIdentifier: createHash("sha256")
+        .update(`daytradingpost:${access.userId}`)
+        .digest("hex"),
     };
     let providerResult = null;
     for await (const chunk of provider.streamResponse(
@@ -223,7 +294,14 @@ export async function* streamAssistantResponse(
         "The provider returned no response.",
         502,
       );
-    const text = sanitizeAssistantMarkdown(providerResult.text);
+    const sanitized = sanitizeAssistantMarkdown(providerResult.text);
+    const text =
+      request.contextMode === "academy_tutor"
+        ? normalizeAcademyTutorSourceMarkers(
+            sanitized,
+            retrieval.documents.length,
+          )
+        : sanitized;
     if (!text)
       throw new AssistantError(
         "PROVIDER_ERROR",
@@ -242,6 +320,7 @@ export async function* streamAssistantResponse(
       provider: providerResult.provider,
       tokenUsage: providerResult.usage,
       safetyFlags: classification.flags,
+      sourceContext,
     });
     await recordAssistantUsage(
       access.userId,

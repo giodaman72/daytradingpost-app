@@ -7,10 +7,12 @@ export function AssistantHistorySidebar({
   conversations,
   activeId,
   onNew,
+  basePath = "/assistant",
 }: {
   conversations: AssistantConversation[];
   activeId: string | null;
   onNew: () => void;
+  basePath?: string;
 }) {
   async function remove(id: string) {
     if (
@@ -20,7 +22,7 @@ export function AssistantHistorySidebar({
     const response = await fetch(`/api/assistant/conversations/${id}`, {
       method: "DELETE",
     });
-    if (response.ok) window.location.assign("/assistant");
+    if (response.ok) window.location.assign(basePath);
   }
   async function archive(id: string) {
     await fetch(`/api/assistant/conversations/${id}`, {
@@ -55,7 +57,9 @@ export function AssistantHistorySidebar({
               data-active={conversation.id === activeId}
               key={conversation.id}
             >
-              <Link href={`/assistant?conversation=${conversation.id}`}>
+              <Link
+                href={`${basePath}${basePath.includes("?") ? "&" : "?"}conversation=${conversation.id}`}
+              >
                 <strong>{conversation.title}</strong>
                 <small>{conversation.contextMode.replaceAll("_", " ")}</small>
               </Link>

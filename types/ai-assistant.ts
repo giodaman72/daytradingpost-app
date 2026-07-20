@@ -13,6 +13,11 @@ export const ASSISTANT_INTENTS = [
   "personal_position_sizing",
   "evasion",
   "prompt_injection",
+  "academy_answer_key",
+  "academy_active_assessment",
+  "academy_assessment_completion",
+  "academy_certification_claim",
+  "academy_premium_extraction",
   "unrelated",
 ] as const;
 
@@ -24,8 +29,28 @@ export type AssistantSafetyFlag =
   | "hidden_prompt"
   | "personal_data"
   | "prompt_injection"
+  | "answer_key_request"
+  | "active_assessment"
+  | "assessment_completion"
+  | "certification_claim"
+  | "premium_extraction"
   | "trade_execution"
   | "unsafe_link";
+
+export const ACADEMY_TUTOR_MODES = [
+  "explain_lesson",
+  "simplify_concept",
+  "summarize_lesson",
+  "lesson_question",
+  "practice_questions",
+  "quiz_feedback",
+  "glossary_help",
+  "compare_concepts",
+  "study_checklist",
+  "next_topic",
+] as const;
+
+export type AcademyTutorMode = (typeof ACADEMY_TUTOR_MODES)[number];
 
 export type AssistantConversation = {
   id: string;
@@ -46,6 +71,10 @@ export type AssistantRequest = {
   articleSlug?: string | null;
   economicEventId?: string | null;
   watchlistId?: string | null;
+  academyCourseSlug?: string | null;
+  academyLessonSlug?: string | null;
+  academyAttemptId?: string | null;
+  academyTutorMode?: AcademyTutorMode | null;
   requestId: string;
 };
 
@@ -58,6 +87,7 @@ export type AssistantProviderRequest = {
   maximumOutputTokens: number;
   temperature: number;
   requestId: string;
+  safetyIdentifier?: string;
 };
 
 export type AssistantResponse = {

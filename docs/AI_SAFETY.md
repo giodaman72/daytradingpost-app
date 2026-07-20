@@ -36,3 +36,17 @@ The system can be incomplete or wrong. Editorial and legal owners must review
 prompts, refusal language, provider terms, retention, model choice, evaluation
 results, and monitoring before production. Feedback is for manual quality
 review and is not automatically used to train on private conversations.
+
+## Academy Tutor boundary
+
+Academy mode adds deterministic checks for answer-key requests, active or graded
+assessment completion, certification bypass and premium/draft extraction. Tutor
+retrieval resolves the signed-in learner's enrollment and membership before
+fetching a published lesson. Assessment feedback is available only for a final
+owner-scoped attempt and only when the assessment policy exposed feedback.
+
+Answer keys, raw responses, private notes, hidden prompts, email, profile data,
+drafts and another learner's content are never retrieval sources. Nested
+assessment-key fields are removed recursively as defense in depth. Losing
+premium entitlement removes premium-derived responses from history replay and
+future provider context.

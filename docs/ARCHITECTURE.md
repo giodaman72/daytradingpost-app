@@ -149,6 +149,15 @@ Implemented HTTP boundaries:
 Authentication forms and membership checkout use Server Actions rather than
 inventing duplicate REST endpoints. See `API_REFERENCE.md`.
 
+## Academy AI Tutor
+
+The Tutor is a presentation and policy specialization of `lib/ai`, not an
+independent provider pipeline. Server Components authorize the learner and load
+owner-scoped history; the Client shell streams through
+`POST /api/assistant/chat`. `lib/ai/retrieval/academyTutorRetriever.ts` resolves
+course, lesson and final-attempt feedback through existing Academy services.
+Provider keys, raw retrieval context and grading data stay server-only.
+
 ## Caching strategy
 
 | Data                       | Strategy                                                               |

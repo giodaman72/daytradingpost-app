@@ -104,8 +104,8 @@ revocation. See `docs/ACADEMY_CERTIFICATES.md` and
 
 ## Known limitations
 
-- Reviews, a full Academy administrator interface, advanced reporting and
-  complete Tutor chat remain future work.
+- Reviews, a full Academy administrator interface and advanced reporting remain
+  future work.
 - Certificate reissue remains disabled until a correction/replacement business
   policy is approved. The model preserves superseding relationships.
 - Content review workflow is modeled but does not automate Sanity approvals.
@@ -141,3 +141,10 @@ recommendation and version-change policies.
 9. Create content in dependency order: instructors, templates, assessments,
    lessons, modules, courses, learning paths.
 10. Do not publish graded assessments until answer-key privacy is verified.
+
+## Academy AI Tutor
+
+Volume 4 completes authenticated general, course and lesson Tutor routes,
+explicit lesson actions, source citations, usage/feedback/history controls and
+assessment-safe retrieval. It never changes progress, grades or certificates.
+See [Academy AI Tutor](ACADEMY_AI_TUTOR.md).
