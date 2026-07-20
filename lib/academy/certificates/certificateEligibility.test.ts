@@ -38,4 +38,28 @@ describe("Academy certificate eligibility", () => {
       }).reasons,
     ).toEqual(["course-not-completed", "display-name-required"]);
   });
+
+  it.each([
+    ["certificateEnabled", false, "certificate-disabled"],
+    ["enrollmentValid", false, "enrollment-invalid"],
+    ["finalAssessmentPassed", false, "assessment-not-passed"],
+    ["administrativeHold", true, "administrative-hold"],
+  ] as const)(
+    "rejects %s when the requirement is not met",
+    (key, value, reason) => {
+      expect(
+        evaluateCertificateEligibility({ ...eligible, [key]: value }).reasons,
+      ).toContain(reason);
+    },
+  );
+
+  it("does not require an assessment when the course has none", () => {
+    expect(
+      evaluateCertificateEligibility({
+        ...eligible,
+        finalAssessmentPassed: null,
+        finalAssessmentRequired: false,
+      }),
+    ).toEqual({ eligible: true, reasons: [] });
+  });
 });

@@ -257,27 +257,29 @@ Watchlist, alert, and notification member mutations use authenticated Server Act
 
 ## Trading Academy
 
-| Method       | Route                                                 | Access        |
-| ------------ | ----------------------------------------------------- | ------------- |
-| GET          | `/api/academy/courses`                                | Published     |
-| GET          | `/api/academy/courses/[courseSlug]`                   | Published     |
-| POST         | `/api/academy/courses/[courseSlug]/enroll`            | Member        |
-| POST         | `/api/academy/learning-paths/[pathSlug]/enroll`       | Member        |
-| GET          | `/api/academy/enrollments`                            | Owner         |
-| POST         | `/api/academy/lessons/[lessonId]/start`               | Enrolled      |
-| PATCH        | `/api/academy/lessons/[lessonId]/progress`            | Enrolled      |
-| POST         | `/api/academy/lessons/[lessonId]/complete`            | Enrolled      |
-| POST         | `/api/academy/assessments/[assessmentId]/attempts`    | Enrolled      |
-| POST         | `/api/academy/attempts/[attemptId]/submit`            | Attempt owner |
-| GET/POST     | `/api/academy/bookmarks`                              | Owner         |
-| PATCH/DELETE | `/api/academy/bookmarks/[id]`                         | Owner         |
-| GET/POST     | `/api/academy/notes`                                  | Owner         |
-| PATCH/DELETE | `/api/academy/notes/[id]`                             | Owner         |
-| GET          | `/api/academy/certificates`                           | Owner         |
-| GET          | `/api/academy/certificates/verify/[verificationCode]` | Public safe   |
-| GET          | `/api/academy/attempts/[attemptId]`                   | Attempt owner |
-| POST         | `/api/academy/events`                                 | Member        |
-| GET          | `/api/academy/resources/[resourceId]`                 | Enrolled      |
+| Method       | Route                                                    | Access        |
+| ------------ | -------------------------------------------------------- | ------------- |
+| GET          | `/api/academy/courses`                                   | Published     |
+| GET          | `/api/academy/courses/[courseSlug]`                      | Published     |
+| POST         | `/api/academy/courses/[courseSlug]/enroll`               | Member        |
+| POST         | `/api/academy/learning-paths/[pathSlug]/enroll`          | Member        |
+| GET          | `/api/academy/enrollments`                               | Owner         |
+| POST         | `/api/academy/lessons/[lessonId]/start`                  | Enrolled      |
+| PATCH        | `/api/academy/lessons/[lessonId]/progress`               | Enrolled      |
+| POST         | `/api/academy/lessons/[lessonId]/complete`               | Enrolled      |
+| POST         | `/api/academy/assessments/[assessmentId]/attempts`       | Enrolled      |
+| POST         | `/api/academy/attempts/[attemptId]/submit`               | Attempt owner |
+| GET/POST     | `/api/academy/bookmarks`                                 | Owner         |
+| PATCH/DELETE | `/api/academy/bookmarks/[id]`                            | Owner         |
+| GET/POST     | `/api/academy/notes`                                     | Owner         |
+| PATCH/DELETE | `/api/academy/notes/[id]`                                | Owner         |
+| GET/POST     | `/api/academy/certificates`                              | Owner         |
+| GET          | `/api/academy/certificates/[certificateId]/download`     | Owner         |
+| GET          | `/api/academy/certificates/verify/[verificationCode]`    | Public safe   |
+| POST         | `/api/admin/academy/certificates/[certificateId]/revoke` | Academy admin |
+| GET          | `/api/academy/attempts/[attemptId]`                      | Attempt owner |
+| POST         | `/api/academy/events`                                    | Member        |
+| GET          | `/api/academy/resources/[resourceId]`                    | Enrolled      |
 
 Mutation routes validate server-side and use typed `ACADEMY_*` error codes.
 Enrollment and submission accept an `Idempotency-Key` header. No route exposes
@@ -289,3 +291,9 @@ Learning-path enrollment requires JSON with an `idempotencyKey` (or the
 `Idempotency-Key` header). The server validates path publication, membership,
 prerequisite paths and ownership, then reuses an existing active enrollment or
 returns the newly created enrollment. Path progress has no browser-write API.
+
+Certificate issuance requires JSON `enrollmentId` and `idempotencyKey`; all
+eligibility and snapshot fields are server-loaded. Download is owner-scoped and
+private. Revocation requires `academy:manage-certificates` plus JSON `reason`,
+`confirmation` equal to `REVOKE`, and a unique `requestId`. Public verification
+uses only the allowlist in `docs/CERTIFICATE_VERIFICATION.md`.

@@ -188,11 +188,10 @@ dashboard continuation card.
 
 ## Recommended Sprint 15 Part 2B
 
-Start with a full learner Academy dashboard backed by the existing enrollment
-and progress contracts. Then add learning-path UX, certificate wallet/PDF and
-public presentation, advanced progress analytics, recommendation and
-notification interfaces, complete Academy Tutor chat, reviews, accessible admin
-course management, end-to-end browser coverage, and final launch polish.
+Build on the completed learning-path and course-certificate foundations with
+advanced progress analytics, a complete Academy Tutor, reviews, accessible
+administrator course/certificate management, end-to-end browser coverage, and
+final launch polish.
 
 ## Sprint 15 Volume 2 — learning paths
 
@@ -201,9 +200,16 @@ dashboard, idempotent server-side enrollment, required/optional progression,
 explicit course states, milestones, accessible ordered maps, explainable
 rules-based recommendations, analytics and versioning guidance.
 
+## Sprint 15 Volume 3 — certificates
+
+Adds server-controlled transactional course-certificate issuance, private
+wallet/detail pages, branded PDF and QR/text verification, privacy-safe public
+status, sharing, idempotent notifications/events and audited administrator
+revocation.
+
 ## Recommended Academy follow-up
 
-Add an administrator reconciliation workflow for material path-version changes,
-replacement-course migrations, database-emulator RLS tests, accessible browser
-automation and learning-path certificates only after a verified issuance policy
-exists.
+Add administrator reconciliation for material path-version changes,
+replacement-course migrations, database-emulator RLS tests, browser automation,
+distributed verification rate limiting and learning-path certificates. Approve
+a correction/reissue policy before enabling the modeled superseding workflow.

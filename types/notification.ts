@@ -23,4 +23,8 @@ export type NotificationDraft = Pick<
   Notification,
   "message" | "notificationType" | "title" | "userId"
 > &
-  Partial<Pick<Notification, "expiresAt" | "link" | "metadata" | "severity">>;
+  Partial<
+    Pick<Notification, "expiresAt" | "link" | "metadata" | "severity">
+  > & {
+    idempotencyKey?: string;
+  };

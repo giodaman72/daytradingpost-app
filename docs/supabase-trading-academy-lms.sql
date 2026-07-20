@@ -230,10 +230,25 @@ create table if not exists public.academy_certificates (
     (status <> 'revoked')
   )
 );
+alter table public.academy_enrollments
+  add column if not exists certificate_hold_at timestamptz,
+  add column if not exists certificate_hold_reason text
+    check (certificate_hold_reason is null or char_length(certificate_hold_reason) <= 500);
+alter table public.academy_certificates
+  add column if not exists supersedes_certificate_id uuid
+    references public.academy_certificates(id) on delete restrict,
+  add column if not exists superseded_by_certificate_id uuid
+    references public.academy_certificates(id) on delete restrict;
 create index if not exists academy_certificates_user_issued_idx
   on public.academy_certificates(user_id, issued_at desc);
 create index if not exists academy_certificates_verification_idx
   on public.academy_certificates(verification_code);
+create unique index if not exists academy_certificates_one_active_course_version
+  on public.academy_certificates(user_id, course_id, course_version)
+  where status = 'issued';
+create unique index if not exists academy_certificates_supersedes_unique
+  on public.academy_certificates(supersedes_certificate_id)
+  where supersedes_certificate_id is not null;
 
 create table if not exists public.academy_learning_path_enrollments (
   id uuid primary key default gen_random_uuid(),
@@ -425,6 +440,188 @@ grant execute on function public.enroll_academy_course(
   uuid, text, text, integer, text, jsonb, jsonb, jsonb, text
 ) to service_role;
 
+-- Certificate issuance is atomic and idempotent. Sanity-backed eligibility
+-- (published course, certificate flag, and assessment configuration) is
+-- checked by trusted server code immediately before this database transaction.
+-- The transaction repeats every database-owned eligibility check under a lock.
+create or replace function public.issue_academy_certificate(
+  p_user_id uuid,
+  p_enrollment_id uuid,
+  p_course_id text,
+  p_course_version integer,
+  p_certificate_number text,
+  p_verification_code text,
+  p_learner_display_name text,
+  p_course_title text,
+  p_instructor_name text,
+  p_completion_date date,
+  p_score_snapshot numeric,
+  p_metadata jsonb,
+  p_idempotency_key text
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  certificate_id uuid;
+  enrollment public.academy_enrollments;
+begin
+  perform pg_advisory_xact_lock(
+    hashtextextended(p_user_id::text || ':' || p_course_id || ':' || p_course_version::text, 0)
+  );
+
+  select id into certificate_id
+  from public.academy_certificates
+  where user_id = p_user_id
+    and course_id = p_course_id
+    and course_version = p_course_version
+    and issuance_idempotency_key = p_idempotency_key
+  limit 1;
+  if certificate_id is not null then return certificate_id; end if;
+
+  select * into enrollment
+  from public.academy_enrollments
+  where id = p_enrollment_id and user_id = p_user_id
+  for update;
+
+  if enrollment.id is null
+    or enrollment.course_id <> p_course_id
+    or enrollment.course_version <> p_course_version
+    or enrollment.status <> 'completed'
+    or enrollment.completed_at is null
+    or enrollment.certificate_hold_at is not null
+    or enrollment.completed_at::date <> p_completion_date
+  then
+    raise exception using errcode = '23514', message = 'certificate enrollment is not eligible';
+  end if;
+
+  if exists (
+    select 1 from public.academy_certificates
+    where user_id = p_user_id
+      and course_id = p_course_id
+      and course_version = p_course_version
+      and status = 'issued'
+  ) then
+    raise exception using errcode = '23505', message = 'active certificate exists';
+  end if;
+
+  insert into public.academy_certificates (
+    user_id, enrollment_id, course_id, course_version, certificate_number,
+    verification_code, learner_display_name, course_title_snapshot,
+    instructor_name_snapshot, completion_date, score_snapshot, metadata,
+    issuance_idempotency_key
+  )
+  values (
+    p_user_id, p_enrollment_id, p_course_id, p_course_version,
+    p_certificate_number, p_verification_code, btrim(p_learner_display_name),
+    btrim(p_course_title), nullif(btrim(p_instructor_name), ''),
+    p_completion_date, p_score_snapshot, coalesce(p_metadata, '{}'::jsonb),
+    p_idempotency_key
+  )
+  returning id into certificate_id;
+
+  return certificate_id;
+end;
+$$;
+
+revoke all on function public.issue_academy_certificate(
+  uuid, uuid, text, integer, text, text, text, text, text, date, numeric, jsonb, text
+) from public, anon, authenticated;
+grant execute on function public.issue_academy_certificate(
+  uuid, uuid, text, integer, text, text, text, text, text, date, numeric, jsonb, text
+) to service_role;
+
+create or replace function public.revoke_academy_certificate(
+  p_actor_user_id uuid,
+  p_certificate_id uuid,
+  p_reason text,
+  p_request_id text
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  certificate public.academy_certificates;
+  prior_target text;
+begin
+  select target_id into prior_target
+  from public.academy_admin_audit
+  where request_id = p_request_id
+  limit 1;
+  if prior_target is not null then return prior_target::uuid; end if;
+
+  select * into certificate
+  from public.academy_certificates
+  where id = p_certificate_id
+  for update;
+  if certificate.id is null then
+    raise exception using errcode = 'P0002', message = 'certificate not found';
+  end if;
+  if certificate.status = 'revoked' then return certificate.id; end if;
+  if certificate.status <> 'issued' then
+    raise exception using errcode = '23514', message = 'certificate is not active';
+  end if;
+
+  update public.academy_certificates
+  set status = 'revoked',
+      revoked_at = now(),
+      revocation_reason = btrim(p_reason)
+  where id = certificate.id;
+
+  insert into public.academy_admin_audit (
+    actor_user_id, action, target_type, target_id, request_id, metadata
+  )
+  values (
+    p_actor_user_id, 'academy_certificate_revoked', 'academy_certificate',
+    certificate.id::text, p_request_id,
+    jsonb_build_object('reason', btrim(p_reason), 'previousStatus', certificate.status)
+  );
+  return certificate.id;
+end;
+$$;
+
+revoke all on function public.revoke_academy_certificate(uuid, uuid, text, text)
+  from public, anon, authenticated;
+grant execute on function public.revoke_academy_certificate(uuid, uuid, text, text)
+  to service_role;
+
+create or replace function public.protect_academy_certificate_snapshot()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  if new.user_id is distinct from old.user_id
+    or new.enrollment_id is distinct from old.enrollment_id
+    or new.course_id is distinct from old.course_id
+    or new.course_version is distinct from old.course_version
+    or new.certificate_number is distinct from old.certificate_number
+    or new.verification_code is distinct from old.verification_code
+    or new.issued_at is distinct from old.issued_at
+    or new.learner_display_name is distinct from old.learner_display_name
+    or new.course_title_snapshot is distinct from old.course_title_snapshot
+    or new.instructor_name_snapshot is distinct from old.instructor_name_snapshot
+    or new.completion_date is distinct from old.completion_date
+    or new.score_snapshot is distinct from old.score_snapshot
+    or new.metadata is distinct from old.metadata
+    or new.issuance_idempotency_key is distinct from old.issuance_idempotency_key
+  then
+    raise exception using errcode = '23514', message = 'certificate issuance snapshot is immutable';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists academy_certificates_protect_snapshot
+  on public.academy_certificates;
+create trigger academy_certificates_protect_snapshot
+  before update on public.academy_certificates
+  for each row execute function public.protect_academy_certificate_snapshot();
+
 -- Atomically persists a server-scored assessment submission. The function
 -- receives scores, never answer keys, and is executable only by service_role.
 create or replace function public.grade_academy_attempt(
@@ -575,6 +772,21 @@ $$;
 
 revoke all on function public.verify_academy_certificate(text) from public, anon, authenticated;
 grant execute on function public.verify_academy_certificate(text) to service_role;
+
+-- Notifications were introduced by the watchlists/alerts migration. When that
+-- table exists, add a provider-neutral key so certificate notifications remain
+-- idempotent across safe issuance and revocation retries.
+do $$
+begin
+  if to_regclass('public.notifications') is not null then
+    alter table public.notifications
+      add column if not exists idempotency_key text;
+    create unique index if not exists notifications_user_idempotency_unique
+      on public.notifications(user_id, idempotency_key)
+      where idempotency_key is not null;
+  end if;
+end;
+$$;
 
 alter table public.academy_enrollments enable row level security;
 alter table public.academy_lesson_progress enable row level security;

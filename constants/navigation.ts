@@ -56,6 +56,11 @@ export const DASHBOARD_NAVIGATION = [
     id: "learning-paths",
     label: "Learning paths",
   },
+  {
+    href: ROUTES.dashboardCertificates,
+    id: "certificates",
+    label: "Certificates",
+  },
   { href: "/dashboard#membership", id: "membership", label: "Membership" },
   {
     href: "/dashboard#notifications",

@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased] — Sprint 15 Volume 3
+
+- Added a protected certificate wallet and private certificate detail pages
+- Added transactional eligibility-based issuance with immutable snapshots,
+  idempotent analytics and learner notifications
+- Added branded server-generated PDFs, QR/text verification and safe sharing
+- Added privacy-limited public status plus permissioned, confirmed, audited and
+  non-destructive administrator revocation
+- Added lifecycle, ownership, privacy, QR, PDF and idempotency test coverage
+
 ## [Unreleased] — Sprint 15 Volume 2
 
 - Added public learning-path catalog and dynamic detail routes plus a protected

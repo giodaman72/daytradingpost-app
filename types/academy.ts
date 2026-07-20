@@ -370,14 +370,30 @@ export type AcademyCertificate = {
   courseId: string;
   courseTitleSnapshot: string;
   courseVersion: number;
+  enrollmentId: string;
   id: string;
   instructorNameSnapshot: string | null;
   issuedAt: string;
   learnerDisplayName: string;
+  revocationReason: string | null;
   revokedAt: string | null;
+  scoreSnapshot: number | null;
   status: AcademyCertificateStatus;
+  supersededByCertificateId: string | null;
+  supersedesCertificateId: string | null;
   userId: string;
   verificationCode: string;
+};
+
+export type AcademyCertificateVerification = {
+  certificateNumber: string;
+  completionDate: string;
+  courseTitle: string;
+  instructorName: string | null;
+  issuedAt: string;
+  learnerDisplayName: string;
+  status: AcademyCertificateStatus;
+  valid: boolean;
 };
 
 export type AcademyLearningPath = {

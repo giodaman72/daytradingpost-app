@@ -1,5 +1,6 @@
 import { academyErrorResponse } from "@/lib/academy/academyHttp";
 import { verifyCertificate } from "@/lib/academy/certificates/certificateService";
+import { AcademyError } from "@/lib/academy/academyErrors";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,14 @@ export async function GET(
       { status: result ? 200 : 404 },
     );
   } catch (error) {
+    if (
+      error instanceof AcademyError &&
+      error.code === "ACADEMY_VALIDATION_FAILED"
+    )
+      return Response.json(
+        { valid: false, status: "not-found" },
+        { status: 404 },
+      );
     return academyErrorResponse(error);
   }
 }

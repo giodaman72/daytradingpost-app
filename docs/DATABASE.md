@@ -281,3 +281,16 @@ Sanity path ID, the enrolled path version, current course pointer and
 server-synchronized percentage. Owner RLS is read-only for browser roles.
 Course enrollment rows remain the authoritative evidence for path completion;
 the path row is a resumable snapshot, not an independent completion grant.
+
+`academy_certificates` stores immutable issuance snapshots, opaque verification
+codes and non-destructive lifecycle status. A partial unique index permits one
+active learner/course/version certificate. `issue_academy_certificate` locks
+and rechecks database eligibility; `revoke_academy_certificate` updates status
+and writes `academy_admin_audit` transactionally. Enrollment certificate holds
+block issuance. Superseding relationship columns preserve future replacement
+history, but reissue is disabled until a policy exists.
+
+When `notifications` exists, the LMS migration adds a nullable
+`idempotency_key` and per-user unique index for safe issuance/revocation retry.
+Public verification uses a service-role-only RPC with a fixed privacy-safe
+return shape.

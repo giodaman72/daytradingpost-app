@@ -94,12 +94,20 @@ Unsupported types render a safe unavailable state. Assessment question order
 comes from the stored attempt, official scoring remains server-only, and review
 fields are removed before serialization when the Sanity policy disallows them.
 
+## Certificate completion records
+
+Sprint 15 Volume 3 completes course certificates with transactional/idempotent
+issuance, owner-only wallet/detail views, branded server-generated PDFs,
+QR/text verification, safe sharing, public status, and audited administrator
+revocation. See `docs/ACADEMY_CERTIFICATES.md` and
+`docs/CERTIFICATE_VERIFICATION.md`.
+
 ## Known limitations
 
-- The full learner Academy dashboard, learning-path experience, certificate
-  wallet/PDF, review UI, admin UI, advanced reporting, recommendations,
-  notifications, and complete Tutor chat are deferred to Part 2B.
-- Certificate PDF generation is not implemented.
+- Reviews, a full Academy administrator interface, advanced reporting and
+  complete Tutor chat remain future work.
+- Certificate reissue remains disabled until a correction/replacement business
+  policy is approved. The model preserves superseding relationships.
 - Content review workflow is modeled but does not automate Sanity approvals.
 - Distributed rate limiting should replace the current instance-local limiter
   before high-scale production traffic.
@@ -128,6 +136,8 @@ recommendation and version-change policies.
 5. Deploy the new Sanity schemas.
 6. Make the Sanity dataset private and configure `SANITY_API_READ_TOKEN`.
 7. Add the Academy configuration variables from `.env.example`.
-8. Create content in dependency order: instructors, templates, assessments,
+8. Set `ACADEMY_CERTIFICATE_VERIFICATION_BASE_URL` or `NEXT_PUBLIC_SITE_URL`
+   to the canonical HTTPS application origin.
+9. Create content in dependency order: instructors, templates, assessments,
    lessons, modules, courses, learning paths.
-9. Do not publish graded assessments until answer-key privacy is verified.
+10. Do not publish graded assessments until answer-key privacy is verified.

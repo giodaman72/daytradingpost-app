@@ -563,27 +563,3 @@ export async function enrollCourseTransactionally(input: {
     );
   return enrollment;
 }
-
-export async function verifyCertificateRecord(verificationCode: string) {
-  const { data, error } = await getSupabaseAdmin().rpc(
-    "verify_academy_certificate",
-    { p_verification_code: verificationCode },
-  );
-  if (error)
-    throw new AcademyError(
-      "ACADEMY_PROVIDER_UNAVAILABLE",
-      "Certificate verification is unavailable.",
-    );
-  const row = Array.isArray(data) ? data[0] : null;
-  if (!row) return null;
-  return {
-    certificateNumber: String(row.certificate_number),
-    completionDate: String(row.completion_date),
-    courseTitle: String(row.course_title),
-    instructorName: row.instructor_name as string | null,
-    issuedAt: String(row.issued_at),
-    learnerDisplayName: String(row.learner_display_name),
-    status: String(row.status),
-    valid: Boolean(row.valid),
-  };
-}

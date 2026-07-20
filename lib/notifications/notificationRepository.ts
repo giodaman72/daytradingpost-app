@@ -41,20 +41,31 @@ export async function countUnreadNotifications(userId: string) {
   return count ?? 0;
 }
 export async function insertNotification(draft: NotificationDraft) {
+  const row: Record<string, unknown> = {
+    user_id: draft.userId,
+    notification_type: draft.notificationType,
+    title: draft.title,
+    message: draft.message,
+    link: draft.link ?? null,
+    severity: draft.severity ?? "info",
+    metadata: draft.metadata ?? {},
+    expires_at: draft.expiresAt ?? null,
+  };
+  if (draft.idempotencyKey) row.idempotency_key = draft.idempotencyKey;
   const { data, error } = await getSupabaseAdmin()
     .from("notifications")
-    .insert({
-      user_id: draft.userId,
-      notification_type: draft.notificationType,
-      title: draft.title,
-      message: draft.message,
-      link: draft.link ?? null,
-      severity: draft.severity ?? "info",
-      metadata: draft.metadata ?? {},
-      expires_at: draft.expiresAt ?? null,
-    })
+    .insert(row)
     .select()
     .single();
+  if (error?.code === "23505" && draft.idempotencyKey) {
+    const { data: existing, error: existingError } = await getSupabaseAdmin()
+      .from("notifications")
+      .select("*")
+      .eq("user_id", draft.userId)
+      .eq("idempotency_key", draft.idempotencyKey)
+      .maybeSingle();
+    if (!existingError && existing) return map(existing);
+  }
   if (error) throw new Error("Could not create notification.");
   return map(data);
 }

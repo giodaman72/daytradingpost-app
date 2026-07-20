@@ -286,3 +286,27 @@ versions, explainable non-sensitive recommendations, the ordered accessible map
 and empty states. Persistence contract tests verify active-enrollment uniqueness
 and owner scoping in both repository filters and SQL. Supabase integration still
 requires the manual owner/non-owner checklist above.
+
+Volume 3 adds deterministic certificate coverage for eligibility and holds,
+duplicate prevention, identifier entropy, lifecycle and disabled reissue,
+public privacy, invalid/revoked/superseded presentation, owner predicates,
+notification retry idempotency, safe sharing, QR payloads, PDF structure and
+accessible wallet states.
+
+Manual certificate checklist:
+
+1. Complete an eligible enrollment and required final assessment.
+2. Issue twice with one idempotency key; confirm one certificate, event and
+   notification.
+3. Retry with a new key; confirm the active-certificate constraint prevents a
+   duplicate.
+4. As user B, request user A's detail/download URL; confirm no record details.
+5. Verify logged out and confirm only documented public fields.
+6. Try malformed/unknown codes and confirm the generic not-verified result.
+7. Scan QR and compare printed URL; confirm neither contains internal IDs.
+8. Inspect the PDF branding, data, certificate number and disclaimer.
+9. Attempt non-admin/unconfirmed revocation; confirm rejection.
+10. Revoke as an authorized admin; confirm audit, notification, retained row
+    and public revoked status.
+11. Retry the request ID; confirm no duplicate audit or notification.
+12. Confirm reissue is rejected while its business rule is disabled.

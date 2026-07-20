@@ -112,6 +112,16 @@ The production dataset containing premium bodies must be private.
 | `ALERT_DEFAULT_COOLDOWN_MINUTES` | Default cooldown, 60 minutes                   |
 | `ALERT_EMAIL_PROVIDER`           | Keep disabled until an approved adapter exists |
 
+### Academy certificates
+
+| Variable                                    | Purpose                                    |
+| ------------------------------------------- | ------------------------------------------ |
+| `ACADEMY_CERTIFICATE_VERIFICATION_BASE_URL` | Canonical public HTTPS verification origin |
+| `NEXT_PUBLIC_SITE_URL`                      | Existing public site-origin fallback       |
+
+Use the final production domain; do not print a Vercel Preview origin in
+Production certificate PDFs.
+
 ## Supabase preparation
 
 For a new environment, run the SQL in this order:
@@ -121,6 +131,7 @@ For a new environment, run the SQL in this order:
 3. `docs/supabase-revolut.sql`
 4. `docs/supabase-economic.sql`
 5. `docs/supabase-watchlists-alerts.sql`
+6. `docs/supabase-trading-academy-lms.sql`
 
 Then verify:
 
@@ -129,6 +140,10 @@ Then verify:
 - anon/authenticated roles cannot write protected membership fields;
 - service-role operations run only from server code;
 - local and production Auth callback URLs are allow-listed.
+- issuance retry produces one certificate, notification and event;
+- owner A cannot download owner B's certificate;
+- public verification returns no private account fields;
+- administrator revocation immediately changes public status.
 
 Treat future schema changes as versioned migrations. Back up production and test
 reversible changes before applying destructive SQL.

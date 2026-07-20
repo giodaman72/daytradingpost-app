@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   Bell,
   BookOpen,
+  Award,
   CalendarDays,
   ChartNoAxesCombined,
   CircleUserRound,
@@ -17,6 +18,7 @@ import { ROUTES } from "@/constants/routes";
 
 const dashboardIcons = {
   "academy-progress": BookOpen,
+  certificates: Award,
   "economic-calendar": CalendarDays,
   "latest-analysis": LayoutDashboard,
   "learning-paths": Route,
