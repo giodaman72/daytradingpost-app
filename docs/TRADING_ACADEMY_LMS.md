@@ -1,5 +1,9 @@
 # Trading Academy 2.0 — LMS backend
 
+The repository-level audit against the Trading Academy 2.0 Master Guide,
+Volume 1, is recorded in
+[`TRADING_ACADEMY_VOLUME_1_COMPATIBILITY.md`](TRADING_ACADEMY_VOLUME_1_COMPATIBILITY.md).
+
 ## Sprint 15 Part 2A
 
 The primary learner experience is implemented across the public catalog,
