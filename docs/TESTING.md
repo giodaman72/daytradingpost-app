@@ -342,3 +342,27 @@ and email opt-in. Reminders are pure test inputs and never send email.
 Manual: sign in as a learner, verify recommendations and reasons, submit/edit/
 delete an eligible review, confirm it stays hidden pending moderation, publish
 as an admin, and verify notification preferences survive a reload.
+
+## Academy Volume 6 checklist
+
+Automated tests cover the admin/editor permission boundary, explicit instructor
+ownership, publication validation, archived-course filtering, analytics filter
+validation, small-cohort suppression, transactional manual enrollment and
+progress-reset contracts, assessment-history retention, audit logging, review
+reporting, and source scans preventing private notes or answer keys in admin
+read models. Existing certificate lifecycle and review moderation tests remain
+part of the full suite.
+
+Manual setup and flows:
+
+1. Apply `supabase-academy-admin.sql`.
+2. Add an explicit instructor assignment using `ACADEMY_INSTRUCTOR.md`.
+3. Sign in as editor; verify learner, certificate, moderation and analytics
+   routes reject access.
+4. Sign in as admin; inspect course validation and Studio links.
+5. Manually enroll, pause and restore a test learner; verify one audit row each.
+6. Reset test progress only after typing `RESET PROGRESS`; verify attempts are
+   invalidated while responses remain.
+7. Report a published review, moderate it and moderate an instructor reply.
+8. Filter analytics to a cohort below five and confirm sensitive rates are
+   suppressed.

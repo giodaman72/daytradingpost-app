@@ -221,10 +221,17 @@ replacement-course migrations, database-emulator RLS tests, browser automation,
 distributed verification rate limiting and learning-path certificates. Approve
 a correction/reissue policy before enabling the modeled superseding workflow.
 
-## After Academy Volume 5
+## Sprint 15 Volume 6 — admin and instructor operations
 
-Add verified instructor-account relationships before instructor replies, a
-review abuse-report workflow, a production consent-aware email adapter, a
-scheduled reminder worker with distributed locking, and database-emulator RLS
-tests. Do not add AI recommendations until a separately reviewed transparent
-policy exists.
+Adds server-enforced administrator and instructor workspaces, verified
+instructor-course assignments, safe course and assessment metadata, enrollment
+operations, certificate lifecycle controls, review reporting and moderation,
+privacy-thresholded analytics, and transactional audit logging.
+
+## After Academy Volume 6
+
+Add a dedicated assignment-management UI with dual approval, Sanity webhook
+reconciliation into Supabase audit reporting, high-volume SQL analytics rollups,
+CSV export with privacy review, richer lesson-level drop-off funnels and
+database-emulator authorization tests. Approve the certificate correction and
+reissue policy before enabling reissue.

@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased] — Academy Volume 6
+
+- Added protected Academy course, assessment, enrollment, certificate, review
+  and analytics administration routes.
+- Added explicit instructor-course assignments and a privacy-conscious
+  instructor dashboard.
+- Added audited transactional enrollment actions and assessment invalidation.
+- Added review reporting plus moderated instructor replies.
+- Added privacy-thresholded Academy aggregate analytics and operational docs.
+
 ## [Unreleased] — Academy Volume 5
 
 - Added deterministic explainable learning recommendations and continue priority.

@@ -299,3 +299,16 @@ Supabase, and `learningPathService` composes membership, path enrollment and
 course-enrollment state. `learningPathProgress` is pure and deterministic;
 Route Handlers never trust client-computed progress. See
 [Academy learning paths](ACADEMY_LEARNING_PATHS.md).
+
+## Academy operational control plane
+
+Sanity owns Academy editorial documents and publication history. Protected
+server read models expose metadata and validation only; Studio handles writes.
+Supabase owns learner state, explicit instructor assignments, review/reply
+moderation, events and audit records. Transactional RPCs protect manual
+enrollment, access lifecycle, progress reset and attempt invalidation.
+
+Admin and instructor pages are dynamic Server Components. Each service performs
+its own authorization. Client components handle only small interactive forms
+and call Route Handlers that repeat authorization. Analytics return aggregates,
+never raw learner content.

@@ -157,3 +157,13 @@ moderation and consent-backed learning notifications. See
 [Reviews](ACADEMY_REVIEWS.md) and
 [Notifications](ACADEMY_NOTIFICATIONS.md). Apply
 `supabase-academy-personalization.sql` after the core LMS migration.
+
+## Administration and Instructor Operations
+
+Volume 6 adds Academy management routes, Studio validation/deep links,
+transactional enrollment controls, certificate and review moderation,
+explicit instructor assignments, moderated instructor replies and
+privacy-conscious aggregate analytics. See [Academy Admin](ACADEMY_ADMIN.md),
+[Instructor Experience](ACADEMY_INSTRUCTOR.md) and
+[Academy Analytics](ACADEMY_ANALYTICS.md). Apply
+`supabase-academy-admin.sql` after the Volume 5 migration.

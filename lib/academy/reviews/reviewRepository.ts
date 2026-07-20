@@ -30,6 +30,9 @@ function mapReview(row: Record<string, unknown>): AcademyCourseReview {
     createdAt: String(row.created_at),
     deletedAt: row.deleted_at ? String(row.deleted_at) : null,
     id: String(row.id),
+    moderationReason: row.moderation_reason
+      ? String(row.moderation_reason)
+      : null,
     rating: Number(row.rating),
     reviewText: row.review_text ? String(row.review_text) : null,
     status: row.moderation_status as AcademyCourseReview["status"],
@@ -168,10 +171,17 @@ export async function deleteOwnedCourseReview(userId: string, id: string) {
 }
 
 export async function listPendingReviews(limit = 100) {
+  return listModerationReviews("pending", limit);
+}
+
+export async function listModerationReviews(
+  status: "pending" | "published" | "rejected" | "reported",
+  limit = 100,
+) {
   const { data, error } = await getSupabaseAdmin()
     .from("academy_course_reviews")
     .select("*")
-    .eq("moderation_status", "pending")
+    .eq("moderation_status", status)
     .is("deleted_at", null)
     .order("created_at", { ascending: true })
     .limit(Math.min(100, Math.max(1, limit)));
@@ -183,25 +193,75 @@ export async function listPendingReviews(limit = 100) {
   return (data ?? []).map(mapReview);
 }
 
+export async function reportCourseReview(input: {
+  reason: string;
+  reviewId: string;
+  userId: string;
+}) {
+  const { error } = await getSupabaseAdmin().rpc("report_academy_review", {
+    p_reason: input.reason,
+    p_review_id: input.reviewId,
+    p_user_id: input.userId,
+  });
+  if (error?.code === "23505") return;
+  if (error)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "The review report could not be submitted.",
+    );
+}
+
+export async function listPublishedReviewReplies(reviewIds: string[]) {
+  if (!reviewIds.length) return [];
+  const { data, error } = await getSupabaseAdmin()
+    .from("academy_review_replies")
+    .select("id,review_id,reply_text,created_at")
+    .in("review_id", reviewIds)
+    .eq("moderation_status", "published")
+    .is("deleted_at", null)
+    .order("created_at", { ascending: true });
+  if (error?.code === "42P01") return [];
+  if (error)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "Instructor replies are unavailable.",
+    );
+  return (data ?? []).map((row) => ({
+    createdAt: String(row.created_at),
+    id: String(row.id),
+    replyText: String(row.reply_text),
+    reviewId: String(row.review_id),
+  }));
+}
+
 export async function moderateCourseReview(input: {
   actorUserId: string;
   id: string;
   reason: string;
+  requestId: string;
   status: "published" | "rejected";
 }) {
-  const { data, error } = await getSupabaseAdmin()
+  const { error } = await getSupabaseAdmin().rpc(
+    "admin_moderate_academy_review",
+    {
+      p_actor_user_id: input.actorUserId,
+      p_reason: input.reason,
+      p_request_id: input.requestId,
+      p_review_id: input.id,
+      p_status: input.status,
+    },
+  );
+  if (error)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "Review moderation could not be completed.",
+    );
+  const { data, error: findError } = await getSupabaseAdmin()
     .from("academy_course_reviews")
-    .update({
-      moderated_at: new Date().toISOString(),
-      moderated_by: input.actorUserId,
-      moderation_reason: input.reason,
-      moderation_status: input.status,
-    })
+    .select("*")
     .eq("id", input.id)
-    .is("deleted_at", null)
-    .select()
     .maybeSingle();
-  if (error || !data)
+  if (findError || !data)
     throw new AcademyError("ACADEMY_REVIEW_NOT_FOUND", "Review was not found.");
   return mapReview(data);
 }

@@ -6,13 +6,18 @@ import { requireAcademyUser } from "../academyAuthorization";
 import { AcademyError } from "../academyErrors";
 import { findEnrollmentByCourse } from "../academyRepository";
 import { getAcademyCourse } from "../academyService";
-import { parseAcademyIdentifier } from "../academyValidation";
+import {
+  normalizePlainText,
+  parseAcademyIdentifier,
+} from "../academyValidation";
 import {
   deleteOwnedCourseReview,
   findOwnedCourseReview,
   getCourseReviewAggregate,
   insertCourseReview,
   listPublishedCourseReviews,
+  listPublishedReviewReplies,
+  reportCourseReview,
   updateOwnedCourseReview,
 } from "./reviewRepository";
 import { parseAcademyReview } from "./reviewValidation";
@@ -23,7 +28,13 @@ export async function getCourseReviews(courseId: string) {
     listPublishedCourseReviews(id),
     getCourseReviewAggregate(id),
   ]);
-  return { aggregate, reviews };
+  return {
+    aggregate,
+    replies: await listPublishedReviewReplies(
+      reviews.map((review) => review.id),
+    ),
+    reviews,
+  };
 }
 
 export async function getReviewEligibility(courseSlug: string) {
@@ -95,4 +106,17 @@ export async function removeCourseReview(reviewId: string) {
     access.userId,
     parseAcademyIdentifier(reviewId, "review ID"),
   );
+}
+
+export async function reportReview(
+  reviewId: string,
+  input: Record<string, unknown>,
+) {
+  const access = await requireAcademyUser();
+  enforceMutationRateLimit(access.userId, "academy-review-report", 5, 60_000);
+  await reportCourseReview({
+    reason: normalizePlainText(input.reason, "Report reason", 500),
+    reviewId: parseAcademyIdentifier(reviewId, "review ID"),
+    userId: access.userId,
+  });
 }

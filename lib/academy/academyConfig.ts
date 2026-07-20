@@ -15,6 +15,12 @@ function boundedInteger(
 }
 
 export const academyConfig = Object.freeze({
+  analyticsPrivacyThreshold: boundedInteger(
+    "ACADEMY_ANALYTICS_PRIVACY_THRESHOLD",
+    5,
+    2,
+    100,
+  ),
   certificateVerificationBaseUrl:
     process.env.ACADEMY_CERTIFICATE_VERIFICATION_BASE_URL?.replace(/\/$/, "") ||
     null,

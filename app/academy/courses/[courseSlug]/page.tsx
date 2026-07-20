@@ -120,6 +120,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
     .slice(0, 3);
   const reviewData = await getCourseReviews(course.id).catch(() => ({
     aggregate: { averageRating: null, publishedCount: 0 },
+    replies: [],
     reviews: [],
   }));
   const reviewEligibility = access.user
@@ -316,7 +317,10 @@ export default async function CoursePage({ params }: CoursePageProps) {
             </div>
             <AcademyReviewSummary aggregate={reviewData.aggregate} />
           </div>
-          <AcademyReviewList reviews={reviewData.reviews} />
+          <AcademyReviewList
+            replies={reviewData.replies}
+            reviews={reviewData.reviews}
+          />
           {reviewEligibility ? (
             <AcademyReviewForm
               courseId={course.id}

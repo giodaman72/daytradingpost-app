@@ -1,8 +1,16 @@
 import type { AcademyCourseReview } from "@/types/academy";
+import { ReviewReportButton } from "./ReviewReportButton";
 
 export function AcademyReviewList({
+  replies = [],
   reviews,
 }: {
+  replies?: Array<{
+    createdAt: string;
+    id: string;
+    replyText: string;
+    reviewId: string;
+  }>;
   reviews: AcademyCourseReview[];
 }) {
   if (!reviews.length) return null;
@@ -22,6 +30,15 @@ export function AcademyReviewList({
               timeZone: "UTC",
             }).format(new Date(review.createdAt))}
           </time>
+          <ReviewReportButton reviewId={review.id} />
+          {replies
+            .filter((reply) => reply.reviewId === review.id)
+            .map((reply) => (
+              <blockquote className="academy-instructor-reply" key={reply.id}>
+                <strong>Instructor response</strong>
+                <p>{reply.replyText}</p>
+              </blockquote>
+            ))}
         </li>
       ))}
     </ul>

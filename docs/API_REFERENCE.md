@@ -330,3 +330,18 @@ uses only the allowlist in `docs/CERTIFICATE_VERIFICATION.md`.
 
 All mutations validate JSON size/content, apply authenticated authorization and
 rate limits where learner-controlled. Private Supabase keys remain server-only.
+
+## Academy Admin and Instructor APIs
+
+- `POST /api/academy/reviews/[reviewId]/report`: authenticated, rate-limited
+  review reporting; the reviewer cannot report their own review.
+- `POST /api/instructor/academy/reviews/[reviewId]/reply`: assigned instructor
+  only; creates or updates a pending moderated reply.
+- `PATCH /api/admin/academy/review-replies/[replyId]/moderate`: administrator
+  publish/reject with a required reason and audit record.
+- Existing certificate revocation remains at
+  `POST /api/admin/academy/certificates/[certificateId]/revoke`.
+
+Enrollment and assessment administrative mutations use Server Actions backed by
+service-role-only RPCs. Each action rechecks the relevant permission and records
+a request-idempotent audit entry.

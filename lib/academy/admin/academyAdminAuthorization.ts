@@ -15,6 +15,7 @@ export const ACADEMY_PERMISSIONS = [
   "academy:manage-certificates",
   "academy:manage-enrollments",
   "academy:manage-reviews",
+  "academy:moderate-reviews",
   "academy:preview-premium",
 ] as const;
 export type AcademyPermission = (typeof ACADEMY_PERMISSIONS)[number];

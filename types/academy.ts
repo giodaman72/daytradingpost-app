@@ -514,9 +514,10 @@ export type AcademyCourseReview = {
   createdAt: string;
   deletedAt: string | null;
   id: string;
+  moderationReason: string | null;
   rating: number;
   reviewText: string | null;
-  status: "pending" | "published" | "rejected";
+  status: "pending" | "published" | "rejected" | "reported";
   title: string | null;
   updatedAt: string;
   userId: string;
