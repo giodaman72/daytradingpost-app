@@ -40,6 +40,12 @@ targeted thresholds when Sprint 9 introduces the market-intelligence domain.
 Tests must not call live Supabase, Sanity, Revolut, or other external services.
 Mock provider boundaries and keep domain tests deterministic.
 
+Sprint 15 Part 2A tests cover catalog filtering and media URL normalization,
+answer-key removal from public assessment questions, catalog empty states, and
+available versus locked curriculum links. Route handlers and server components
+retain the Part 1 service authorization boundary and are validated by the
+production build.
+
 ## Git hooks
 
 The `prepare` script installs Husky after dependency installation.
@@ -264,3 +270,11 @@ Manual database checklist after applying the SQL:
    record/result.
 8. Verify unique active enrollment, attempt number, certificate number, and
    verification-code constraints.
+
+Part 2A adds deterministic coverage for catalog parameter validation, filtering,
+sorting and pagination persistence; lesson renderer selection; video resume
+normalization and provider host rejection; assessment unanswered counts and
+payload normalization; public answer-key redaction; curriculum availability;
+and Academy component semantics. `npm run test:run` is the closest existing
+automated command for unit and component coverage. This repository has no
+Academy end-to-end, axe, database-emulator, RLS-test, or bundle-analysis script.

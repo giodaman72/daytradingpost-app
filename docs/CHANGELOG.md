@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased] — Sprint 15 Part 2A
+
+- Added the public Trading Academy landing page, catalog, search and SEO course
+  detail pages
+- Added private curriculum, lesson player, video checkpoints, resources,
+  lesson completion, bookmarks and learner notes
+- Added refresh-safe assessment attempts, accessible question interfaces and
+  assessment results without exposing grading keys
+- Connected dashboard Academy progress to Supabase enrollments
+- Added authenticated Academy analytics ingestion and responsive learner states
+
 ## [Unreleased] — Sprint 15 Part 1
 
 - Added Trading Academy 2.0 Sanity course, module, lesson, instructor,

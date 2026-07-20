@@ -60,6 +60,11 @@ export type AcademyReference = {
   version: number;
 };
 
+export type AcademyImage = {
+  alt: string;
+  url: string;
+};
+
 export type AcademyInstructor = {
   id: string;
   name: string;
@@ -86,6 +91,7 @@ export type AcademyResource = {
   description: string | null;
   downloadable: boolean;
   fileSize: number | null;
+  id: string;
   mimeType: string | null;
   resourceType:
     | "pdf-guide"
@@ -167,6 +173,7 @@ export type AcademyCourse = {
   accessLevel: AcademyAccessLevel;
   certificateEnabled: boolean;
   category: { id: string; slug: string; title: string } | null;
+  coverImage: AcademyImage | null;
   description: unknown[];
   difficulty: AcademyDifficulty;
   durationMinutes: number;
@@ -187,6 +194,25 @@ export type AcademyCourse = {
   title: string;
   updatedAt: string;
   version: number;
+};
+
+export type AcademyCurriculumLesson = Omit<
+  AcademyLessonBase,
+  "body" | "resources"
+> & {
+  assessmentId: string | null;
+  lessonType: AcademyLessonType;
+};
+
+export type AcademyCurriculumModule = AcademyModule & {
+  lessons: AcademyCurriculumLesson[];
+};
+
+export type AcademyCourseDetail = AcademyCourse & {
+  modules: AcademyCurriculumModule[];
+  seoDescription: string;
+  seoImage: AcademyImage | null;
+  seoTitle: string;
 };
 
 export type AcademyPassingRequirements = {
@@ -262,8 +288,11 @@ export type AcademyQuestion = {
 
 export type AcademyPublicQuestion = Omit<
   AcademyQuestion,
-  "correctAnswer" | "explanation"
->;
+  "answers" | "correctAnswer" | "explanation"
+> & {
+  answers: Array<Pick<AcademyAnswerOption, "id" | "label">>;
+  matchTargets?: string[];
+};
 
 export type AcademyAssessment = {
   assessmentType:
@@ -305,6 +334,24 @@ export type AcademyAttempt = {
   status: AcademyAttemptStatus;
   submittedAt: string | null;
   userId: string;
+};
+
+export type AcademyAttemptView = {
+  attempt: AcademyAttempt;
+  initialRemainingSeconds: number | null;
+  assessment: {
+    courseId: string;
+    instructions: unknown[];
+    maximumAttempts: number;
+    passingScore: number;
+    showCorrectAnswers: boolean;
+    showExplanations: boolean;
+    timeLimitMinutes: number | null;
+    title: string;
+  };
+  attemptsUsed: number;
+  questions: AcademyPublicQuestion[];
+  responses: AcademyResponse[];
 };
 
 export type AcademyResponse = {
@@ -360,6 +407,7 @@ export type AcademyLearningPathEnrollment = {
 
 export type AcademyBookmark = {
   courseId: string;
+  createdAt?: string;
   id: string;
   label: string | null;
   lessonId: string;
@@ -370,11 +418,13 @@ export type AcademyBookmark = {
 
 export type AcademyLearnerNote = {
   courseId: string;
+  createdAt?: string;
   id: string;
   lessonId: string;
   moduleId: string | null;
   noteText: string;
   positionSeconds: number | null;
+  updatedAt?: string;
   userId: string;
 };
 
@@ -432,4 +482,18 @@ export type AcademyProgressSummary = {
   coursePercent: number;
   totalRequiredLessons: number;
   totalRequiredModules: number;
+};
+
+export type AcademyLearningState = {
+  enrollment: AcademyEnrollment;
+  lessonProgress: AcademyLessonProgress[];
+  moduleProgress: AcademyModuleProgress[];
+};
+
+export type AcademyLessonView = {
+  course: AcademyCourseDetail;
+  currentLesson: AcademyLesson;
+  learningState: AcademyLearningState;
+  nextLesson: AcademyCurriculumLesson | null;
+  previousLesson: AcademyCurriculumLesson | null;
 };

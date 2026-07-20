@@ -5,20 +5,19 @@ import {
 import { enrollUserInCourse } from "@/lib/academy/academyService";
 import {
   normalizePlainText,
-  parseAcademyIdentifier,
+  parseAcademySlug,
 } from "@/lib/academy/academyValidation";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(
   request: Request,
-  context: { params: Promise<{ courseId: string }> },
+  context: { params: Promise<{ courseSlug: string }> },
 ) {
   try {
-    const { courseId } = await context.params;
+    const { courseSlug } = await context.params;
     const body = await readAcademyJson(request, 2_000);
-    parseAcademyIdentifier(courseId, "course ID");
-    const courseSlug = normalizePlainText(body.courseSlug, "Course slug", 100);
+    parseAcademySlug(courseSlug);
     const idempotencyKey = normalizePlainText(
       request.headers.get("idempotency-key") ?? body.idempotencyKey,
       "Idempotency key",

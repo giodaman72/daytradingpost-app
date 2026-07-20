@@ -1,5 +1,13 @@
 # Trading Academy 2.0 — LMS backend
 
+## Sprint 15 Part 2A
+
+The primary learner experience is implemented across the public catalog,
+course pages, private curriculum, lesson player, assessments, bookmarks, notes,
+resources and dashboard entry point. See
+`docs/ACADEMY_LEARNER_EXPERIENCE.md` for the canonical routes, authorization
+boundary, media behavior and Part 2B deferrals.
+
 ## Part 1 scope
 
 Sprint 15 Part 1 establishes the content model, learner-state database,
@@ -67,9 +75,26 @@ certificates remain visible unless explicitly revoked.
 - Notes are private and excluded from analytics, notifications, and AI context.
 - Certificate verification returns snapshots only, never user ID or email.
 
-## Known Part 1 limitations
+## Part 2A learner architecture
 
-- The full learner UI and admin UI are deferred to Part 2.
+Public Academy landing, catalog, search, and course pages use lightweight
+published Sanity projections. Private curriculum and lesson routes resolve the
+current Supabase user, membership, enrollment, prerequisite state, and lesson
+ownership before requesting a full lesson projection. Interactive controls are
+small Client Components that call protected routes; they never import Sanity
+tokens or the Supabase service client.
+
+The centralized lesson renderer supports text, video, mixed, quiz, assessment,
+downloadable, webinar replay, chart practice, and external resource lessons.
+Unsupported types render a safe unavailable state. Assessment question order
+comes from the stored attempt, official scoring remains server-only, and review
+fields are removed before serialization when the Sanity policy disallows them.
+
+## Known limitations
+
+- The full learner Academy dashboard, learning-path experience, certificate
+  wallet/PDF, review UI, admin UI, advanced reporting, recommendations,
+  notifications, and complete Tutor chat are deferred to Part 2B.
 - Certificate PDF generation is not implemented.
 - Content review workflow is modeled but does not automate Sanity approvals.
 - Distributed rate limiting should replace the current instance-local limiter

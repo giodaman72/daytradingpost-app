@@ -5,6 +5,7 @@ import type { AcademyBookmark } from "@/types/academy";
 import { requireAcademyUser } from "../academyAuthorization";
 import { academyConfig } from "../academyConfig";
 import { AcademyError } from "../academyErrors";
+import { validateAcademyLearnerReference } from "../academyLearnerOwnership";
 import {
   normalizePlainText,
   parseAcademyIdentifier,
@@ -12,6 +13,7 @@ import {
 
 const mapBookmark = (row: Record<string, unknown>): AcademyBookmark => ({
   courseId: String(row.course_id),
+  createdAt: row.created_at ? String(row.created_at) : undefined,
   id: String(row.id),
   label: row.label as string | null,
   lessonId: String(row.lesson_id),
@@ -50,6 +52,12 @@ export async function createBookmark(input: {
   positionSeconds?: number | null;
 }) {
   const access = await requireAcademyUser();
+  const reference = await validateAcademyLearnerReference({
+    courseId: input.courseId,
+    lessonId: input.lessonId,
+    moduleId: input.moduleId,
+    userId: access.userId,
+  });
   const { count } = await getSupabaseAdmin()
     .from("academy_bookmarks")
     .select("id", { count: "exact", head: true })
@@ -67,7 +75,7 @@ export async function createBookmark(input: {
     .from("academy_bookmarks")
     .insert({
       bookmark_type: position === null ? "lesson" : "video-timestamp",
-      course_id: parseAcademyIdentifier(input.courseId, "course ID"),
+      course_id: reference.courseId,
       label: input.label
         ? normalizePlainText(
             input.label,
@@ -75,10 +83,8 @@ export async function createBookmark(input: {
             academyConfig.maxBookmarkLabelLength,
           )
         : null,
-      lesson_id: parseAcademyIdentifier(input.lessonId, "lesson ID"),
-      module_id: input.moduleId
-        ? parseAcademyIdentifier(input.moduleId, "module ID")
-        : null,
+      lesson_id: reference.lessonId,
+      module_id: reference.moduleId,
       position_seconds: position,
       user_id: access.userId,
     })
@@ -89,6 +95,28 @@ export async function createBookmark(input: {
       "ACADEMY_PROVIDER_UNAVAILABLE",
       "Could not create bookmark.",
     );
+  return mapBookmark(data);
+}
+
+export async function updateBookmark(id: string, label: string | null) {
+  const access = await requireAcademyUser();
+  const { data, error } = await getSupabaseAdmin()
+    .from("academy_bookmarks")
+    .update({
+      label: label
+        ? normalizePlainText(
+            label,
+            "Bookmark label",
+            academyConfig.maxBookmarkLabelLength,
+          )
+        : null,
+    })
+    .eq("id", parseAcademyIdentifier(id, "bookmark ID"))
+    .eq("user_id", access.userId)
+    .select()
+    .maybeSingle();
+  if (error || !data)
+    throw new AcademyError("ACADEMY_FORBIDDEN", "Bookmark was not found.");
   return mapBookmark(data);
 }
 

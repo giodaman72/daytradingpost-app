@@ -141,3 +141,11 @@ authorized course/lesson projections. Tutor context must check course and lesson
 access, omit assessment keys, cite canonical course/lesson URLs, and exclude
 private notes. It reuses the existing AI provider and is never called
 automatically during rendering. The learner Tutor experience remains Part 2.
+
+Part 2A adds an explicit “Ask about this lesson” entry point on authorized
+lesson pages. It navigates to the existing Assistant with a normalized
+lesson-title prompt only after the learner chooses the action. Lesson notes,
+assessment responses, answer keys, unpublished fields, and private resource
+locations are not added to the prompt. The Assistant still resolves authorized
+Academy context server-side and labels generated responses through its existing
+experience. Full inline Tutor chat remains deferred to Part 2B.

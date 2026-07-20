@@ -261,7 +261,7 @@ Watchlist, alert, and notification member mutations use authenticated Server Act
 | ------------ | ----------------------------------------------------- | ------------- |
 | GET          | `/api/academy/courses`                                | Published     |
 | GET          | `/api/academy/courses/[courseSlug]`                   | Published     |
-| POST         | `/api/academy/courses/[courseId]/enroll`              | Member        |
+| POST         | `/api/academy/courses/[courseSlug]/enroll`            | Member        |
 | GET          | `/api/academy/enrollments`                            | Owner         |
 | POST         | `/api/academy/lessons/[lessonId]/start`               | Enrolled      |
 | PATCH        | `/api/academy/lessons/[lessonId]/progress`            | Enrolled      |
@@ -269,12 +269,17 @@ Watchlist, alert, and notification member mutations use authenticated Server Act
 | POST         | `/api/academy/assessments/[assessmentId]/attempts`    | Enrolled      |
 | POST         | `/api/academy/attempts/[attemptId]/submit`            | Attempt owner |
 | GET/POST     | `/api/academy/bookmarks`                              | Owner         |
-| DELETE       | `/api/academy/bookmarks/[id]`                         | Owner         |
+| PATCH/DELETE | `/api/academy/bookmarks/[id]`                         | Owner         |
 | GET/POST     | `/api/academy/notes`                                  | Owner         |
 | PATCH/DELETE | `/api/academy/notes/[id]`                             | Owner         |
 | GET          | `/api/academy/certificates`                           | Owner         |
 | GET          | `/api/academy/certificates/verify/[verificationCode]` | Public safe   |
+| GET          | `/api/academy/attempts/[attemptId]`                   | Attempt owner |
+| POST         | `/api/academy/events`                                 | Member        |
+| GET          | `/api/academy/resources/[resourceId]`                 | Enrolled      |
 
 Mutation routes validate server-side and use typed `ACADEMY_*` error codes.
 Enrollment and submission accept an `Idempotency-Key` header. No route exposes
 draft content, answer keys, private notes from another user, or raw providers.
+Full lesson bodies are loaded by authorized server components and intentionally
+have no public API endpoint.

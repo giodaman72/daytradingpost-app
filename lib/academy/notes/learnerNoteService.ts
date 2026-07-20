@@ -5,6 +5,7 @@ import type { AcademyLearnerNote } from "@/types/academy";
 import { requireAcademyUser } from "../academyAuthorization";
 import { academyConfig } from "../academyConfig";
 import { AcademyError } from "../academyErrors";
+import { validateAcademyLearnerReference } from "../academyLearnerOwnership";
 import {
   normalizePlainText,
   parseAcademyIdentifier,
@@ -12,12 +13,14 @@ import {
 
 const mapNote = (row: Record<string, unknown>): AcademyLearnerNote => ({
   courseId: String(row.course_id),
+  createdAt: row.created_at ? String(row.created_at) : undefined,
   id: String(row.id),
   lessonId: String(row.lesson_id),
   moduleId: row.module_id as string | null,
   noteText: String(row.note_text),
   positionSeconds:
     row.position_seconds === null ? null : Number(row.position_seconds),
+  updatedAt: row.updated_at ? String(row.updated_at) : undefined,
   userId: String(row.user_id),
 });
 
@@ -50,6 +53,12 @@ export async function createLearnerNote(input: {
   positionSeconds?: number | null;
 }) {
   const access = await requireAcademyUser();
+  const reference = await validateAcademyLearnerReference({
+    courseId: input.courseId,
+    lessonId: input.lessonId,
+    moduleId: input.moduleId,
+    userId: access.userId,
+  });
   const { count } = await getSupabaseAdmin()
     .from("academy_learner_notes")
     .select("id", { count: "exact", head: true })
@@ -62,11 +71,9 @@ export async function createLearnerNote(input: {
   const { data, error } = await getSupabaseAdmin()
     .from("academy_learner_notes")
     .insert({
-      course_id: parseAcademyIdentifier(input.courseId, "course ID"),
-      lesson_id: parseAcademyIdentifier(input.lessonId, "lesson ID"),
-      module_id: input.moduleId
-        ? parseAcademyIdentifier(input.moduleId, "module ID")
-        : null,
+      course_id: reference.courseId,
+      lesson_id: reference.lessonId,
+      module_id: reference.moduleId,
       note_text: normalizePlainText(
         input.noteText,
         "Note",

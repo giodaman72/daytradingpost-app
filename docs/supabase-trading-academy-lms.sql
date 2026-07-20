@@ -264,13 +264,18 @@ create table if not exists public.academy_events (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references public.profiles(id) on delete set null,
   event_name text not null check (event_name in (
+    'academy_landing_viewed', 'academy_catalog_viewed',
+    'academy_search_used', 'academy_filter_applied',
     'academy_course_viewed', 'academy_course_enrolled', 'academy_course_started',
+    'academy_course_resumed',
     'academy_lesson_started', 'academy_lesson_progressed', 'academy_lesson_completed',
+    'academy_video_started', 'academy_video_completed',
     'academy_module_completed', 'academy_assessment_started',
     'academy_assessment_submitted', 'academy_assessment_passed',
     'academy_assessment_failed', 'academy_course_completed',
     'academy_certificate_issued', 'academy_resource_downloaded',
-    'academy_bookmark_created', 'academy_learning_path_enrolled'
+    'academy_bookmark_created', 'academy_note_created',
+    'academy_learning_path_enrolled'
   )),
   course_id text,
   module_id text,
@@ -280,6 +285,23 @@ create table if not exists public.academy_events (
   idempotency_key text,
   created_at timestamptz not null default now()
 );
+alter table public.academy_events
+  drop constraint if exists academy_events_event_name_check;
+alter table public.academy_events
+  add constraint academy_events_event_name_check check (event_name in (
+    'academy_landing_viewed', 'academy_catalog_viewed',
+    'academy_search_used', 'academy_filter_applied',
+    'academy_course_viewed', 'academy_course_enrolled', 'academy_course_started',
+    'academy_course_resumed', 'academy_lesson_started',
+    'academy_lesson_progressed', 'academy_lesson_completed',
+    'academy_video_started', 'academy_video_completed',
+    'academy_module_completed', 'academy_assessment_started',
+    'academy_assessment_submitted', 'academy_assessment_passed',
+    'academy_assessment_failed', 'academy_course_completed',
+    'academy_certificate_issued', 'academy_resource_downloaded',
+    'academy_bookmark_created', 'academy_note_created',
+    'academy_learning_path_enrolled'
+  ));
 create unique index if not exists academy_events_idempotency_unique
   on public.academy_events(user_id, idempotency_key)
   where idempotency_key is not null;

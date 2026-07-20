@@ -11,37 +11,51 @@ import {
 import type {
   AcademyAssessment,
   AcademyCourse,
+  AcademyCourseDetail,
   AcademyEnrollment,
   AcademyLearningPath,
+  AcademyLearningState,
+  AcademyLesson,
+  AcademyLessonProgress,
+  AcademyModuleProgress,
 } from "@/types/academy";
 import { AcademyError } from "./academyErrors";
 import {
   academyAssessmentForGradingQuery,
+  academyCourseByLegacySlugQuery,
   academyCourseBySlugQuery,
   academyCoursesQuery,
   academyLearningPathsQuery,
+  academyLessonByCourseAndSlugQuery,
   academyLessonForTutorQuery,
   academyLessonStateQuery,
 } from "./academyQueries";
 
-const publishedClient = isSanityConfigured
-  ? createClient({
+let publishedClient: ReturnType<typeof createClient> | null = null;
+
+function getPublishedClient() {
+  if (!isSanityConfigured) return null;
+  if (!publishedClient) {
+    publishedClient = createClient({
       apiVersion: sanityApiVersion,
       dataset: sanityDataset,
       perspective: "published",
       projectId: sanityProjectId,
       token: process.env.SANITY_API_READ_TOKEN?.trim() || undefined,
       useCdn: !process.env.SANITY_API_READ_TOKEN,
-    })
-  : null;
+    });
+  }
+  return publishedClient;
+}
 
 function requirePublishedClient() {
-  if (!publishedClient)
+  const client = getPublishedClient();
+  if (!client)
     throw new AcademyError(
       "ACADEMY_PROVIDER_UNAVAILABLE",
       "Academy content is not configured.",
     );
-  return publishedClient;
+  return client;
 }
 
 const mapEnrollment = (row: Record<string, unknown>): AcademyEnrollment => ({
@@ -68,10 +82,39 @@ export async function listPublishedCourses(limit = 20, offset = 0) {
 }
 
 export async function findPublishedCourseBySlug(slug: string) {
-  return requirePublishedClient().fetch<AcademyCourse | null>(
+  return requirePublishedClient().fetch<AcademyCourseDetail | null>(
     academyCourseBySlugQuery,
     { slug },
     { next: { revalidate: 60, tags: ["sanity", "academy-course", slug] } },
+  );
+}
+
+export async function findPublishedCourseByLegacySlug(slug: string) {
+  return requirePublishedClient().fetch<AcademyCourseDetail | null>(
+    academyCourseByLegacySlugQuery,
+    { slug },
+    {
+      next: {
+        revalidate: 60,
+        tags: ["sanity", "academy-course", `legacy:${slug}`],
+      },
+    },
+  );
+}
+
+export async function findPublishedLessonByCourseAndSlug(
+  courseId: string,
+  lessonSlug: string,
+) {
+  return requirePublishedClient().fetch<AcademyLesson | null>(
+    academyLessonByCourseAndSlugQuery,
+    { courseId, lessonSlug },
+    {
+      next: {
+        revalidate: 60,
+        tags: ["sanity", "academy-lesson", courseId, lessonSlug],
+      },
+    },
   );
 }
 
@@ -205,6 +248,80 @@ export async function findEnrollmentByCourse(userId: string, courseId: string) {
       "Enrollment is unavailable.",
     );
   return data ? mapEnrollment(data) : null;
+}
+
+const mapLessonProgress = (
+  row: Record<string, unknown>,
+): AcademyLessonProgress => ({
+  completedAt: row.completed_at as string | null,
+  completionMethod:
+    row.completion_method as AcademyLessonProgress["completionMethod"],
+  contentViewedAt: row.content_viewed_at as string | null,
+  enrollmentId: String(row.enrollment_id),
+  id: String(row.id),
+  lastAccessedAt: row.last_accessed_at as string | null,
+  lessonId: String(row.lesson_id),
+  lessonVersion: Number(row.lesson_version),
+  progressPercent: Number(row.progress_percent),
+  status: row.status as AcademyLessonProgress["status"],
+  userId: String(row.user_id),
+  videoDurationSeconds:
+    row.video_duration_seconds === null
+      ? null
+      : Number(row.video_duration_seconds),
+  videoPositionSeconds:
+    row.video_position_seconds === null
+      ? null
+      : Number(row.video_position_seconds),
+});
+
+const mapModuleProgress = (
+  row: Record<string, unknown>,
+): AcademyModuleProgress => ({
+  completedAt: row.completed_at as string | null,
+  completedRequiredLessonsCount: Number(row.completed_required_lessons_count),
+  enrollmentId: String(row.enrollment_id),
+  id: String(row.id),
+  moduleId: String(row.module_id),
+  moduleVersion: Number(row.module_version),
+  progressPercent: Number(row.progress_percent),
+  requiredLessonsCount: Number(row.required_lessons_count),
+  status: row.status as AcademyModuleProgress["status"],
+  userId: String(row.user_id),
+});
+
+export async function findLearningState(
+  userId: string,
+  enrollment: AcademyEnrollment,
+): Promise<AcademyLearningState> {
+  const admin = getSupabaseAdmin();
+  const [
+    { data: lessonRows, error: lessonError },
+    { data: moduleRows, error: moduleError },
+  ] = await Promise.all([
+    admin
+      .from("academy_lesson_progress")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("enrollment_id", enrollment.id)
+      .order("created_at", { ascending: true }),
+    admin
+      .from("academy_module_progress")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("enrollment_id", enrollment.id)
+      .order("created_at", { ascending: true }),
+  ]);
+  if (lessonError || moduleError)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "Course progress is unavailable.",
+    );
+  return {
+    enrollment,
+    lessonProgress: (lessonRows ?? []).map(mapLessonProgress),
+    moduleProgress: (moduleRows ?? []).map(mapModuleProgress),
+  };
 }
 
 export async function insertEnrollment(input: {

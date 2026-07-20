@@ -193,3 +193,19 @@ lesson. Increment versions deliberately and create a new assessment version for
 answer-key or scoring changes. Never place provider secrets, embed HTML,
 personalized recommendations, fabricated credentials, or learner notes in
 Sanity. Keep the dataset private before graded assessments are published.
+
+For learner-facing lessons, choose the renderer intentionally: text, video,
+mixed, quiz, assessment, downloadable, webinar replay, chart practice, or
+external resource. Supply transcript and caption metadata only when it exists.
+Webinar replays and market examples must show their original date and state that
+historical commentary is not current analysis. Chart-practice material must
+identify delayed, historical, or illustrative data and include a textual
+alternative. Resource files need a useful title, format, size, and safe HTTPS
+location. External-resource lessons must name the source and explain that the
+learner is leaving DayTradingPost.
+
+Assessment review settings are product controls, not presentation hints.
+`showCorrectAnswers` and `showExplanations` must reflect the intended policy for
+failed attempts and retakes. Never place an answer key in excerpts, question
+media metadata, explanations visible before submission, analytics, or Tutor
+prompts.

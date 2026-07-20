@@ -1,7 +1,12 @@
 import "server-only";
 
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
-import type { AcademyAttempt, AcademyPublicQuestion } from "@/types/academy";
+import type {
+  AcademyAttempt,
+  AcademyAttemptView,
+  AcademyPublicQuestion,
+  AcademyResponse,
+} from "@/types/academy";
 import { requireAcademyUser } from "../academyAuthorization";
 import { AcademyError } from "../academyErrors";
 import {
@@ -33,15 +38,56 @@ const mapAttempt = (row: Record<string, unknown>): AcademyAttempt => ({
   userId: String(row.user_id),
 });
 
-const publicQuestion = (
+export const toPublicAcademyQuestion = (
   question: Parameters<typeof scoreAssessment>[0][number],
 ): AcademyPublicQuestion => {
   const {
+    answers,
     correctAnswer: _answer,
     explanation: _explanation,
     ...safe
   } = question;
-  return safe;
+  return {
+    ...safe,
+    answers: answers.map(({ id, label }) => ({ id, label })),
+    matchTargets:
+      question.questionType === "matching"
+        ? [...new Set(answers.map((answer) => answer.matchKey).filter(Boolean))]
+            .sort()
+            .map(String)
+        : undefined,
+  };
+};
+
+const orderPublicQuestions = (
+  assessment: Awaited<ReturnType<typeof findAssessmentForGrading>>,
+  attempt: AcademyAttempt,
+) => {
+  if (!assessment) return [];
+  const questionMap = new Map(
+    assessment.questions.map((question) => [question.id, question]),
+  );
+  return attempt.randomizedQuestionIds
+    .map((id) => questionMap.get(id))
+    .filter((question): question is NonNullable<typeof question> =>
+      Boolean(question),
+    )
+    .map((question) => {
+      const safe = toPublicAcademyQuestion(question);
+      const answerOrder = attempt.randomizedAnswerOrders[question.id] ?? [];
+      if (!answerOrder.length) return safe;
+      const answerMap = new Map(
+        safe.answers.map((answer) => [answer.id, answer]),
+      );
+      return {
+        ...safe,
+        answers: answerOrder
+          .map((id) => answerMap.get(id))
+          .filter((answer): answer is NonNullable<typeof answer> =>
+            Boolean(answer),
+          ),
+      };
+    });
 };
 
 export async function startAssessmentAttempt(assessmentIdInput: string) {
@@ -137,17 +183,114 @@ export async function startAssessmentAttempt(assessmentIdInput: string) {
       "Could not start assessment.",
     );
   const attempt = mapAttempt(data);
-  const questionMap = new Map(
-    assessment.questions.map((question) => [question.id, question]),
-  );
   return {
     attempt,
-    questions: attempt.randomizedQuestionIds
-      .map((id) => questionMap.get(id))
-      .filter((question): question is NonNullable<typeof question> =>
-        Boolean(question),
-      )
-      .map(publicQuestion),
+    questions: orderPublicQuestions(assessment, attempt),
+  };
+}
+
+export async function getAssessmentAttemptForLearner(
+  attemptIdInput: string,
+): Promise<AcademyAttemptView> {
+  const access = await requireAcademyUser();
+  const attemptId = parseAcademyIdentifier(attemptIdInput, "attempt ID");
+  const { data, error } = await getSupabaseAdmin()
+    .from("academy_assessment_attempts")
+    .select("*")
+    .eq("id", attemptId)
+    .eq("user_id", access.userId)
+    .maybeSingle();
+  if (error || !data)
+    throw new AcademyError(
+      "ACADEMY_FORBIDDEN",
+      "Assessment attempt was not found.",
+    );
+  let attempt = mapAttempt(data);
+  if (
+    attempt.status === "started" &&
+    attempt.expiresAt &&
+    new Date(attempt.expiresAt) <= new Date()
+  ) {
+    const { data: expiredRow, error: expirationError } =
+      await getSupabaseAdmin()
+        .from("academy_assessment_attempts")
+        .update({ status: "expired" })
+        .eq("id", attempt.id)
+        .eq("user_id", access.userId)
+        .eq("status", "started")
+        .select()
+        .maybeSingle();
+    if (expirationError)
+      throw new AcademyError(
+        "ACADEMY_PROVIDER_UNAVAILABLE",
+        "Assessment expiration could not be confirmed.",
+      );
+    if (expiredRow) attempt = mapAttempt(expiredRow);
+  }
+  const assessment = await findAssessmentForGrading(attempt.assessmentId);
+  if (!assessment || assessment.version !== attempt.assessmentVersion)
+    throw new AcademyError(
+      "ACADEMY_ASSESSMENT_NOT_AVAILABLE",
+      "This assessment version is unavailable.",
+    );
+  const { data: responseRows, error: responseError } = await getSupabaseAdmin()
+    .from("academy_assessment_responses")
+    .select("*")
+    .eq("attempt_id", attempt.id)
+    .eq("user_id", access.userId);
+  if (responseError)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "Assessment results are unavailable.",
+    );
+  const finalAttempt = ["graded", "passed", "failed"].includes(attempt.status);
+  const responses: AcademyResponse[] = (responseRows ?? []).map((row) => ({
+    awardedPoints:
+      finalAttempt &&
+      assessment.showCorrectAnswers &&
+      row.awarded_points !== null
+        ? Number(row.awarded_points)
+        : null,
+    correct:
+      finalAttempt && assessment.showCorrectAnswers
+        ? (row.correct as boolean | null)
+        : null,
+    feedback:
+      finalAttempt && assessment.showExplanations
+        ? (row.feedback as string | null)
+        : null,
+    id: String(row.id),
+    maximumPoints: Number(row.maximum_points),
+    questionId: String(row.question_id),
+    response: row.response,
+  }));
+  const { count: attemptsUsed } = await getSupabaseAdmin()
+    .from("academy_assessment_attempts")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", access.userId)
+    .eq("assessment_id", assessment.id)
+    .neq("status", "invalidated");
+  return {
+    assessment: {
+      courseId: assessment.courseId,
+      instructions: assessment.instructions,
+      maximumAttempts: assessment.maximumAttempts,
+      passingScore: assessment.passingScore,
+      showCorrectAnswers: assessment.showCorrectAnswers,
+      showExplanations: assessment.showExplanations,
+      timeLimitMinutes: assessment.timeLimitMinutes,
+      title: assessment.title,
+    },
+    attempt,
+    attemptsUsed: attemptsUsed ?? attempt.attemptNumber,
+    initialRemainingSeconds: attempt.expiresAt
+      ? Math.max(
+          0,
+          Math.floor((Date.parse(attempt.expiresAt) - Date.now()) / 1_000),
+        )
+      : null,
+    questions: orderPublicQuestions(assessment, attempt),
+    responses,
   };
 }
 

@@ -158,3 +158,20 @@ Test at 320, 375, 768, 1024, and 1440 px, plus zoom at 200%.
 - touch targets appropriate for mobile
 - decorative elements hidden from assistive technology
 - meaningful loading and error announcements
+
+## Academy learner patterns
+
+- Course cards use one primary canonical link, consistent cover-image ratios,
+  restrained access/difficulty badges, and textual progress.
+- Curriculum modules use native disclosure controls. Completion, premium,
+  optional, current, and locked states always include text rather than color or
+  icon alone.
+- Lesson content keeps a comfortable reading width while the curriculum moves
+  from a desktop sidebar to a native mobile disclosure.
+- Assessment options use `fieldset` and `legend`; question navigation exposes
+  current, answered, open, and flagged status in text. Ordering includes
+  keyboard Move up/Move down controls.
+- Mutation feedback uses inline `status` or `alert` regions and disables
+  duplicate submissions while persistence is pending.
+- Academy motion follows the global reduced-motion rule; video never autoplays
+  because a resume position exists.

@@ -276,3 +276,10 @@ Sanity owns published course structure and educational content. Supabase owns
 private learner state. `lib/academy` is the only authorization, enrollment,
 progress, scoring, prerequisite and certificate boundary. Browser clients never
 calculate authoritative state. See [Trading Academy LMS](TRADING_ACADEMY_LMS.md).
+
+The Part 2A frontend keeps catalog and course metadata in Server Components,
+uses client islands only for learner mutations, and fetches full lesson bodies
+only after server authorization. Canonical lesson and attempt routes are
+documented in [Academy learner experience](ACADEMY_LEARNER_EXPERIENCE.md).
+Assessment review policy is enforced before serialization, and protected
+resource URLs are resolved only through an authorized Route Handler.

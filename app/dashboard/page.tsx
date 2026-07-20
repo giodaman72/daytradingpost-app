@@ -27,6 +27,10 @@ import { getInstrument } from "@/constants/instruments";
 import { getMembershipAccess } from "@/lib/payments";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 import { getAssistantUsage } from "@/lib/ai/assistantUsage";
+import {
+  getAcademyCourse,
+  listUserEnrollments,
+} from "@/lib/academy/academyService";
 
 export const metadata: Metadata = {
   title: "Trader Dashboard",
@@ -57,6 +61,7 @@ export default async function DashboardPage() {
     notifications,
     unreadCount,
     assistantUsage,
+    academyEnrollments,
   ] = await Promise.all([
     getLatestArticles(5),
     getUserWatchlists().catch(() => []),
@@ -64,7 +69,16 @@ export default async function DashboardPage() {
     getUserNotifications(5).catch(() => []),
     getUnreadNotificationCount().catch(() => 0),
     getAssistantUsage(user.id, hasPremiumAccess).catch(() => null),
+    listUserEnrollments(20, 0).catch(() => []),
   ]);
+  const academyEnrollment =
+    academyEnrollments.find((item) => item.status === "in_progress") ??
+    academyEnrollments.find((item) => item.status === "enrolled") ??
+    academyEnrollments[0] ??
+    null;
+  const academyCourse = academyEnrollment
+    ? await getAcademyCourse(academyEnrollment.courseSlug).catch(() => null)
+    : null;
   const defaultWatchlist =
     watchlists.find((item) => item.isDefault) ?? watchlists[0] ?? null;
   const watchlistInstruments =
@@ -119,7 +133,10 @@ export default async function DashboardPage() {
             <WebinarWidget />
             <Watchlist watchlist={defaultWatchlist} quotes={watchlistQuotes} />
             <SmartAlerts alerts={alerts} />
-            <AcademyProgress />
+            <AcademyProgress
+              courseTitle={academyCourse?.title}
+              enrollment={academyEnrollment}
+            />
             <MembershipCard
               hasPremiumAccess={hasPremiumAccess}
               profile={profile}

@@ -220,6 +220,10 @@ and push a new commit so concurrency cancels the obsolete run.
 - [ ] Academy Viewer token, course projections, enrollment and grading work
 - [ ] Cross-user Academy isolation and protected calculated fields are verified
 - [ ] Academy configuration values are set for Preview and Production
+- [ ] Re-run the Academy SQL event-constraint section so Part 2A video, resume,
+      and note events are accepted
+- [ ] Canonical lesson, attempt, result, and protected-resource routes pass
+- [ ] Assessment review policy is verified with both reveal settings disabled
 
 ## Rollback
 

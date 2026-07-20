@@ -41,15 +41,20 @@ export function sanitizeAcademyTutorContext(lesson: Record<string, unknown>) {
     ...safe,
     citation: buildAcademyCitation(
       String(lesson.title ?? "Academy lesson"),
+      String(lesson.courseSlug ?? ""),
       String(lesson.slug ?? ""),
     ),
   };
 }
 
-export function buildAcademyCitation(title: string, slug: string) {
+export function buildAcademyCitation(
+  title: string,
+  courseSlug: string,
+  lessonSlug: string,
+) {
   return {
     title,
-    url: `/academy/lessons/${encodeURIComponent(slug)}`,
+    url: `/academy/courses/${encodeURIComponent(courseSlug)}/learn/${encodeURIComponent(lessonSlug)}`,
   };
 }
 

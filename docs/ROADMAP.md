@@ -178,8 +178,18 @@ Adds hybrid Sanity/Supabase LMS content and state, access/enrollment,
 progress/scoring/prerequisites, certificate verification, private learner
 utilities, API foundations, tests, and documentation.
 
-## Sprint 15 Part 2
+## Sprint 15 Part 2A — learner-facing foundation
 
-Build the responsive course catalog, lesson player, quiz experience, learning
-paths, progress dashboard, certificate UI/PDF, accessible admin tools, and
-end-to-end production integration on the Part 1 contracts.
+Adds the responsive Academy landing and catalog, SEO course pages, enrollment,
+private curriculum and canonical lesson routes, centralized lesson renderers,
+video checkpoints and resume, protected resources, bookmarks, private notes,
+graded assessments, policy-controlled results, retakes, analytics, and a compact
+dashboard continuation card.
+
+## Recommended Sprint 15 Part 2B
+
+Start with a full learner Academy dashboard backed by the existing enrollment
+and progress contracts. Then add learning-path UX, certificate wallet/PDF and
+public presentation, advanced progress analytics, recommendation and
+notification interfaces, complete Academy Tutor chat, reviews, accessible admin
+course management, end-to-end browser coverage, and final launch polish.
