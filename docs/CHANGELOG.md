@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased] — Academy Volume 5
+
+- Added deterministic explainable learning recommendations and continue priority.
+- Added verified learner reviews with owner controls and admin moderation.
+- Added Academy notification preferences, reminder rules and safe deep links.
+- Added the personalization/reviews Supabase migration, tests and operations docs.
+
 ## [Unreleased] — Sprint 15 Volume 4
 
 - Added protected general, course and lesson Academy AI Tutor routes

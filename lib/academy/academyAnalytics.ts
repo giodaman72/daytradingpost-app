@@ -30,6 +30,12 @@ export const ACADEMY_ANALYTICS_EVENTS = [
   "academy_learning_path_resumed",
   "academy_learning_path_course_opened",
   "academy_learning_path_completed",
+  "academy_recommendation_viewed",
+  "academy_recommendation_opened",
+  "academy_review_created",
+  "academy_review_edited",
+  "academy_notification_opened",
+  "academy_preference_changed",
 ] as const;
 
 export type AcademyAnalyticsEventName =

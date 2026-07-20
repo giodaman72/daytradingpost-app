@@ -317,3 +317,16 @@ eligibility and snapshot fields are server-loaded. Download is owner-scoped and
 private. Revocation requires `academy:manage-certificates` plus JSON `reason`,
 `confirmation` equal to `REVOKE`, and a unique `requestId`. Public verification
 uses only the allowlist in `docs/CERTIFICATE_VERIFICATION.md`.
+
+## Academy Personalization APIs
+
+- `GET/PATCH /api/academy/preferences`: owner-only notification preferences and
+  selected interests.
+- `GET /api/academy/courses/[courseSlug]/reviews`: public moderated reviews.
+- `POST /api/academy/courses/[courseSlug]/reviews`: eligible enrolled learner.
+- `PATCH/DELETE /api/academy/reviews/[reviewId]`: owner-only edit/delete.
+- `PATCH /api/admin/academy/reviews/[reviewId]/moderate`: admin-only publish or
+  reject.
+
+All mutations validate JSON size/content, apply authenticated authorization and
+rate limits where learner-controlled. Private Supabase keys remain server-only.

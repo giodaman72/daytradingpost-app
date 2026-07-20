@@ -57,13 +57,18 @@ export const DASHBOARD_NAVIGATION = [
     label: "Learning paths",
   },
   {
+    href: ROUTES.dashboardLearningRecommendations,
+    id: "recommendations",
+    label: "Recommended learning",
+  },
+  {
     href: ROUTES.dashboardCertificates,
     id: "certificates",
     label: "Certificates",
   },
   { href: "/dashboard#membership", id: "membership", label: "Membership" },
   {
-    href: "/dashboard#notifications",
+    href: ROUTES.dashboardLearningNotifications,
     id: "notifications",
     label: "Notifications",
   },

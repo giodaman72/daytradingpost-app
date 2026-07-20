@@ -33,6 +33,12 @@ export const academyConfig = Object.freeze({
     1,
     365,
   ),
+  reviewMinimumProgressPercent: boundedInteger(
+    "ACADEMY_REVIEW_MIN_PROGRESS_PERCENT",
+    20,
+    0,
+    100,
+  ),
   videoCompletionPercent: boundedInteger(
     "ACADEMY_VIDEO_COMPLETION_PERCENT",
     80,

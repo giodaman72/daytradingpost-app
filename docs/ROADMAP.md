@@ -220,3 +220,11 @@ Add administrator reconciliation for material path-version changes,
 replacement-course migrations, database-emulator RLS tests, browser automation,
 distributed verification rate limiting and learning-path certificates. Approve
 a correction/reissue policy before enabling the modeled superseding workflow.
+
+## After Academy Volume 5
+
+Add verified instructor-account relationships before instructor replies, a
+review abuse-report workflow, a production consent-aware email adapter, a
+scheduled reminder worker with distributed locking, and database-emulator RLS
+tests. Do not add AI recommendations until a separately reviewed transparent
+policy exists.

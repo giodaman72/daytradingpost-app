@@ -7147,6 +7147,170 @@ button {
   }
 }
 
+/* Academy personalization, verified reviews and learner notifications */
+.academy-recommendations-page,
+.academy-notifications-page {
+  display: grid;
+  gap: 34px;
+}
+
+.academy-recommendation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.academy-recommendation-card,
+.academy-review-list li,
+.academy-review-form {
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(12, 20, 31, 0.78);
+}
+
+.academy-recommendation-card h2,
+.academy-next-learning h2 {
+  margin: 14px 0 8px;
+}
+
+.academy-recommendation-card > p,
+.academy-next-learning > p,
+.academy-preferences > p {
+  color: var(--text-muted);
+}
+
+.academy-recommendation-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--accent) !important;
+  font-size: 13px;
+}
+
+.academy-recommendation-reason svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
+.academy-personalization-note {
+  padding: 15px 18px;
+  border-left: 3px solid var(--accent);
+  color: var(--text-muted);
+  background: rgba(245, 185, 66, 0.05);
+}
+
+.academy-preference-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 22px 0;
+}
+
+.academy-preference-list label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.academy-interests-field {
+  display: grid;
+  gap: 7px;
+  max-width: 720px;
+  margin: 0 0 22px;
+}
+
+.academy-interests-field span {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.academy-interests-field input {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.academy-review-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+}
+
+.academy-review-summary svg,
+.academy-review-list li > div:first-child {
+  color: var(--accent);
+}
+
+.academy-review-list {
+  display: grid;
+  gap: 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.academy-review-list li h3 {
+  margin: 10px 0 6px;
+}
+
+.academy-review-list time {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.academy-review-form {
+  display: grid;
+  gap: 15px;
+  max-width: 720px;
+  margin-top: 24px;
+}
+
+.academy-review-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.academy-review-form input,
+.academy-review-form select,
+.academy-review-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.academy-review-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.academy-review-actions button:not(.button) {
+  color: var(--text-muted);
+  text-decoration: underline;
+  background: transparent;
+  border: 0;
+}
+
+@media (max-width: 1000px) {
+  .academy-recommendation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .academy-recommendation-grid,
+  .academy-preference-list {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Sprint 15 Volume 3: certificate wallet, documents and public verification */
 .certificate-wallet-page .dashboard-main,
 .certificate-detail-page,

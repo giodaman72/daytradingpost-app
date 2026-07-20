@@ -36,3 +36,10 @@ rewritten; future replacement must preserve and link both records.
 
 For the broader application privacy policy, see `PRIVACY.md` in the repository
 root. Operational logs must not store full verification URLs or PDF contents.
+
+Academy personalization uses verified learning state and learner-selected
+interests only. It excludes private notes, review drafts, demographic data and
+financial suitability. Review drafts are visible only to their owner through
+server services and authorized moderators; only published reviews are public.
+Analytics record event names and entity identifiers, never review text or
+learner note content. Global notification unsubscribe overrides all categories.

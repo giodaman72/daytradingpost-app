@@ -294,3 +294,12 @@ When `notifications` exists, the LMS migration adds a nullable
 `idempotency_key` and per-user unique index for safe issuance/revocation retry.
 Public verification uses a service-role-only RPC with a fixed privacy-safe
 return shape.
+
+## Academy Volume 5
+
+`supabase-academy-personalization.sql` adds private
+`academy_learner_preferences` and moderated `academy_course_reviews`. Browser
+roles have no direct access; owner/public projections are server-enforced. A
+partial unique index permits one active review per learner/course. Only
+published, non-deleted rows are queried for public aggregates. The migration
+also extends the Academy analytics event allowlist.

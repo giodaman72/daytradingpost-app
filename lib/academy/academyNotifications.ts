@@ -7,7 +7,11 @@ export type AcademyMilestone =
   | "assessment-passed"
   | "assessment-failed"
   | "certificate-issued"
-  | "learning-path-milestone";
+  | "learning-path-milestone"
+  | "resume-reminder"
+  | "assessment-expiry"
+  | "course-progress-reminder"
+  | "new-course-content";
 
 export function createAcademyMilestoneNotification(input: {
   courseSlug: string;
@@ -44,11 +48,27 @@ export function createAcademyMilestoneNotification(input: {
       message: `You reached a learning-path milestone in ${input.courseTitle}.`,
       title: "Learning milestone",
     },
+    "resume-reminder": {
+      message: `Your place in ${input.courseTitle} is saved whenever you are ready.`,
+      title: "Continue learning",
+    },
+    "assessment-expiry": {
+      message: `An active assessment in ${input.courseTitle} is approaching its expiry time.`,
+      title: "Assessment expiry reminder",
+    },
+    "course-progress-reminder": {
+      message: `You can continue ${input.courseTitle} from your last saved lesson.`,
+      title: "Course progress saved",
+    },
+    "new-course-content": {
+      message: `New published content is available in ${input.courseTitle}.`,
+      title: "New Academy content",
+    },
   };
   return {
     ...copy[input.milestone],
     idempotencyKey: `${input.userId}:${input.courseSlug}:${input.milestone}`,
-    link: `/academy/${input.courseSlug}`,
+    link: `/academy/courses/${input.courseSlug}`,
     notificationType: `academy_${input.milestone.replaceAll("-", "_")}`,
     severity: input.milestone === "assessment-failed" ? "warning" : "success",
     userId: input.userId,

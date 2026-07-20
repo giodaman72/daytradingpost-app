@@ -23,6 +23,7 @@ import {
   listEnrollments,
   listPublishedCourses,
 } from "./academyRepository";
+import { deliverAcademyDashboardNotification } from "./notifications/academyNotificationService";
 import { parseAcademyIdentifier, parseAcademySlug } from "./academyValidation";
 import { deriveAcademyAvailability } from "./learningPaths/academyAvailability";
 
@@ -106,7 +107,7 @@ export async function enrollUserInCourse(input: {
         version: lesson.version,
       })),
   );
-  return enrollCourseTransactionally({
+  const enrollment = await enrollCourseTransactionally({
     accessSnapshot: {
       accessLevel: course.accessLevel,
       membershipPlan: access.profile?.membership_plan ?? "free",
@@ -130,6 +131,13 @@ export async function enrollUserInCourse(input: {
     source: input.source ?? "self",
     userId: access.userId,
   });
+  await deliverAcademyDashboardNotification({
+    courseSlug: course.slug,
+    courseTitle: course.title,
+    milestone: "course-enrolled",
+    userId: access.userId,
+  }).catch(() => undefined);
+  return enrollment;
 }
 
 export async function listUserEnrollments(limit = 20, offset = 0) {

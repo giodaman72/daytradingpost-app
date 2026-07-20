@@ -15,6 +15,9 @@ import { AcademyCatalogGrid } from "@/components/academy/AcademyCatalogGrid";
 import { AcademyViewEvent } from "@/components/academy/AcademyViewEvent";
 import { CourseCurriculum } from "@/components/academy/CourseCurriculum";
 import { EnrollmentButton } from "@/components/academy/EnrollmentButton";
+import { AcademyReviewForm } from "@/components/academy/reviews/AcademyReviewForm";
+import { AcademyReviewList } from "@/components/academy/reviews/AcademyReviewList";
+import { AcademyReviewSummary } from "@/components/academy/reviews/AcademyReviewSummary";
 import { AcademyError } from "@/lib/academy/academyErrors";
 import { formatAcademyDuration } from "@/lib/academy/academyPresentation";
 import { listEnrollments } from "@/lib/academy/academyRepository";
@@ -25,6 +28,10 @@ import {
 } from "@/lib/academy/academyService";
 import { getMembershipAccess } from "@/lib/membership/access";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
+import {
+  getCourseReviews,
+  getReviewEligibility,
+} from "@/lib/academy/reviews/reviewService";
 
 type CoursePageProps = {
   params: Promise<{ courseSlug: string }>;
@@ -111,6 +118,13 @@ export default async function CoursePage({ params }: CoursePageProps) {
           candidate.tags.some((tag) => course.tags.includes(tag))),
     )
     .slice(0, 3);
+  const reviewData = await getCourseReviews(course.id).catch(() => ({
+    aggregate: { averageRating: null, publishedCount: 0 },
+    reviews: [],
+  }));
+  const reviewEligibility = access.user
+    ? await getReviewEligibility(course.slug)
+    : null;
 
   return (
     <>
@@ -291,6 +305,34 @@ export default async function CoursePage({ params }: CoursePageProps) {
             </p>
           </div>
           <CourseCurriculum course={course} />
+        </div>
+      </section>
+      <section className="academy-section academy-reviews-section">
+        <div className="container">
+          <div className="academy-section-heading">
+            <div>
+              <span className="section-kicker">Verified learners</span>
+              <h2>Course reviews</h2>
+            </div>
+            <AcademyReviewSummary aggregate={reviewData.aggregate} />
+          </div>
+          <AcademyReviewList reviews={reviewData.reviews} />
+          {reviewEligibility ? (
+            <AcademyReviewForm
+              courseId={course.id}
+              courseSlug={course.slug}
+              eligible={reviewEligibility.eligible}
+              initial={reviewEligibility.review}
+              minimumProgressPercent={reviewEligibility.minimumProgressPercent}
+            />
+          ) : (
+            <p>
+              <Link href={`/login?next=/academy/courses/${course.slug}`}>
+                Sign in
+              </Link>{" "}
+              to review a course you are enrolled in.
+            </p>
+          )}
         </div>
       </section>
       {relatedCourses.length ? (

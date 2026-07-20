@@ -330,3 +330,15 @@ Manual certificate checklist:
     and public revoked status.
 11. Retry the request ID; confirm no duplicate audit or notification.
 12. Confirm reissue is rejected while its business rule is disabled.
+
+## Academy Volume 5 checklist
+
+Automated tests cover recommendation priority and explanations, enrolled/unmet
+prerequisite exclusions, rating and text validation, published aggregate math,
+moderation validation, review uniqueness, cross-user SQL isolation, notification
+deep links/idempotency, inactivity/expiry rules, category consent, unsubscribe
+and email opt-in. Reminders are pure test inputs and never send email.
+
+Manual: sign in as a learner, verify recommendations and reasons, submit/edit/
+delete an eligible review, confirm it stays hidden pending moderation, publish
+as an admin, and verify notification preferences survive a reload.

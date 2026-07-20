@@ -511,12 +511,54 @@ export type AcademyLearnerNote = {
 
 export type AcademyCourseReview = {
   courseId: string;
+  createdAt: string;
+  deletedAt: string | null;
   id: string;
   rating: number;
   reviewText: string | null;
   status: "pending" | "published" | "rejected";
   title: string | null;
+  updatedAt: string;
   userId: string;
+};
+
+export type AcademyReviewAggregate = {
+  averageRating: number | null;
+  publishedCount: number;
+};
+
+export type AcademyLearnerPreferences = {
+  academyAnnouncements: boolean;
+  assessmentNotifications: boolean;
+  certificateNotifications: boolean;
+  completionNotifications: boolean;
+  courseReminders: boolean;
+  emailEnabled: boolean;
+  interests: string[];
+  unsubscribedAll: boolean;
+  updatedAt: string | null;
+  userId: string;
+};
+
+export type AcademyRecommendationReason =
+  | "active-assessment"
+  | "current-required-lesson"
+  | "continue-course"
+  | "next-in-learning-path"
+  | "prerequisite-completed"
+  | "reinforces-recent-lesson"
+  | "selected-interest"
+  | "beginner-continuation";
+
+export type AcademyLearningRecommendation = {
+  course: AcademyCourse;
+  href: string;
+  lessonSlug: string | null;
+  lessonTitle: string | null;
+  priority: 1 | 2 | 3 | 4 | 5;
+  reason: AcademyRecommendationReason;
+  reasonText: string;
+  type: "assessment" | "lesson" | "course" | "learning-path" | "recommended";
 };
 
 export type AcademyMembershipLimits = {

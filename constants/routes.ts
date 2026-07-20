@@ -22,6 +22,8 @@ export const ROUTES = {
   dashboard: "/dashboard",
   dashboardCertificates: "/dashboard/learning/certificates",
   dashboardLearningPaths: "/dashboard/learning/paths",
+  dashboardLearningRecommendations: "/dashboard/learning/recommendations",
+  dashboardLearningNotifications: "/dashboard/learning/notifications",
   economicCalendar: "/economic-calendar",
   home: "/",
   membership: {

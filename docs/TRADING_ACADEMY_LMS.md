@@ -148,3 +148,12 @@ Volume 4 completes authenticated general, course and lesson Tutor routes,
 explicit lesson actions, source citations, usage/feedback/history controls and
 assessment-safe retrieval. It never changes progress, grades or certificates.
 See [Academy AI Tutor](ACADEMY_AI_TUTOR.md).
+
+## Personalization, Reviews and Notifications
+
+Volume 5 adds explainable rules-based recommendations, verified learner reviews,
+moderation and consent-backed learning notifications. See
+[Personalization](ACADEMY_PERSONALIZATION.md),
+[Reviews](ACADEMY_REVIEWS.md) and
+[Notifications](ACADEMY_NOTIFICATIONS.md). Apply
+`supabase-academy-personalization.sql` after the core LMS migration.

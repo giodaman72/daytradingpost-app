@@ -19,6 +19,11 @@ export function NotificationItem({
       {!notification.readAt ? (
         <form action={readNotificationAction}>
           <input type="hidden" name="id" value={notification.id} />
+          <input
+            type="hidden"
+            name="notificationType"
+            value={notification.notificationType}
+          />
           <button type="submit">Mark read</button>
         </form>
       ) : (
