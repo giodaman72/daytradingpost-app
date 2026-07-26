@@ -7,6 +7,22 @@ describe("deterministic assistant evaluation", () => {
     expect(ASSISTANT_EVALUATION_CASES).toHaveLength(20);
     const results = runDeterministicAssistantEvaluation();
     expect(results).toHaveLength(20);
-    expect(results.every((result) => result.score === 1)).toBe(true);
+    expect(results.filter((result) => result.score !== 1)).toEqual([]);
+    expect(
+      results.find((result) => result.id === "fabricated-citation")?.dimensions
+        .citationValidity,
+    ).toBe(true);
+    expect(
+      results.find((result) => result.id === "market-data-delayed")?.dimensions
+        .timestampDisclosure,
+    ).toBe(true);
+    expect(
+      results.find((result) => result.id === "premium-denied")?.dimensions
+        .accessControl,
+    ).toBe(true);
+    expect(
+      results.find((result) => result.id === "oversized")?.dimensions
+        .safetyBehavior,
+    ).toBe(true);
   });
 });

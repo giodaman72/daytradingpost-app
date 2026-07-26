@@ -30,6 +30,7 @@ only when deliberately adding, removing, or updating a package.
 | `npm run typecheck`     | Run strict `tsc --noEmit` validation                                 |
 | `npm test`              | Start Vitest in watch mode for local development                     |
 | `npm run test:run`      | Run the deterministic test suite once                                |
+| `npm run test:ai-eval`  | Run the 20-case deterministic AI evaluation without live providers   |
 | `npm run test:coverage` | Run tests with text, JSON, and HTML coverage reports                 |
 | `npm run build`         | Create the optimized Next.js production build                        |
 | `npm run check`         | Run format, lint, typecheck, tests, and build in order               |

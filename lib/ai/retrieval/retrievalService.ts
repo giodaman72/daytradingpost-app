@@ -11,7 +11,9 @@ import { retrieveEconomicEvents } from "./economicRetriever";
 import { retrieveMarketData } from "./marketDataRetriever";
 import { retrieveMarketIntelligence } from "./marketIntelligenceRetriever";
 import { retrieveSanityArticles } from "./sanityRetriever";
-import { retrieveWatchlist } from "./watchlistRetriever";
+import { retrieveWatchlistContext } from "./watchlistRetriever";
+
+const MAX_WATCHLIST_INSTRUMENTS = 8;
 
 export async function retrieveAssistantContext(
   request: AssistantRequest,
@@ -27,20 +29,42 @@ export async function retrieveAssistantContext(
     );
   const allowed = new Set(rule.sources);
   const tasks: Promise<RetrievalDocument[]>[] = [];
+  let watchlistInstrumentSlugs: string[] | null = null;
+  if (allowed.has("watchlist")) {
+    const watchlist = await retrieveWatchlistContext(
+      userId,
+      request.watchlistId ?? null,
+    );
+    tasks.push(Promise.resolve(watchlist.documents));
+    watchlistInstrumentSlugs = watchlist.instrumentSlugs.slice(
+      0,
+      MAX_WATCHLIST_INSTRUMENTS,
+    );
+  }
   if (allowed.has("article"))
     tasks.push(
       retrieveSanityArticles(request.articleSlug ?? null, hasPremiumAccess),
     );
-  if (allowed.has("market_intelligence"))
-    tasks.push(retrieveMarketIntelligence(request.instrumentSlug ?? null));
-  if (allowed.has("market_data"))
-    tasks.push(retrieveMarketData(request.instrumentSlug ?? null));
+  if (allowed.has("market_intelligence")) {
+    if (watchlistInstrumentSlugs)
+      tasks.push(
+        ...watchlistInstrumentSlugs.map((slug) =>
+          retrieveMarketIntelligence(slug),
+        ),
+      );
+    else tasks.push(retrieveMarketIntelligence(request.instrumentSlug ?? null));
+  }
+  if (allowed.has("market_data")) {
+    if (watchlistInstrumentSlugs)
+      tasks.push(
+        ...watchlistInstrumentSlugs.map((slug) => retrieveMarketData(slug)),
+      );
+    else tasks.push(retrieveMarketData(request.instrumentSlug ?? null));
+  }
   if (allowed.has("economic_event"))
     tasks.push(retrieveEconomicEvents(request.economicEventId ?? null));
   if (allowed.has("academy"))
     tasks.push(Promise.resolve(retrieveAcademyContent()));
-  if (allowed.has("watchlist"))
-    tasks.push(retrieveWatchlist(userId, request.watchlistId ?? null));
 
   const settled = await Promise.allSettled(tasks);
   const accessError = settled.find(

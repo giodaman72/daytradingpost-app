@@ -7,6 +7,7 @@ export type AssistantEvaluationCase = {
   expectsCitations?: boolean;
   expectsRefusal?: boolean;
   expectsDelayedDisclosure?: boolean;
+  expectsTimestampDisclosure?: boolean;
   expectsFixtureDisclosure?: boolean;
   expectsAccessDenied?: boolean;
   expectsValidationError?: boolean;
@@ -55,6 +56,7 @@ export const ASSISTANT_EVALUATION_CASES: AssistantEvaluationCase[] = [
   {
     id: "market-data-delayed",
     prompt: "Explain this delayed quote.",
+    expectsCitations: true,
     expectsDelayedDisclosure: true,
   },
   {
@@ -106,6 +108,7 @@ export const ASSISTANT_EVALUATION_CASES: AssistantEvaluationCase[] = [
     id: "timestamp-mismatch",
     prompt: "Use the source timestamp.",
     expectsCitations: true,
+    expectsTimestampDisclosure: true,
   },
   {
     id: "fixture-disclosure",
