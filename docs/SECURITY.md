@@ -15,3 +15,6 @@ to assigned course IDs and privacy-thresholded aggregates.
 Sensitive enrollment and assessment mutations are confirmed, reasoned,
 transactional, idempotent and audited. Browser roles have no direct access to
 instructor assignments, review reports or instructor reply drafts.
+Certificate revocation and reissue follow the same controls. Reissue accepts
+only revoked records, rotates certificate number and verification code, and
+retains the prior immutable record as superseded.

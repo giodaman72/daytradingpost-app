@@ -7,7 +7,6 @@ import { requireAcademyPermission } from "../admin/academyAdminAuthorization";
 import { requireAcademyUser } from "../academyAuthorization";
 import { enforceAcademyRateLimit } from "../academyRateLimit";
 import { AcademyError } from "../academyErrors";
-import { recordAcademyEvent } from "../academyEventService";
 import { findPublishedCourseBySlug } from "../academyRepository";
 import {
   normalizePlainText,
@@ -16,7 +15,10 @@ import {
 } from "../academyValidation";
 import { academyConfig } from "../academyConfig";
 import { evaluateCertificateEligibility } from "./certificateEligibility";
-import { canRevokeCertificate } from "./certificateLifecycle";
+import {
+  canReissueCertificate,
+  canRevokeCertificate,
+} from "./certificateLifecycle";
 import {
   findActiveCertificateRecord,
   findCertificateRecord,
@@ -256,13 +258,27 @@ async function finalizeCertificateIssuance(certificate: AcademyCertificate) {
       title: "Certificate issued",
       userId: certificate.userId,
     }),
-    recordAcademyEvent({
-      courseId: certificate.courseId,
-      idempotencyKey: `certificate:${certificate.id}:issued`,
-      name: "academy_certificate_issued",
-    }),
+    recordCertificateIssuanceEvent(certificate),
   ]);
   return certificate;
+}
+
+async function recordCertificateIssuanceEvent(certificate: AcademyCertificate) {
+  const { error } = await getSupabaseAdmin()
+    .from("academy_events")
+    .insert({
+      course_id: certificate.courseId,
+      event_name: "academy_certificate_issued",
+      idempotency_key: `certificate:${certificate.id}:issued`,
+      metadata: {},
+      user_id: certificate.userId,
+    });
+  if (error?.code === "23505") return;
+  if (error)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "Certificate analytics could not be recorded.",
+    );
 }
 
 export async function getCertificateWallet(limit = 12, offset = 0) {
@@ -377,4 +393,68 @@ export async function revokeCertificate(input: {
     userId: revoked.userId,
   });
   return revoked;
+}
+
+export async function reissueCertificate(input: {
+  certificateId: string;
+  confirmation: string;
+  reason: string;
+  requestId: string;
+}) {
+  const actor = await requireAcademyPermission("academy:manage-certificates");
+  enforceAcademyRateLimit(actor.userId, "admin-certificate", 10);
+  const certificateId = parseAcademyIdentifier(
+    input.certificateId,
+    "certificate ID",
+  );
+  const reason = normalizePlainText(input.reason, "Reissue reason", 500);
+  const requestId = normalizePlainText(input.requestId, "Request ID", 160);
+  const certificate = await findCertificateRecord(certificateId);
+  if (!certificate)
+    throw new AcademyError("ACADEMY_FORBIDDEN", "Certificate was not found.");
+  const decision = canReissueCertificate({
+    actorCanManageCertificates: true,
+    confirmation: input.confirmation,
+    reason,
+    status: certificate.status,
+  });
+  if (!decision.allowed) {
+    if (
+      certificate.status === "superseded" &&
+      certificate.supersededByCertificateId &&
+      input.confirmation === "REISSUE"
+    ) {
+      const existing = await findCertificateRecord(
+        certificate.supersededByCertificateId,
+      );
+      if (existing) return finalizeCertificateIssuance(existing);
+    }
+    throw new AcademyError(
+      "ACADEMY_VALIDATION_FAILED",
+      "Reissue requires a revoked certificate, a reason, and explicit confirmation.",
+    );
+  }
+  const { data, error } = await getSupabaseAdmin().rpc(
+    "reissue_academy_certificate",
+    {
+      p_actor_user_id: actor.userId,
+      p_certificate_id: certificateId,
+      p_certificate_number: createCertificateNumber(),
+      p_reason: reason,
+      p_request_id: requestId,
+      p_verification_code: createCertificateVerificationCode(),
+    },
+  );
+  if (error)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "Certificate could not be reissued.",
+    );
+  const replacement = await findCertificateRecord(String(data));
+  if (!replacement)
+    throw new AcademyError(
+      "ACADEMY_PROVIDER_UNAVAILABLE",
+      "Certificate reissue could not be confirmed.",
+    );
+  return finalizeCertificateIssuance(replacement);
 }

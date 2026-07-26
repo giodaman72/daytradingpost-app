@@ -33,11 +33,15 @@ service-role-only transactional database functions. Reset requires the exact
 attempts but retains responses, scores and audit history. Individual scores
 cannot be edited. Attempt invalidation separately requires `INVALIDATE`.
 
-Certificate records remain immutable. Authorized revocation uses the existing
-confirmation and audited RPC. Reissue remains disabled until a correction and
-superseding policy is approved.
+Certificate records remain immutable. Authorized revocation requires
+`REVOKE`, and reissue requires `REISSUE`; both require a reason and use audited,
+request-idempotent RPCs. Reissue is limited to revoked certificates. It copies
+the original completion snapshot into a replacement with fresh public
+identifiers, marks the prior record superseded and links both records. It does
+not correct names, scores, course data or completion dates in place.
 
-Apply `docs/supabase-academy-admin.sql` before using mutation workflows.
+Apply `docs/supabase-trading-academy-lms.sql` and then
+`docs/supabase-academy-admin.sql` before using mutation workflows.
 Set `SANITY_API_READ_TOKEN` on the server so draft-aware validation can read
 editorial metadata. Do not create a browser-exposed or application-level Sanity
 write token. Configure matching Sanity project roles so editorial users cannot

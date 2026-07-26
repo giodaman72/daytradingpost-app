@@ -16,12 +16,14 @@ export function canRevokeCertificate(input: {
 
 export function canReissueCertificate(input: {
   actorCanManageCertificates: boolean;
-  businessRuleEnabled: boolean;
+  confirmation: string;
+  reason: string;
   status: AcademyCertificateStatus;
 }) {
   const reasons: string[] = [];
   if (!input.actorCanManageCertificates) reasons.push("permission-required");
-  if (!input.businessRuleEnabled) reasons.push("reissue-policy-disabled");
+  if (input.confirmation !== "REISSUE") reasons.push("confirmation-required");
+  if (input.reason.trim().length < 10) reasons.push("reason-required");
   if (input.status !== "revoked") reasons.push("certificate-not-revoked");
   return { allowed: reasons.length === 0, reasons };
 }

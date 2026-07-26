@@ -33,17 +33,34 @@ describe("certificate lifecycle policy", () => {
     ).toBe(true);
   });
 
-  it("keeps reissue disabled until an approved business rule exists", () => {
+  it("requires permission, confirmation, a reason and revoked status to reissue", () => {
     expect(
       canReissueCertificate({
-        actorCanManageCertificates: true,
-        businessRuleEnabled: false,
-        status: "revoked",
+        actorCanManageCertificates: false,
+        confirmation: "",
+        reason: "short",
+        status: "issued",
       }),
     ).toEqual({
       allowed: false,
-      reasons: ["reissue-policy-disabled"],
+      reasons: [
+        "permission-required",
+        "confirmation-required",
+        "reason-required",
+        "certificate-not-revoked",
+      ],
     });
+  });
+
+  it("allows an administrator to replace a revoked certificate", () => {
+    expect(
+      canReissueCertificate({
+        actorCanManageCertificates: true,
+        confirmation: "REISSUE",
+        reason: "The revoked credential has been reviewed and approved.",
+        status: "revoked",
+      }).allowed,
+    ).toBe(true);
   });
 
   it("preserves revoked and superseded public statuses", () => {

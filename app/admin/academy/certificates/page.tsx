@@ -15,7 +15,7 @@ export default async function AcademyCertificatesAdminPage() {
   return (
     <AcademyAdminShell
       title="Certificate management"
-      description="Review issued, revoked and superseded certificates, verify public records and perform authorized audited revocation."
+      description="Review issued, revoked and superseded certificates, verify public records and perform authorized audited lifecycle actions."
     >
       <div className="academy-admin-table-wrap">
         <table className="academy-admin-table">
@@ -90,8 +90,10 @@ export default async function AcademyCertificatesAdminPage() {
         ) : null}
       </section>
       <p className="academy-admin-notice">
-        Certificate reissue remains disabled until a correction and superseding
-        policy is approved. Existing records are never rewritten or deleted.
+        Reissue is limited to revoked certificates. It creates a replacement
+        with fresh public identifiers, preserves the original snapshot, and
+        marks the prior record superseded. Existing records are never rewritten
+        or deleted.
       </p>
     </AcademyAdminShell>
   );

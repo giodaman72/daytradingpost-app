@@ -9,6 +9,8 @@
 - Added explicit instructor-course assignments and a privacy-conscious
   instructor dashboard.
 - Added audited transactional enrollment actions and assessment invalidation.
+- Added confirmed, audited and idempotent revoked-certificate reissue with
+  immutable superseding history and rotated public identifiers.
 - Added review reporting plus moderated instructor replies.
 - Added privacy-thresholded Academy aggregate analytics and operational docs.
 

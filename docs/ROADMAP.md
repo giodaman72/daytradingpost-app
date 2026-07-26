@@ -224,7 +224,8 @@ revocation.
 Add administrator reconciliation for material path-version changes,
 replacement-course migrations, database-emulator RLS tests, browser automation,
 distributed verification rate limiting and learning-path certificates. Approve
-a correction/reissue policy before enabling the modeled superseding workflow.
+a separate correction policy before allowing changes to certificate snapshot
+facts; Volume 6 reissue intentionally preserves those facts.
 
 ## Sprint 15 Volume 6 — admin and instructor operations
 
@@ -239,4 +240,5 @@ Add a dedicated assignment-management UI with dual approval, Sanity webhook
 reconciliation into Supabase audit reporting, high-volume SQL analytics rollups,
 CSV export with privacy review, richer lesson-level drop-off funnels and
 database-emulator authorization tests. Approve the certificate correction and
-reissue policy before enabling reissue.
+dual-approval policy before allowing snapshot corrections; the shipped reissue
+flow only replaces a revoked record without changing its completion facts.

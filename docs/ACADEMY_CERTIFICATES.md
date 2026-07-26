@@ -2,7 +2,7 @@
 
 Sprint 15 Volume 3 adds a protected certificate wallet, server-controlled
 issuance, branded PDF download, QR verification, safe sharing, public
-verification and administrator revocation. Certificates are educational
+verification and administrator revocation/reissue. Certificates are educational
 course-completion records, never claims of accreditation, professional
 licensure, financial competence, or trading performance.
 
@@ -60,10 +60,13 @@ characters, the literal confirmation `REVOKE`, and a unique request ID. The
 database updates status/timestamp, writes the audit row transactionally, keeps
 the immutable snapshot, updates public verification, and sends one notification.
 
-Reissue is deliberately disabled because no approved business rule currently
-defines replacement. The schema supports `supersedes_certificate_id` and
-`superseded_by_certificate_id` so a future approved workflow can preserve both
-records. Do not manually overwrite an issued snapshot.
+Reissue is limited to a revoked certificate and requires the same permission,
+a reason of at least ten characters, `REISSUE`, and a unique request ID. The
+transaction copies the immutable completion snapshot into a new issued record,
+rotates the certificate number and verification code, marks the prior record
+superseded, links both records and writes an audit row. Retries return the same
+replacement. Corrections to snapshot facts are outside this workflow; never
+manually overwrite an issued snapshot.
 
 ## Operations
 

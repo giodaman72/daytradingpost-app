@@ -346,8 +346,11 @@ rate limits where learner-controlled. Private Supabase keys remain server-only.
   only; creates or updates a pending moderated reply.
 - `PATCH /api/admin/academy/review-replies/[replyId]/moderate`: administrator
   publish/reject with a required reason and audit record.
-- Existing certificate revocation remains at
-  `POST /api/admin/academy/certificates/[certificateId]/revoke`.
+- `POST /api/admin/academy/certificates/[certificateId]/revoke`: admin-only,
+  reasoned and explicitly confirmed certificate revocation.
+- `POST /api/admin/academy/certificates/[certificateId]/reissue`: admin-only
+  replacement of a revoked certificate. Requires `REISSUE`, a reason and a
+  request ID; returns the same replacement when safely retried.
 
 Enrollment and assessment administrative mutations use Server Actions backed by
 service-role-only RPCs. Each action rechecks the relevant permission and records

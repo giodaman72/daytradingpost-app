@@ -170,4 +170,6 @@ explicit instructor assignments, moderated instructor replies and
 privacy-conscious aggregate analytics. See [Academy Admin](ACADEMY_ADMIN.md),
 [Instructor Experience](ACADEMY_INSTRUCTOR.md) and
 [Academy Analytics](ACADEMY_ANALYTICS.md). Apply
-`supabase-academy-admin.sql` after the Volume 5 migration.
+`supabase-academy-admin.sql` after the Volume 5 migration. The core LMS
+migration also defines the audited, immutable revoke-and-reissue certificate
+lifecycle; reapply it when upgrading an existing Sprint 15 environment.

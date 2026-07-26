@@ -314,6 +314,10 @@ server read models expose metadata and validation only; Studio handles writes.
 Supabase owns learner state, explicit instructor assignments, review/reply
 moderation, events and audit records. Transactional RPCs protect manual
 enrollment, access lifecycle, progress reset and attempt invalidation.
+Certificate revocation and revoked-certificate reissue are separate
+service-role-only transactions. Reissue copies immutable issuance facts into a
+new record, rotates public identifiers and links the superseded record rather
+than updating or deleting its snapshot.
 
 Admin and instructor pages are dynamic Server Components. Each service performs
 its own authorization. Client components handle only small interactive forms

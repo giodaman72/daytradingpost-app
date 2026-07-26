@@ -375,3 +375,7 @@ Manual setup and flows:
 7. Report a published review, moderate it and moderate an instructor reply.
 8. Filter analytics to a cohort below five and confirm sensitive rates are
    suppressed.
+9. Revoke a test certificate with `REVOKE`, then reissue it with `REISSUE`.
+   Confirm the old verification page says superseded, the replacement is valid,
+   retries do not create another certificate, and both audit rows retain their
+   reasons.

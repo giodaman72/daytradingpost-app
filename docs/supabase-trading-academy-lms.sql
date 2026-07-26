@@ -589,6 +589,117 @@ revoke all on function public.revoke_academy_certificate(uuid, uuid, text, text)
 grant execute on function public.revoke_academy_certificate(uuid, uuid, text, text)
   to service_role;
 
+-- Reissue never edits an issuance snapshot. A revoked record is retained and
+-- marked superseded while a replacement copies its immutable completion facts
+-- and receives new public identifiers. The audit request ID makes retries safe.
+create or replace function public.reissue_academy_certificate(
+  p_actor_user_id uuid,
+  p_certificate_id uuid,
+  p_certificate_number text,
+  p_verification_code text,
+  p_reason text,
+  p_request_id text
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  certificate public.academy_certificates;
+  replacement_id uuid;
+begin
+  select target_id::uuid into replacement_id
+  from public.academy_admin_audit
+  where request_id = p_request_id
+    and action = 'academy_certificate_reissued'
+  limit 1;
+  if replacement_id is not null then return replacement_id; end if;
+
+  select * into certificate
+  from public.academy_certificates
+  where id = p_certificate_id
+  for update;
+  if certificate.id is null then
+    raise exception using errcode = 'P0002', message = 'certificate not found';
+  end if;
+
+  perform pg_advisory_xact_lock(
+    hashtextextended(
+      certificate.user_id::text || ':' || certificate.course_id || ':' ||
+      certificate.course_version::text,
+      0
+    )
+  );
+
+  if certificate.status = 'superseded'
+    and certificate.superseded_by_certificate_id is not null
+  then
+    return certificate.superseded_by_certificate_id;
+  end if;
+  if certificate.status <> 'revoked' then
+    raise exception using errcode = '23514', message = 'certificate is not revoked';
+  end if;
+  if char_length(btrim(p_reason)) < 10 then
+    raise exception using errcode = '23514', message = 'reissue reason is required';
+  end if;
+  if exists (
+    select 1 from public.academy_certificates
+    where user_id = certificate.user_id
+      and course_id = certificate.course_id
+      and course_version = certificate.course_version
+      and status = 'issued'
+  ) then
+    raise exception using errcode = '23505', message = 'active certificate exists';
+  end if;
+
+  insert into public.academy_certificates (
+    user_id, enrollment_id, course_id, course_version, certificate_number,
+    verification_code, learner_display_name, course_title_snapshot,
+    instructor_name_snapshot, completion_date, score_snapshot, metadata,
+    issuance_idempotency_key, supersedes_certificate_id
+  )
+  values (
+    certificate.user_id, certificate.enrollment_id, certificate.course_id,
+    certificate.course_version, p_certificate_number, p_verification_code,
+    certificate.learner_display_name, certificate.course_title_snapshot,
+    certificate.instructor_name_snapshot, certificate.completion_date,
+    certificate.score_snapshot,
+    certificate.metadata || jsonb_build_object(
+      'reissuedFromCertificateId', certificate.id::text
+    ),
+    p_request_id, certificate.id
+  )
+  returning id into replacement_id;
+
+  update public.academy_certificates
+  set status = 'superseded',
+      superseded_by_certificate_id = replacement_id
+  where id = certificate.id;
+
+  insert into public.academy_admin_audit (
+    actor_user_id, action, target_type, target_id, request_id, metadata
+  )
+  values (
+    p_actor_user_id, 'academy_certificate_reissued', 'academy_certificate',
+    replacement_id::text, p_request_id,
+    jsonb_build_object(
+      'reason', btrim(p_reason),
+      'previousCertificateId', certificate.id::text,
+      'previousStatus', certificate.status
+    )
+  );
+  return replacement_id;
+end;
+$$;
+
+revoke all on function public.reissue_academy_certificate(
+  uuid, uuid, text, text, text, text
+) from public, anon, authenticated;
+grant execute on function public.reissue_academy_certificate(
+  uuid, uuid, text, text, text, text
+) to service_role;
+
 create or replace function public.protect_academy_certificate_snapshot()
 returns trigger
 language plpgsql
