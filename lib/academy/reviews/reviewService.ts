@@ -1,9 +1,9 @@
 import "server-only";
 
-import { enforceMutationRateLimit } from "@/lib/mutationRateLimit";
 import { academyConfig } from "../academyConfig";
 import { requireAcademyUser } from "../academyAuthorization";
 import { AcademyError } from "../academyErrors";
+import { enforceAcademyRateLimit } from "../academyRateLimit";
 import { findEnrollmentByCourse } from "../academyRepository";
 import { getAcademyCourse } from "../academyService";
 import {
@@ -60,7 +60,7 @@ export async function createCourseReview(
   input: Record<string, unknown>,
 ) {
   const access = await requireAcademyUser();
-  enforceMutationRateLimit(access.userId, "academy-review", 8, 60_000);
+  enforceAcademyRateLimit(access.userId, "review", 8);
   const course = await getAcademyCourse(courseSlug);
   const enrollment = await findEnrollmentByCourse(access.userId, course.id);
   if (!enrollment)
@@ -91,7 +91,7 @@ export async function editCourseReview(
   input: Record<string, unknown>,
 ) {
   const access = await requireAcademyUser();
-  enforceMutationRateLimit(access.userId, "academy-review", 8, 60_000);
+  enforceAcademyRateLimit(access.userId, "review", 8);
   return updateOwnedCourseReview({
     id: parseAcademyIdentifier(reviewId, "review ID"),
     userId: access.userId,
@@ -101,7 +101,7 @@ export async function editCourseReview(
 
 export async function removeCourseReview(reviewId: string) {
   const access = await requireAcademyUser();
-  enforceMutationRateLimit(access.userId, "academy-review", 8, 60_000);
+  enforceAcademyRateLimit(access.userId, "review", 8);
   await deleteOwnedCourseReview(
     access.userId,
     parseAcademyIdentifier(reviewId, "review ID"),
@@ -113,7 +113,7 @@ export async function reportReview(
   input: Record<string, unknown>,
 ) {
   const access = await requireAcademyUser();
-  enforceMutationRateLimit(access.userId, "academy-review-report", 5, 60_000);
+  enforceAcademyRateLimit(access.userId, "review-report", 5);
   await reportCourseReview({
     reason: normalizePlainText(input.reason, "Report reason", 500),
     reviewId: parseAcademyIdentifier(reviewId, "review ID"),

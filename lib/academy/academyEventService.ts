@@ -1,8 +1,8 @@
 import "server-only";
 
-import { enforceMutationRateLimit } from "@/lib/mutationRateLimit";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { requireAcademyUser } from "./academyAuthorization";
+import { enforceAcademyRateLimit } from "./academyRateLimit";
 import {
   ACADEMY_ANALYTICS_EVENTS,
   type AcademyAnalyticsEventName,
@@ -23,7 +23,7 @@ export async function recordAcademyEvent(input: {
   name: string;
 }) {
   const access = await requireAcademyUser();
-  enforceMutationRateLimit(access.userId, "academy-analytics", 120, 60_000);
+  enforceAcademyRateLimit(access.userId, "analytics", 120);
   if (
     !ACADEMY_ANALYTICS_EVENTS.includes(input.name as AcademyAnalyticsEventName)
   )

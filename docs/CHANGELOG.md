@@ -2,6 +2,8 @@
 
 ## [Unreleased] — Academy Volume 6
 
+- Added typed Academy mutation rate limits across learner and administrator
+  mutation domains plus a bounded background-job runner foundation.
 - Added protected Academy course, assessment, enrollment, certificate, review
   and analytics administration routes.
 - Added explicit instructor-course assignments and a privacy-conscious
@@ -69,6 +71,11 @@
 - Added LMS authorization, progress, scoring, prerequisite and certificate
   foundations plus owner-scoped API routes
 - Added deterministic Academy backend tests and operating documentation
+
+## Sprint 14 — Advanced Charts
+
+Added advanced chart routes, public TradingView adapter, truthful first-party
+datafeed fallback, saved/shared layouts, integrations, RLS and tests.
 
 ## Sprint 13 — AI Trading Assistant
 

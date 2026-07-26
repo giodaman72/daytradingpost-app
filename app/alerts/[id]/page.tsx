@@ -48,6 +48,9 @@ export default async function AlertPage({
           ) : null}
           <AlertTriggerSummary alert={alert} />
           <div className="smart-actions">
+            <Link href={`/charts/${alert.instrumentSlug}`}>
+              View alert on chart
+            </Link>
             <Link href={`/alerts/${id}/edit`}>Edit alert</Link>
             {alert.status === "active" ? (
               <form action={pauseAlertAction}>

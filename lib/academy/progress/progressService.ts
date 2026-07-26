@@ -4,6 +4,7 @@ import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { requireAcademyUser } from "../academyAuthorization";
 import { academyConfig } from "../academyConfig";
 import { AcademyError } from "../academyErrors";
+import { enforceAcademyRateLimit } from "../academyRateLimit";
 import { findEnrollment, findPublishedLessonState } from "../academyRepository";
 import {
   parseAcademyIdentifier,
@@ -147,6 +148,7 @@ async function recalculateStoredProgress(
 
 export async function startLesson(enrollmentId: string, lessonId: string) {
   const value = await context(enrollmentId, lessonId);
+  enforceAcademyRateLimit(value.access.userId, "lesson-start", 30);
   const now = new Date().toISOString();
   const { data, error } = await getSupabaseAdmin()
     .from("academy_lesson_progress")
@@ -175,6 +177,7 @@ export async function updateLessonProgress(input: {
   positionSeconds: number;
 }) {
   const value = await context(input.enrollmentId, input.lessonId);
+  enforceAcademyRateLimit(value.access.userId, "lesson-progress", 120);
   if (value.lesson.completionMode !== "video-threshold")
     throw new AcademyError(
       "ACADEMY_VALIDATION_FAILED",
@@ -226,6 +229,7 @@ export async function updateLessonProgress(input: {
 
 export async function completeLesson(enrollmentId: string, lessonId: string) {
   const value = await context(enrollmentId, lessonId);
+  enforceAcademyRateLimit(value.access.userId, "lesson-completion", 20);
   if (value.progress.status === "completed") return value.progress;
   if (value.lesson.completionMode === "video-threshold")
     throw new AcademyError(

@@ -5,6 +5,7 @@ import type { AcademyBookmark } from "@/types/academy";
 import { requireAcademyUser } from "../academyAuthorization";
 import { academyConfig } from "../academyConfig";
 import { AcademyError } from "../academyErrors";
+import { enforceAcademyRateLimit } from "../academyRateLimit";
 import { validateAcademyLearnerReference } from "../academyLearnerOwnership";
 import {
   normalizePlainText,
@@ -52,6 +53,7 @@ export async function createBookmark(input: {
   positionSeconds?: number | null;
 }) {
   const access = await requireAcademyUser();
+  enforceAcademyRateLimit(access.userId, "bookmark", 30);
   const reference = await validateAcademyLearnerReference({
     courseId: input.courseId,
     lessonId: input.lessonId,

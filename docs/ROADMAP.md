@@ -1,5 +1,10 @@
 # DayTradingPost product roadmap
 
+## Recommended Sprint 15 follow-up
+
+Add licensed production historical OHLC, richer Academy chart lessons, reviewed
+overlay editing, multi-chart layouts and browser end-to-end coverage.
+
 ## Recommended follow-up after Sprint 13
 
 Add distributed rate limiting, automated retention, reviewed shared-summary

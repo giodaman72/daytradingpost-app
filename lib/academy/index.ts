@@ -11,6 +11,8 @@ export * from "./learningPaths/learningPathProgress";
 export * from "./learningPaths/learningPathRecommendations";
 export * from "./learningPaths/learningPathService";
 export * from "./academyValidation";
+export * from "./academyRateLimit";
+export * from "./jobs/academyJobRunner";
 export * from "./assessments/assessmentRandomization";
 export * from "./assessments/assessmentScoring";
 export * from "./certificates/certificateEligibility";

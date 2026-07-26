@@ -1,6 +1,5 @@
 import "server-only";
 
-import { enforceMutationRateLimit } from "@/lib/mutationRateLimit";
 import type {
   AcademyCurriculumLesson,
   AcademyLessonView,
@@ -13,6 +12,7 @@ import {
 } from "./academyAccess";
 import { requireAcademyUser } from "./academyAuthorization";
 import { AcademyError } from "./academyErrors";
+import { enforceAcademyRateLimit } from "./academyRateLimit";
 import {
   enrollCourseTransactionally,
   findEnrollmentByCourse,
@@ -51,7 +51,7 @@ export async function enrollUserInCourse(input: {
   source?: "self" | "learning_path" | "admin" | "migration";
 }) {
   const access = await requireAcademyUser();
-  enforceMutationRateLimit(access.userId, "academy-enrollment", 10, 60_000);
+  enforceAcademyRateLimit(access.userId, "enrollment", 10);
   const course = await getAcademyCourse(input.courseSlug);
   const completed = await listEnrollments(access.userId, 100, 0);
   const completedCourseIds = new Set(

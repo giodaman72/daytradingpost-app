@@ -1,5 +1,10 @@
 # Data model and storage
 
+## Chart persistence
+
+Apply `docs/supabase-chart-layouts.sql` for private preferences, saved layouts,
+RLS ownership policies and server-controlled sharing fields.
+
 ## AI Assistant
 
 `ai_conversations`, `ai_messages`, `ai_usage`, and `ai_feedback` are private to

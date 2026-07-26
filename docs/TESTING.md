@@ -1,5 +1,9 @@
 # Testing strategy
 
+Chart tests cover canonical symbols/timeframes, OHLC normalization, bounded
+ranges, deterministic indicator math, plan rules, fixture labeling, TradingView
+loader idempotency and accessible fallbacks.
+
 ## AI Assistant
 
 Standard tests use deterministic fixtures and mocked boundaries; they never call
@@ -30,6 +34,7 @@ only when deliberately adding, removing, or updating a package.
 | `npm run typecheck`     | Run strict `tsc --noEmit` validation                                 |
 | `npm test`              | Start Vitest in watch mode for local development                     |
 | `npm run test:run`      | Run the deterministic test suite once                                |
+| `npm run test:ai-eval`  | Run the 20-case deterministic AI evaluation without live providers   |
 | `npm run test:coverage` | Run tests with text, JSON, and HTML coverage reports                 |
 | `npm run build`         | Create the optimized Next.js production build                        |
 | `npm run check`         | Run format, lint, typecheck, tests, and build in order               |
@@ -344,6 +349,10 @@ delete an eligible review, confirm it stays hidden pending moderation, publish
 as an admin, and verify notification preferences survive a reload.
 
 ## Academy Volume 6 checklist
+
+Academy tests also cover typed mutation-rate-limit behavior and the bounded,
+failure-isolated background-job runner. They do not call Supabase, Sanity,
+OpenAI, video, email, notification or payment providers.
 
 Automated tests cover the admin/editor permission boundary, explicit instructor
 ownership, publication validation, archived-course filtering, analytics filter

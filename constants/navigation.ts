@@ -3,6 +3,7 @@ import { ROUTES } from "./routes";
 export const MAIN_NAVIGATION = [
   { href: "/#markets", label: "Markets" },
   { href: ROUTES.analysis, label: "Analysis" },
+  { href: ROUTES.charts, label: "Charts" },
   { href: ROUTES.economicCalendar, label: "Calendar" },
   { authenticatedOnly: true, href: ROUTES.dashboard, label: "Dashboard" },
   { authenticatedOnly: true, href: ROUTES.assistant, label: "AI Assistant" },
@@ -15,6 +16,7 @@ export const MAIN_NAVIGATION = [
 export const ACCOUNT_NAVIGATION = [
   { href: ROUTES.dashboard, label: "Trader dashboard", section: "dashboard" },
   { href: ROUTES.assistant, label: "AI Assistant", section: "assistant" },
+  { href: ROUTES.charts, label: "Advanced charts", section: "charts" },
   { href: ROUTES.account, label: "Account overview", section: "overview" },
   { href: ROUTES.billing, label: "Billing & membership", section: "billing" },
   { href: ROUTES.watchlists, label: "Watchlists", section: "watchlists" },
@@ -24,6 +26,11 @@ export const ACCOUNT_NAVIGATION = [
 ] as const;
 
 export const DASHBOARD_NAVIGATION = [
+  {
+    href: "/dashboard#advanced-chart",
+    id: "advanced-chart",
+    label: "Advanced chart",
+  },
   {
     href: "/dashboard#market-outlook",
     id: "market-outlook",

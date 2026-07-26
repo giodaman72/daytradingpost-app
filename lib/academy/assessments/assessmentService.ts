@@ -9,6 +9,7 @@ import type {
 } from "@/types/academy";
 import { requireAcademyUser } from "../academyAuthorization";
 import { AcademyError } from "../academyErrors";
+import { enforceAcademyRateLimit } from "../academyRateLimit";
 import {
   findAssessmentForGrading,
   findEnrollmentByCourse,
@@ -92,6 +93,7 @@ const orderPublicQuestions = (
 
 export async function startAssessmentAttempt(assessmentIdInput: string) {
   const access = await requireAcademyUser();
+  enforceAcademyRateLimit(access.userId, "assessment-attempt", 10);
   const assessmentId = parseAcademyIdentifier(
     assessmentIdInput,
     "assessment ID",
@@ -300,6 +302,7 @@ export async function submitAssessmentAttempt(input: {
   responses: Record<string, unknown>;
 }) {
   const access = await requireAcademyUser();
+  enforceAcademyRateLimit(access.userId, "assessment-submission", 10);
   const attemptId = parseAcademyIdentifier(input.attemptId, "attempt ID");
   const { data, error } = await getSupabaseAdmin()
     .from("academy_assessment_attempts")

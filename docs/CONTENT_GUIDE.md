@@ -1,5 +1,9 @@
 # Market analysis content guide
 
+Chart copy must distinguish third-party data, DayTradingPost provider snapshots,
+editorial levels, user layouts, delayed data and development fixtures. Never
+describe a chart as a trade signal or imply guaranteed outcomes.
+
 ## AI retrieval readiness
 
 Use stable slugs, concise excerpts, accurate instruments, publication times,

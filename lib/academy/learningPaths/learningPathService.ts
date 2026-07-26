@@ -1,6 +1,5 @@
 import "server-only";
 
-import { enforceMutationRateLimit } from "@/lib/mutationRateLimit";
 import { getMembershipAccess } from "@/lib/membership/access";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 import type {
@@ -11,6 +10,7 @@ import type {
 } from "@/types/academy";
 import { canEnrollInCourse } from "../academyAccess";
 import { requireAcademyUser } from "../academyAuthorization";
+import { enforceAcademyRateLimit } from "../academyRateLimit";
 import { AcademyError } from "../academyErrors";
 import {
   deleteLearningPathEnrollment,
@@ -203,7 +203,7 @@ export async function enrollUserInLearningPath(input: {
   pathSlug: string;
 }) {
   const access = await requireAcademyUser();
-  enforceMutationRateLimit(access.userId, "academy-path-enrollment", 8, 60_000);
+  enforceAcademyRateLimit(access.userId, "path-enrollment", 8);
   const path = await getAcademyLearningPath(input.pathSlug);
   const [courseEnrollments, pathEnrollments] = await Promise.all([
     listEnrollments(access.userId, 200, 0),

@@ -36,6 +36,7 @@ export function WatchlistInstrumentRow({
         <Link href={`/alerts/new?instrument=${instrument.slug}`}>
           Create alert
         </Link>
+        <Link href={`/charts/${instrument.slug}`}>Open chart</Link>
       </header>
       <div className="watchlist-instrument-data">
         <section>

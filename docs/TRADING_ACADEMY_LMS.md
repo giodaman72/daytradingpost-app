@@ -115,8 +115,12 @@ revocation. See `docs/ACADEMY_CERTIFICATES.md` and
   available. Breaking edits should create a new assessment document/version.
 - Reviews were not implemented: moderation, identity display, and product value
   need a product decision first.
-- Background reminder and reconciliation interfaces are documented but not
-  scheduled in Part 1.
+- `runAcademyBatchJob` provides a bounded, failure-isolated job foundation for
+  reminders, expiry cleanup, certificate retries and reconciliation. No
+  production schedule or internal job endpoint is enabled in Part 1.
+- Academy mutations share an instance-local limiter that maps exhausted limits
+  to the typed `ACADEMY_RATE_LIMITED` response with retry metadata. A
+  distributed limiter remains required before high-scale deployment.
 
 ## Guided learning paths
 

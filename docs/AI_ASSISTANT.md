@@ -1,5 +1,9 @@
 # DayTradingPost AI Assistant
 
+Chart links send only normalized instrument, timeframe, indicator and
+source-backed annotation context. They never send provider internals or infer
+signals from arbitrary drawings.
+
 ## Purpose and boundaries
 
 The assistant is an authenticated, source-grounded educational interface. It
@@ -57,6 +61,11 @@ and watchlist identifiers take priority, followed by recent published records.
 Documents are ranked by relevance then timestamp, deduplicated by source type
 and ID, sanitized as untrusted content, and bounded by
 `AI_MAX_CONTEXT_CHARACTERS`.
+
+Watchlist mode resolves the requested list against the authenticated owner,
+rejects unknown or non-owned IDs without revealing whether they exist, and
+retrieves market intelligence and quote context only for up to the first eight
+instruments on that owned list.
 
 Published Sanity content only is queried. Premium bodies require active premium
 access. Watchlists are fetched with the authenticated owner ID. Market snapshots
@@ -120,6 +129,8 @@ processing terms require legal/privacy review.
 6. Test login, public/premium sources, watchlist ownership, deletion, refusals,
    citations, timeout behavior, and `/admin/ai`.
 7. Monitor aggregate error, refusal, token, feedback, and citation metrics.
+8. Run `npm run test:ai-eval` to execute the deterministic 20-case safety,
+   access, citation, timestamp, fixture, and validation evaluation.
 
 ## Troubleshooting and limitations
 

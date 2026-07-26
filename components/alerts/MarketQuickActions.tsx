@@ -17,6 +17,7 @@ export async function MarketQuickActions({
     >
       <strong>Track {instrument.name}</strong>
       <div>
+        <Link href={`/charts/${instrument.slug}`}>Open advanced chart</Link>
         {user ? (
           <>
             <Link href="/watchlists">Add to watchlist</Link>

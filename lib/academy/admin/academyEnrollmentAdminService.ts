@@ -5,6 +5,7 @@ import type { AcademyAdminEnrollment } from "@/types/academy-admin";
 import type { AcademyCourseDetail } from "@/types/academy";
 import { requireAcademyPermission } from "./academyAdminAuthorization";
 import { AcademyError } from "../academyErrors";
+import { enforceAcademyRateLimit } from "../academyRateLimit";
 import {
   normalizePlainText,
   parseAcademyIdentifier,
@@ -125,6 +126,7 @@ export async function manuallyEnrollAcademyLearner(input: {
   userId: string;
 }) {
   const actor = await requireAcademyPermission("academy:manage-enrollments");
+  enforceAcademyRateLimit(actor.userId, "admin-enrollment", 20);
   const userId = parseAcademyIdentifier(input.userId, "learner ID");
   const course = await getAcademyCourse(parseAcademySlug(input.courseSlug));
   const requestId = normalizePlainText(input.requestId, "Request ID", 160);
@@ -166,6 +168,7 @@ export async function manageAcademyEnrollment(input: {
   requestId: string;
 }) {
   const actor = await requireAcademyPermission("academy:manage-enrollments");
+  enforceAcademyRateLimit(actor.userId, "admin-enrollment", 20);
   const confirmation =
     input.action === "reset"
       ? normalizePlainText(input.confirmation, "Confirmation", 40)

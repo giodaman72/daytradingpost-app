@@ -1,6 +1,5 @@
 import "server-only";
 
-import { enforceMutationRateLimit } from "@/lib/mutationRateLimit";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import type { AcademyInstructorReply } from "@/types/academy-admin";
 import { requireAcademyPermission } from "./academyAdminAuthorization";
@@ -9,6 +8,7 @@ import {
   requireAcademyInstructor,
 } from "./academyInstructorAuthorization";
 import { AcademyError } from "../academyErrors";
+import { enforceAcademyRateLimit } from "../academyRateLimit";
 import {
   normalizePlainText,
   parseAcademyIdentifier,
@@ -34,12 +34,7 @@ export async function saveInstructorReviewReply(
   input: Record<string, unknown>,
 ) {
   const access = await requireAcademyInstructor();
-  enforceMutationRateLimit(
-    access.userId,
-    "academy-instructor-reply",
-    10,
-    60_000,
-  );
+  enforceAcademyRateLimit(access.userId, "instructor-reply", 10);
   const reviewId = parseAcademyIdentifier(reviewIdInput, "review ID");
   const { data: review, error: reviewError } = await getSupabaseAdmin()
     .from("academy_course_reviews")
@@ -121,6 +116,7 @@ export async function moderateInstructorReply(
   input: Record<string, unknown>,
 ) {
   const actor = await requireAcademyPermission("academy:moderate-reviews");
+  enforceAcademyRateLimit(actor.userId, "admin-instructor-reply", 20);
   const status = String(input.status);
   if (!["published", "rejected"].includes(status))
     throw new AcademyError(

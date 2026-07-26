@@ -1,6 +1,7 @@
 import "server-only";
 
 import { requireAcademyPermission } from "../admin/academyAdminAuthorization";
+import { enforceAcademyRateLimit } from "../academyRateLimit";
 import {
   normalizePlainText,
   parseAcademyIdentifier,
@@ -23,6 +24,7 @@ export async function moderateReview(
   input: Record<string, unknown>,
 ) {
   const access = await requireAcademyPermission("academy:moderate-reviews");
+  enforceAcademyRateLimit(access.userId, "admin-review", 20);
   const moderation = parseReviewModeration(input);
   const review = await moderateCourseReview({
     actorUserId: access.userId,

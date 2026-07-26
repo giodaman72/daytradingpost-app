@@ -11,6 +11,7 @@ import { Watchlist } from "@/components/dashboard/Watchlist";
 import { SmartAlerts } from "@/components/dashboard/SmartAlerts";
 import { WebinarWidget } from "@/components/dashboard/WebinarWidget";
 import { AIAssistantWidget } from "@/components/dashboard/AIAssistantWidget";
+import { ChartWidget } from "@/components/dashboard/ChartWidget";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { getLatestArticles } from "@/lib/cms";
@@ -120,6 +121,10 @@ export default async function DashboardPage() {
           </header>
 
           <div className="dashboard-grid">
+            <ChartWidget
+              instrument={watchlistInstruments[0] ?? null}
+              quote={watchlistQuotes[0] ?? null}
+            />
             <AIAssistantWidget
               usage={assistantUsage}
               premium={hasPremiumAccess}

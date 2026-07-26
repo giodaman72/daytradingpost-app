@@ -1,8 +1,8 @@
 import "server-only";
 
-import { enforceMutationRateLimit } from "@/lib/mutationRateLimit";
 import type { AcademyLearnerPreferences } from "@/types/academy";
 import { requireAcademyUser } from "../academyAuthorization";
+import { enforceAcademyRateLimit } from "../academyRateLimit";
 import { AcademyError } from "../academyErrors";
 import { normalizePlainText } from "../academyValidation";
 import {
@@ -17,7 +17,7 @@ export async function getAcademyPreferences() {
 
 export async function saveAcademyPreferences(input: unknown) {
   const access = await requireAcademyUser();
-  enforceMutationRateLimit(access.userId, "academy-preferences", 12, 60_000);
+  enforceAcademyRateLimit(access.userId, "preferences", 12);
   if (!input || typeof input !== "object" || Array.isArray(input))
     throw new AcademyError(
       "ACADEMY_VALIDATION_FAILED",

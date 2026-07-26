@@ -1,11 +1,11 @@
 import "server-only";
 
-import { enforceMutationRateLimit } from "@/lib/mutationRateLimit";
 import { createNotification } from "@/lib/notifications";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import type { AcademyCertificate } from "@/types/academy";
 import { requireAcademyPermission } from "../admin/academyAdminAuthorization";
 import { requireAcademyUser } from "../academyAuthorization";
+import { enforceAcademyRateLimit } from "../academyRateLimit";
 import { AcademyError } from "../academyErrors";
 import { recordAcademyEvent } from "../academyEventService";
 import { findPublishedCourseBySlug } from "../academyRepository";
@@ -158,7 +158,7 @@ export async function issueCertificate(input: {
   idempotencyKey: string;
 }) {
   const access = await requireAcademyUser();
-  enforceMutationRateLimit(access.userId, "academy-certificate", 6, 60_000);
+  enforceAcademyRateLimit(access.userId, "certificate", 6);
   const enrollmentId = parseAcademyIdentifier(
     input.enrollmentId,
     "enrollment ID",
@@ -322,6 +322,7 @@ export async function revokeCertificate(input: {
   requestId: string;
 }) {
   const actor = await requireAcademyPermission("academy:manage-certificates");
+  enforceAcademyRateLimit(actor.userId, "admin-certificate", 10);
   const certificateId = parseAcademyIdentifier(
     input.certificateId,
     "certificate ID",
