@@ -1,5 +1,9 @@
 # DayTradingPost AI Assistant
 
+Chart links send only normalized instrument, timeframe, indicator and
+source-backed annotation context. They never send provider internals or infer
+signals from arbitrary drawings.
+
 ## Purpose and boundaries
 
 The assistant is an authenticated, source-grounded educational interface. It

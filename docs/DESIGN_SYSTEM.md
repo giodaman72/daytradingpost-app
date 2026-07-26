@@ -1,5 +1,9 @@
 # DayTradingPost design system
 
+Chart surfaces use the existing dark neutral palette, gold focus/accent state,
+semantic up/down colors with accompanying text, keyboard-accessible controls,
+responsive overflow handling and a nonvisual data summary.
+
 ## Assistant patterns
 
 Assistant surfaces reuse the dark navy, gold accent, restrained borders, Geist

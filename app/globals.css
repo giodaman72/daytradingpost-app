@@ -19,6 +19,207 @@
   --container: 1180px;
 }
 
+/* Sprint 14 advanced charting */
+.charts-page {
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+}
+.chart-hero {
+  padding: 8rem 0 2.5rem;
+  background:
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(236, 182, 57, 0.12),
+      transparent 35%
+    ),
+    linear-gradient(180deg, #101318, #090b0e);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.chart-hero h1 {
+  margin: 0.5rem 0;
+  font-size: clamp(2.4rem, 6vw, 5rem);
+}
+.chart-hero p {
+  max-width: 760px;
+  color: #aeb4bf;
+}
+.advanced-chart {
+  margin: 2rem 0 5rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  background: #0b0e12;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.3);
+}
+.chart-toolbar {
+  display: flex;
+  align-items: end;
+  gap: 0.75rem;
+  padding: 0.5rem 0.5rem 1rem;
+  overflow-x: auto;
+}
+.chart-toolbar label,
+.chart-indicator-controls {
+  display: grid;
+  gap: 0.35rem;
+  color: #aeb4bf;
+  font-size: 0.75rem;
+}
+.chart-toolbar select,
+.chart-toolbar button,
+.chart-actions button,
+.chart-actions a {
+  min-height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 0.55rem 0.8rem;
+  background: #14181e;
+  color: #f5f7fa;
+}
+.chart-indicator-controls {
+  display: flex;
+  align-items: center;
+  min-width: max-content;
+}
+.chart-indicator-controls button[aria-pressed="true"] {
+  border-color: #ecb639;
+  color: #ecb639;
+}
+.chart-status-row,
+.chart-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem;
+  color: #aeb4bf;
+}
+.chart-frame {
+  min-height: 560px;
+}
+.chart-frame > div {
+  height: 520px;
+}
+.chart-frame > p,
+.chart-risk-disclaimer,
+.chart-inline-status {
+  color: #8e96a3;
+  font-size: 0.8rem;
+}
+.chart-canvas {
+  width: 100%;
+  min-height: 420px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  border-radius: 10px;
+}
+.chart-canvas line {
+  stroke: currentColor;
+}
+.chart-canvas rect {
+  fill: currentColor;
+}
+.candle-up {
+  color: #4fd1a1;
+}
+.candle-down {
+  color: #ef6a71;
+}
+.chart-unavailable,
+.chart-loading {
+  display: grid;
+  min-height: 420px;
+  place-items: center;
+  padding: 2rem;
+  color: #aeb4bf;
+  text-align: center;
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+}
+.chart-accessibility-summary {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 10px;
+  background: #11151a;
+}
+.chart-accessibility-summary dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+.chart-accessibility-summary dt {
+  color: #8e96a3;
+  font-size: 0.75rem;
+}
+.chart-accessibility-summary dd {
+  margin: 0.2rem 0 0;
+}
+.dashboard-chart-placeholder {
+  display: flex;
+  height: 90px;
+  align-items: end;
+  gap: 8px;
+  margin: 1rem 0;
+}
+.dashboard-chart-placeholder i {
+  flex: 1;
+  height: 45%;
+  border-top: 2px solid #ecb639;
+  transform: skewY(-12deg);
+}
+.dashboard-chart-placeholder i:nth-child(2) {
+  height: 62%;
+}
+.dashboard-chart-placeholder i:nth-child(3) {
+  height: 50%;
+}
+.dashboard-chart-placeholder i:nth-child(4) {
+  height: 78%;
+}
+.dashboard-chart-placeholder i:nth-child(5) {
+  height: 68%;
+}
+.dashboard-chart-widget nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+@media (max-width: 720px) {
+  .chart-hero {
+    padding-top: 6rem;
+  }
+  .advanced-chart {
+    margin-inline: -0.75rem;
+    border-radius: 0;
+  }
+  .chart-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    overflow: visible;
+  }
+  .chart-indicator-controls {
+    align-items: stretch;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .chart-frame {
+    min-height: 430px;
+  }
+  .chart-frame > div {
+    height: 390px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .advanced-chart * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+
 * {
   box-sizing: border-box;
 }

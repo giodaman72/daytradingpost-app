@@ -1,5 +1,12 @@
 # DayTradingPost architecture
 
+## Sprint 14 charting
+
+Advanced charts use a hybrid public-TradingView/first-party provider boundary,
+the canonical instrument registry, normalized server datafeeds, owner-scoped
+layout persistence, and opaque server-projected share links. See
+`CHARTING_SYSTEM.md`.
+
 ## Sprint 13 AI boundary
 
 The authenticated `/assistant` feature uses a server-only provider abstraction,

@@ -1,5 +1,8 @@
 # Watchlists and Smart Alerts
 
+Watchlist and alert views link to canonical chart routes. Only owner-scoped
+alerts may become private chart overlays; browser code cannot trigger alerts.
+
 ## Architecture audit
 
 Sprint 12 found that the prior watchlist and notification types, dashboard widgets, hooks, and notification formatter were future-facing placeholders rather than persistence boundaries. There was no email-delivery provider. The implementation preserves the static dashboard type separately, replaces the persisted types, extends the existing Supabase/auth/membership boundaries, and adds a provider-neutral disabled email channel rather than inventing delivery credentials.

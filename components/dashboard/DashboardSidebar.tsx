@@ -15,6 +15,7 @@ import { DASHBOARD_NAVIGATION } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
 
 const dashboardIcons = {
+  "advanced-chart": ChartNoAxesCombined,
   "academy-progress": BookOpen,
   "economic-calendar": CalendarDays,
   "latest-analysis": LayoutDashboard,

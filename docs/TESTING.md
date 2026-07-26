@@ -1,5 +1,9 @@
 # Testing strategy
 
+Chart tests cover canonical symbols/timeframes, OHLC normalization, bounded
+ranges, deterministic indicator math, plan rules, fixture labeling, TradingView
+loader idempotency and accessible fallbacks.
+
 ## AI Assistant
 
 Standard tests use deterministic fixtures and mocked boundaries; they never call

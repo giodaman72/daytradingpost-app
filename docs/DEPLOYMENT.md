@@ -1,5 +1,11 @@
 # Deployment guide
 
+## Chart deployment
+
+Apply `supabase-chart-layouts.sql`, configure the chart environment variables,
+and permit `s3.tradingview.com` plus TradingView frames. Review widget licensing
+and symbol availability before production.
+
 ## AI Assistant launch
 
 Apply `docs/supabase-ai-assistant.sql`, then add server-only `AI_*` and

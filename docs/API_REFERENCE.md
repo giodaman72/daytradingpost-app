@@ -1,5 +1,12 @@
 # API and server boundary reference
 
+## Chart routes
+
+`GET /api/charts/bars` and `GET /api/charts/config/[instrument]` expose safe
+normalized data/configuration. `/api/chart-layouts` requires authentication and
+ownership. `GET /api/charts/share/[shareId]` returns a constrained public
+projection without owner identity or private alert state.
+
 ## AI Assistant routes
 
 - `POST /api/assistant/chat` — authenticated SSE generation stream.

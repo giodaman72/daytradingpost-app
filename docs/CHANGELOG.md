@@ -1,5 +1,10 @@
 # Changelog
 
+## Sprint 14 — Advanced Charts
+
+Added advanced chart routes, public TradingView adapter, truthful first-party
+datafeed fallback, saved/shared layouts, integrations, RLS and tests.
+
 ## Sprint 13 — AI Trading Assistant
 
 Added authenticated source-grounded chat, OpenAI Responses API integration,
