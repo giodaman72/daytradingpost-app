@@ -100,6 +100,7 @@ The production dataset containing premium bodies must be private.
 | `NEXT_PUBLIC_REVOLUT_MONTHLY_PAYMENT_LINK` | Public hosted URL                   |
 | `NEXT_PUBLIC_REVOLUT_ANNUAL_PAYMENT_LINK`  | Public hosted URL                   |
 | `NEXT_PUBLIC_SITE_URL`                     | Public canonical application origin |
+| `NEXT_PUBLIC_SUPPORT_EMAIL`                | Public monitored support address    |
 
 ### Economic intelligence
 
@@ -110,13 +111,14 @@ The production dataset containing premium bodies must be private.
 
 ### Smart alerts
 
-| Variable                         | Purpose                                        |
-| -------------------------------- | ---------------------------------------------- |
-| `ALERT_CRON_SECRET`              | Server-only evaluator bearer secret            |
-| `ALERT_EVALUATION_BATCH_SIZE`    | Batch size, default 25 and maximum 100         |
-| `ALERT_DATA_MAX_AGE_SECONDS`     | Maximum accepted quote age, default 900        |
-| `ALERT_DEFAULT_COOLDOWN_MINUTES` | Default cooldown, 60 minutes                   |
-| `ALERT_EMAIL_PROVIDER`           | Keep disabled until an approved adapter exists |
+| Variable                         | Purpose                                         |
+| -------------------------------- | ----------------------------------------------- |
+| `ALERT_CRON_SECRET`              | Server-only evaluator bearer secret             |
+| `CRON_SECRET`                    | Vercel Cron bearer secret; preferred in hosting |
+| `ALERT_EVALUATION_BATCH_SIZE`    | Batch size, default 25 and maximum 100          |
+| `ALERT_DATA_MAX_AGE_SECONDS`     | Maximum accepted quote age, default 900         |
+| `ALERT_DEFAULT_COOLDOWN_MINUTES` | Default cooldown, 60 minutes                    |
+| `ALERT_EMAIL_PROVIDER`           | Keep disabled until an approved adapter exists  |
 
 ### Academy certificates
 
@@ -136,8 +138,14 @@ For a new environment, run the SQL in this order:
 2. `docs/supabase-newsletter.sql`
 3. `docs/supabase-revolut.sql`
 4. `docs/supabase-economic.sql`
-5. `docs/supabase-watchlists-alerts.sql`
-6. `docs/supabase-trading-academy-lms.sql`
+5. `docs/supabase-market-intelligence.sql`
+6. `docs/supabase-market-data.sql`
+7. `docs/supabase-watchlists-alerts.sql`
+8. `docs/supabase-chart-layouts.sql`
+9. `docs/supabase-ai-assistant.sql`
+10. `docs/supabase-trading-academy-lms.sql`
+11. `docs/supabase-academy-personalization.sql`
+12. `docs/supabase-academy-admin.sql`
 
 Then verify:
 
@@ -190,12 +198,25 @@ For payment-link mode:
 4. Use `npm run build` as the build command.
 5. Confirm the production domain and `NEXT_PUBLIC_SITE_URL` match exactly.
 6. Update Supabase, Sanity, and Revolut allow-lists/webhooks for the domain.
+7. Set a monitored `NEXT_PUBLIC_SUPPORT_EMAIL` and complete owner/legal review
+   of `/privacy` and `/terms`.
+8. Configure `CRON_SECRET`; `vercel.json` schedules smart-alert evaluation
+   every 15 minutes.
 
 The Vercel GitHub integration creates an isolated Preview deployment for each
 pull request. Use that URL for responsive, authentication, CMS, and membership
 acceptance checks. A merge to `main` remains the production deployment trigger.
 GitHub Actions validates the same commit independently and does not replace the
 Vercel build.
+
+Before production promotion, execute against the Vercel Production environment:
+
+```bash
+vercel env run --environment=production -- npm run check:production
+```
+
+The readiness command reports missing variable names and unsafe development
+configuration without printing secret values.
 
 ## Troubleshooting CI
 
@@ -219,6 +240,8 @@ and push a new commit so concurrency cancels the obsolete run.
 - [ ] Pull request approved and CI green
 - [ ] `npm run check` passes
 - [ ] No secrets or `.env.local` in the diff
+- [ ] `npm run check:production` passes with the Production environment
+- [ ] Production dependency audit has no critical advisory
 - [ ] Database migrations applied and verified
 - [ ] Sanity dataset is private and Viewer token works
 - [ ] Auth registration, confirmation, login, logout, recovery, and reset pass
@@ -229,6 +252,8 @@ and push a new commit so concurrency cancels the obsolete run.
 - [ ] Desktop/mobile layouts and keyboard navigation pass
 - [ ] Error and empty states are understandable
 - [ ] Monitoring owner and rollback commit are identified
+- [ ] Privacy policy, terms, support address, and financial-risk wording are
+      approved by the responsible business/legal owner
 - [ ] Market-data display and redistribution rights are contractually confirmed
 - [ ] Server-only market-data variables are configured; fixtures are absent
 - [ ] Quote unavailable, stale, delayed, rate-limit, and health paths are tested

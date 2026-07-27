@@ -42,7 +42,13 @@ Dashboard notifications are persisted and member-readable. Header data is server
 
 ## Scheduler
 
-`POST /api/internal/alerts/evaluate` requires `Authorization: Bearer $ALERT_CRON_SECRET`. It bounds batches to 100, times out after 50 seconds, rejects overlapping runs on the same instance, logs identifiers/statistics without secrets, and returns `no-store` results. Invoke every 15 minutes initially; do not schedule faster until provider rights and rate limits are confirmed. Multi-instance locking requires a future database advisory lock.
+`GET` or `POST /api/internal/alerts/evaluate` requires `Authorization: Bearer
+$CRON_SECRET` (or the legacy `ALERT_CRON_SECRET`). It bounds batches to 100,
+times out after 50 seconds, rejects overlapping runs on the same instance, logs
+identifiers/statistics without secrets, and returns `no-store` results.
+`vercel.json` invokes the authenticated GET route every 15 minutes. Do not
+schedule faster until provider rights and rate limits are confirmed.
+Multi-instance locking requires a future database advisory lock.
 
 ## Database and RLS
 
@@ -54,7 +60,8 @@ Recommended retention is 30 days for free users and 365 days for Premium. Implem
 
 - Apply SQL and verify every new table reports RLS enabled.
 - Test two accounts cannot read or mutate each other's records.
-- Configure a long random cron secret in Vercel only.
+- Configure a long random `CRON_SECRET` in Vercel only. Vercel Cron sends it as
+  the bearer token automatically.
 - Keep batch 25 and maximum data age 900 seconds initially.
 - Leave email disabled until a provider, sender domain, unsubscribe policy, and retry adapter are approved.
 - Confirm the market-data provider permits automated alert evaluation.

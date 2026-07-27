@@ -3,7 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import { isSitePagePath, sitePagePaths, sitePages } from "@/lib/site-pages";
+import {
+  isSitePagePath,
+  sitePagePaths,
+  sitePages,
+  type SitePage,
+} from "@/lib/site-pages";
 import { EconomicCard } from "@/components/economic/EconomicCard";
 import {
   getRecentEconomicReleases,
@@ -12,6 +17,7 @@ import {
 import { getEventsForMarket } from "@/lib/economic/economicImpact";
 import { MarketQuickActions } from "@/components/alerts/MarketQuickActions";
 import { AssistantContextActions } from "@/components/assistant/AssistantContextActions";
+import { getSupportEmail } from "@/lib/config";
 
 type PageProps = {
   params: Promise<{ slug: string[] }>;
@@ -33,7 +39,7 @@ export async function generateMetadata({
     return {};
   }
 
-  const page = sitePages[path];
+  const page: SitePage = sitePages[path];
 
   return {
     title: page.kicker,
@@ -49,7 +55,8 @@ export default async function SitePage({ params }: PageProps) {
     notFound();
   }
 
-  const page = sitePages[path];
+  const page: SitePage = sitePages[path];
+  const supportEmail = getSupportEmail();
   const marketKey = path.startsWith("markets/") ? path.split("/")[1] : null;
   const [upcoming, recent] = marketKey
     ? await Promise.all([
@@ -113,13 +120,47 @@ export default async function SitePage({ params }: PageProps) {
             </ul>
 
             <p>
-              This page is live so you can navigate the site today. The full
-              experience will replace this launch preview as content becomes
-              available.
+              Information is updated as verified coverage, sessions, and
+              operational details become available.
             </p>
+            {path === "contact" ? (
+              supportEmail ? (
+                <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+              ) : (
+                <p role="alert">
+                  A production support email must be configured before launch.
+                </p>
+              )
+            ) : null}
           </aside>
         </div>
       </section>
+
+      {page.sections?.length ? (
+        <section className="section">
+          <div className="container legal-content">
+            {page.sections.map((section) => (
+              <section key={section.heading}>
+                <h2>{section.heading}</h2>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                {section.items?.length ? (
+                  <ul>
+                    {section.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </section>
+            ))}
+            <p>
+              Questions about these terms or privacy practices can be sent
+              through the <Link href="/contact">contact page</Link>.
+            </p>
+          </div>
+        </section>
+      ) : null}
 
       {marketKey ? (
         <section className="section market-economic-section">

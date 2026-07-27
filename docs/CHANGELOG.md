@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased] — Production readiness
+
+- Patched Next.js, React, Sanity, and integration dependencies and added
+  reviewed PostCSS/Sharp overrides for current runtime advisories.
+- Added public robots and sitemap metadata, global baseline security headers,
+  production environment validation, and a Vercel smart-alert schedule.
+- Replaced launch-preview membership, support, market, privacy, and terms copy
+  with production-oriented states and policy drafts.
+- Expanded deployment documentation with complete migration ordering, support,
+  legal approval, dependency audit, and production-environment gates.
+
 ## [Unreleased] — Academy Volume 6
 
 - Added typed Academy mutation rate limits across learner and administrator

@@ -14,3 +14,8 @@ export function getPublicSiteUrl() {
     APP_CONFIG.siteUrl
   );
 }
+
+export function getSupportEmail() {
+  const value = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim().toLowerCase();
+  return value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? value : null;
+}

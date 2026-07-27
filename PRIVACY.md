@@ -15,9 +15,10 @@ cascades its messages and feedback. Aggregate daily usage and privacy-conscious
 operational telemetry may remain until account erasure or the reviewed retention
 job removes it. The documented default conversation retention is 180 days.
 
-This engineering note is not a final legal privacy policy. Provider processing,
-international transfers, retention, user notices, deletion SLAs, and feedback
-review require legal and privacy review before launch.
+The application now renders a public privacy-policy draft at `/privacy`.
+Provider processing, international transfers, retention, user notices, deletion
+SLAs, and feedback review still require approval by the responsible business or
+legal owner before production promotion.
 
 ## Trading Academy learner data
 

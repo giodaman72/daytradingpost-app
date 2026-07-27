@@ -1524,6 +1524,41 @@ button {
   line-height: 1.65;
 }
 
+.legal-content {
+  display: grid;
+  gap: 42px;
+  max-width: 920px;
+}
+
+.legal-content > section {
+  padding-bottom: 36px;
+  border-bottom: 1px solid var(--border);
+}
+
+.legal-content h2 {
+  margin: 0 0 18px;
+  font-size: clamp(25px, 3vw, 34px);
+  letter-spacing: -0.04em;
+}
+
+.legal-content p,
+.legal-content li {
+  color: var(--text-soft);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.legal-content p {
+  margin: 0 0 16px;
+}
+
+.legal-content ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 22px;
+}
+
 @media (max-width: 900px) {
   .inner-layout {
     grid-template-columns: 1fr;

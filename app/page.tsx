@@ -277,20 +277,21 @@ export default async function Home() {
               <span className="pricing-label">Founding membership</span>
 
               <div className="price">
-                <strong>$39</strong>
-                <span>/month</span>
+                <strong>2 plans</strong>
+                <span>monthly or annual</span>
               </div>
 
-              <p>Cancel anytime. Premium content added every week.</p>
+              <p>
+                Final pricing, currency, and payment terms are shown securely
+                during checkout.
+              </p>
 
               <Link href="/premium" className="button button-full">
                 Join Premium
                 <span aria-hidden="true">→</span>
               </Link>
 
-              <span className="pricing-note">
-                Membership enrollment opening soon
-              </span>
+              <span className="pricing-note">Revolut-secured checkout</span>
             </div>
           </div>
         </div>

@@ -7,11 +7,11 @@ import {
 } from "@/lib/alerts/alertSchedulerAuth";
 export const runtime = "nodejs";
 let running = false;
-export async function POST(request: Request) {
+async function evaluateAlerts(request: Request) {
   if (
     !isAlertSchedulerAuthorized(
       request.headers.get("authorization"),
-      process.env.ALERT_CRON_SECRET,
+      process.env.CRON_SECRET || process.env.ALERT_CRON_SECRET,
     )
   )
     return NextResponse.json(
@@ -77,3 +77,6 @@ export async function POST(request: Request) {
     running = false;
   }
 }
+
+export const GET = evaluateAlerts;
+export const POST = evaluateAlerts;
