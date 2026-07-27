@@ -8,10 +8,16 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function ForgotPasswordPage() {
+export default async function ForgotPasswordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error } = await searchParams;
+
   return (
     <AuthPage>
-      <AuthForm mode="forgot" />
+      <AuthForm mode="forgot" initialMessage={error} />
     </AuthPage>
   );
 }

@@ -1,12 +1,17 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  getEmailOtpSuccessPath,
+  parseSupportedEmailOtpType,
+} from "@/lib/auth/emailOtp";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   const redirectUrl = request.nextUrl.clone();
   const tokenHash = redirectUrl.searchParams.get("token_hash");
-  const type = redirectUrl.searchParams.get("type") as EmailOtpType | null;
+  const rawType = redirectUrl.searchParams.get("type") as EmailOtpType | null;
+  const type = parseSupportedEmailOtpType(rawType);
   redirectUrl.search = "";
 
   if (tokenHash && type && isSupabaseAuthConfigured()) {
@@ -17,7 +22,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (!error) {
-      redirectUrl.pathname = "/account";
+      redirectUrl.pathname = getEmailOtpSuccessPath(type);
       return NextResponse.redirect(redirectUrl);
     }
   }

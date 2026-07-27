@@ -141,9 +141,13 @@ order by users.created_at desc;
 --      http://localhost:3000/auth/callback
 --      http://localhost:3001/auth/callback
 --      https://YOUR_PRODUCTION_DOMAIN/auth/callback
--- 2. Authentication > Email Templates > Confirm signup
---    Use this confirmation URL:
---    {{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email
+-- 2. Authentication > Email Templates
+--    Confirm signup:
+--    {{ .SiteURL }}/auth/verify?token_hash={{ .TokenHash }}&type=email
+--    Reset password:
+--    {{ .SiteURL }}/auth/verify?token_hash={{ .TokenHash }}&type=recovery
+--    These links require a human button press before token verification so
+--    email-provider URL prefetching cannot consume the single-use token.
 -- 3. Authentication > Providers > Email
 --    Keep email/password enabled and choose whether confirmation is required.
 -- 4. Configure custom SMTP before production; the default sender is rate-limited.
