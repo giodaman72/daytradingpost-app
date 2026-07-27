@@ -149,6 +149,12 @@ For a new environment, run the SQL in this order:
 
 Then verify:
 
+- Confirm-signup emails link to
+  `{{ .SiteURL }}/auth/verify?token_hash={{ .TokenHash }}&type=email`.
+- Password-recovery emails link to
+  `{{ .SiteURL }}/auth/verify?token_hash={{ .TokenHash }}&type=recovery`.
+- Both scanner-safe pages require a human button press before consuming the
+  single-use token.
 - profile trigger creates one row per Auth user;
 - RLS is enabled;
 - anon/authenticated roles cannot write protected membership fields;
