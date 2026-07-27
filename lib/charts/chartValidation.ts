@@ -2,6 +2,7 @@ import { resolveChartSymbol } from "./chartSymbols";
 import { isChartTimeframe } from "./chartTimeframes";
 import { validateIndicator } from "./chartIndicators";
 import { ChartError } from "./chartErrors";
+import { stripMarkup } from "@/lib/security/plainText";
 import type { ChartProviderId } from "@/types/chart";
 import type { ChartLayout } from "@/types/chart-layout";
 import type { ChartPreference } from "@/types/chart-layout";
@@ -16,11 +17,7 @@ const PROVIDERS: ChartProviderId[] = [
 ];
 const text = (value: unknown, maximum = 120) =>
   typeof value === "string"
-    ? value
-        .replace(/<[^>]*>/g, "")
-        .replace(/\s+/g, " ")
-        .trim()
-        .slice(0, maximum)
+    ? stripMarkup(value).replace(/\s+/g, " ").trim().slice(0, maximum)
     : "";
 
 export function parseBarsQuery(

@@ -42,6 +42,9 @@ describe("assistant safety", () => {
     expect(value).not.toContain("<script>");
     expect(value).not.toContain("javascript:");
     expect(value).toContain("[good](/analysis)");
+    expect(
+      sanitizeAssistantMarkdown("<<script>alert(1)</script>Market context"),
+    ).toBe("alert(1)Market context");
   });
   it("keeps only valid Tutor source markers and adds a disclosure fallback", () => {
     expect(

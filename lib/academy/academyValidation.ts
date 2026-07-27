@@ -1,4 +1,5 @@
 import { AcademyError } from "./academyErrors";
+import { stripMarkup } from "@/lib/security/plainText";
 
 const identifierPattern = /^[a-zA-Z0-9_.-]{1,160}$/;
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -69,8 +70,7 @@ export function normalizePlainText(
   maximum: number,
 ) {
   if (typeof value !== "string") fail(`${label} is required.`);
-  const normalized = value
-    .replace(/<[^>]*>/g, "")
+  const normalized = stripMarkup(value)
     .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "")
     .trim();
   if (!normalized || normalized.length > maximum)

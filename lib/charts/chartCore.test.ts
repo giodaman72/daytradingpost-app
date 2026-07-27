@@ -198,7 +198,7 @@ describe("advanced chart core", () => {
         {
           id: "a",
           kind: "support",
-          label: "<script>bad</script>Support",
+          label: "<<script>bad</script>Support",
           value: 2300,
           timestamp: null,
           sourceId: "source",

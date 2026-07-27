@@ -119,7 +119,8 @@ export function getAcademyVideoSource(
       : { kind: "unavailable", src: null };
   if (
     video.provider === "cloudflare-stream" &&
-    playback.hostname.endsWith("videodelivery.net") &&
+    (playback.hostname === "videodelivery.net" ||
+      playback.hostname.endsWith(".videodelivery.net")) &&
     playback.pathname.includes("/iframe")
   )
     return { kind: "iframe", src: playback.toString() };
@@ -132,6 +133,5 @@ export function isSafeAcademyResourceUrl(value: string) {
   if (value.startsWith("/") && !value.startsWith("//") && !value.includes("\\"))
     return true;
   const url = validHttpsUrl(value);
-  if (!url) return false;
-  return !["javascript:", "data:", "file:"].includes(url.protocol);
+  return url !== null;
 }

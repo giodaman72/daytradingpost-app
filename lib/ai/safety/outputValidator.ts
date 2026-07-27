@@ -1,9 +1,9 @@
 import type { AssistantCitation } from "@/types/ai-citation";
 import type { RetrievalDocument } from "@/types/ai-context";
+import { stripMarkup } from "@/lib/security/plainText";
 
 export function sanitizeAssistantMarkdown(value: string) {
-  return value
-    .replace(/<[^>]*>/g, "")
+  return stripMarkup(value)
     .replace(
       /\[([^\]]+)\]\(([^)]+)\)/g,
       (_match, label: string, url: string) => {

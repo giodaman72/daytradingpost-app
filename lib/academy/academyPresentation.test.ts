@@ -112,6 +112,27 @@ describe("Academy presentation helpers", () => {
         }),
       ),
     ).toEqual({ kind: "unavailable", src: null });
+    expect(
+      getAcademyVideoSource(
+        video({
+          playbackUrl:
+            "https://customer-code.videodelivery.net/video-id/iframe",
+          provider: "cloudflare-stream",
+        }),
+      ),
+    ).toEqual({
+      kind: "iframe",
+      src: "https://customer-code.videodelivery.net/video-id/iframe",
+    });
+    expect(
+      getAcademyVideoSource(
+        video({
+          playbackUrl: "https://evilvideodelivery.net/video-id/iframe",
+          provider: "cloudflare-stream",
+        }),
+      ),
+    ).toEqual({ kind: "unavailable", src: null });
+    expect(isSafeAcademyResourceUrl("vbscript:msgbox(1)")).toBe(false);
   });
 
   it("normalizes saved video positions without resuming near completion", () => {
