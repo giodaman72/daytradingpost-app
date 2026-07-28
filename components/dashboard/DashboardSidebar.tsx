@@ -2,24 +2,33 @@ import Link from "next/link";
 import {
   Bell,
   BookOpen,
+  Award,
   CalendarDays,
   ChartNoAxesCombined,
   CircleUserRound,
   Crown,
   LayoutDashboard,
   ListPlus,
+  Route,
+  Sparkles,
   Radio,
+  ShieldAlert,
 } from "lucide-react";
 import { DASHBOARD_NAVIGATION } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
 
 const dashboardIcons = {
+  "advanced-chart": ChartNoAxesCombined,
   "academy-progress": BookOpen,
+  certificates: Award,
   "economic-calendar": CalendarDays,
   "latest-analysis": LayoutDashboard,
+  "learning-paths": Route,
   "market-outlook": ChartNoAxesCombined,
   membership: Crown,
   notifications: Bell,
+  recommendations: Sparkles,
+  "smart-alerts": ShieldAlert,
   watchlist: ListPlus,
   webinar: Radio,
 } as const;

@@ -1,5 +1,20 @@
 # DayTradingPost architecture
 
+## Sprint 14 charting
+
+Advanced charts use a hybrid public-TradingView/first-party provider boundary,
+the canonical instrument registry, normalized server datafeeds, owner-scoped
+layout persistence, and opaque server-projected share links. See
+`CHARTING_SYSTEM.md`.
+
+## Sprint 13 AI boundary
+
+The authenticated `/assistant` feature uses a server-only provider abstraction,
+structured retrieval, deterministic safety controls, validated citations, and
+Supabase-owned conversation storage. OpenAI-specific code is isolated under
+`lib/ai/providers/`; public UI code receives only normalized stream events. See
+`AI_ASSISTANT.md` and `AI_SAFETY.md`.
+
 ## System overview
 
 DayTradingPost is a Next.js 16 App Router application. It combines a public
@@ -141,6 +156,15 @@ Implemented HTTP boundaries:
 Authentication forms and membership checkout use Server Actions rather than
 inventing duplicate REST endpoints. See `API_REFERENCE.md`.
 
+## Academy AI Tutor
+
+The Tutor is a presentation and policy specialization of `lib/ai`, not an
+independent provider pipeline. Server Components authorize the learner and load
+owner-scoped history; the Client shell streams through
+`POST /api/assistant/chat`. `lib/ai/retrieval/academyTutorRetriever.ts` resolves
+course, lesson and final-attempt feedback through existing Academy services.
+Provider keys, raw retrieval context and grading data stay server-only.
+
 ## Caching strategy
 
 | Data                       | Strategy                                                               |
@@ -257,3 +281,45 @@ deterministic development adapter is available only outside production and is
 always visibly labeled simulated. Pages, dashboard widgets, the Daily Market
 Brief, newsletter formatting, APIs, and future alert/mobile consumers share the
 same `EconomicEvent` contract. See [Economic Intelligence](ECONOMIC_SYSTEM.md).
+
+## Watchlists and Smart Alerts
+
+Private watchlists and alerts use server-only repositories, repeated ownership checks, and Supabase RLS. The scheduler consumes normalized Market Data, editorial Market Intelligence, Economic Intelligence, and published Sanity metadata; its pure evaluator rejects missing, stale, expired, cooling-down, or simulated sources. Trigger history is written before notification delivery. See [Watchlists and Smart Alerts](WATCHLISTS_ALERTS.md).
+
+## Trading Academy 2.0
+
+Sanity owns published course structure and educational content. Supabase owns
+private learner state. `lib/academy` is the only authorization, enrollment,
+progress, scoring, prerequisite and certificate boundary. Browser clients never
+calculate authoritative state. See [Trading Academy LMS](TRADING_ACADEMY_LMS.md).
+
+The Part 2A frontend keeps catalog and course metadata in Server Components,
+uses client islands only for learner mutations, and fetches full lesson bodies
+only after server authorization. Canonical lesson and attempt routes are
+documented in [Academy learner experience](ACADEMY_LEARNER_EXPERIENCE.md).
+Assessment review policy is enforced before serialization, and protected
+resource URLs are resolved only through an authorized Route Handler.
+
+Learning paths add a composition layer without duplicating course truth.
+Published structure is projected from Sanity, learner ownership remains in
+Supabase, and `learningPathService` composes membership, path enrollment and
+course-enrollment state. `learningPathProgress` is pure and deterministic;
+Route Handlers never trust client-computed progress. See
+[Academy learning paths](ACADEMY_LEARNING_PATHS.md).
+
+## Academy operational control plane
+
+Sanity owns Academy editorial documents and publication history. Protected
+server read models expose metadata and validation only; Studio handles writes.
+Supabase owns learner state, explicit instructor assignments, review/reply
+moderation, events and audit records. Transactional RPCs protect manual
+enrollment, access lifecycle, progress reset and attempt invalidation.
+Certificate revocation and revoked-certificate reissue are separate
+service-role-only transactions. Reissue copies immutable issuance facts into a
+new record, rotates public identifiers and links the superseded record rather
+than updating or deleting its snapshot.
+
+Admin and instructor pages are dynamic Server Components. Each service performs
+its own authorization. Client components handle only small interactive forms
+and call Route Handlers that repeat authorization. Analytics return aggregates,
+never raw learner content.

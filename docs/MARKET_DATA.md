@@ -22,6 +22,14 @@ ETHUSD, EURUSD, GBPUSD, and USDJPY.
 
 ## Provider modes
 
+### Disabled launch mode
+
+Set `MARKET_DATA_PROVIDER=disabled` to launch without licensed quote data.
+Provider credentials are not required in this mode. Quote surfaces render their
+typed Data unavailable state, the health endpoint reports the intentional mode,
+and no simulated or fabricated prices are shown. Use this mode only until a
+provider contract and public display rights are in place.
+
 ### Development fixtures
 
 Set `MARKET_DATA_PROVIDER=development` only locally. Fixtures are deterministic
@@ -81,6 +89,7 @@ if enabled. This is an operational cache, not a historical-price database.
 
 ## Production checklist
 
+- Use `MARKET_DATA_PROVIDER=disabled` when launching without licensed quote data.
 - Select a licensed provider and review API and exchange agreements.
 - Confirm web display and redistribution rights by instrument and region.
 - Confirm whether data is exchange real-time, delayed, or indicative.
@@ -95,7 +104,8 @@ if enabled. This is an operational cache, not a historical-price database.
 ## Troubleshooting
 
 - **Unavailable in production:** expected until a real provider and all required
-  variables are valid. Development fixtures are intentionally blocked.
+  variables are valid, or while `MARKET_DATA_PROVIDER=disabled`. Development
+  fixtures are intentionally blocked.
 - **Provider unhealthy:** check base URL, key, health endpoint, and entitlement.
 - **Stale label:** compare provider timestamp/server clock and documented delay.
 - **No Supabase rows:** fixtures are never persisted; verify SQL and service role.

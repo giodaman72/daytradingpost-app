@@ -8,15 +8,30 @@ import { MarketOutlook } from "@/components/dashboard/MarketOutlook";
 import { MembershipCard } from "@/components/dashboard/MembershipCard";
 import { Notifications } from "@/components/dashboard/Notifications";
 import { Watchlist } from "@/components/dashboard/Watchlist";
+import { SmartAlerts } from "@/components/dashboard/SmartAlerts";
 import { WebinarWidget } from "@/components/dashboard/WebinarWidget";
+import { AIAssistantWidget } from "@/components/dashboard/AIAssistantWidget";
+import { ChartWidget } from "@/components/dashboard/ChartWidget";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { getLatestArticles } from "@/lib/cms";
-import { DEFAULT_WATCHLIST } from "@/constants/markets";
 import { getDashboardMarketIntelligence } from "@/lib/market/marketIntelligenceService";
 import { getDashboardQuotes } from "@/lib/market-data/marketDataService";
+import { getMarketQuotes } from "@/lib/market-data/marketDataService";
+import { getUserWatchlists } from "@/lib/watchlists";
+import { getUserAlerts } from "@/lib/alerts";
+import {
+  getUserNotifications,
+  getUnreadNotificationCount,
+} from "@/lib/notifications";
+import { getInstrument } from "@/constants/instruments";
 import { getMembershipAccess } from "@/lib/payments";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
+import { getAssistantUsage } from "@/lib/ai/assistantUsage";
+import {
+  getAcademyCourse,
+  listUserEnrollments,
+} from "@/lib/academy/academyService";
 
 export const metadata: Metadata = {
   title: "Trader Dashboard",
@@ -35,26 +50,57 @@ function marketDate() {
 export default async function DashboardPage() {
   if (!isSupabaseAuthConfigured()) redirect("/login?next=/dashboard");
 
-  const [access, articles, marketIntelligence, marketQuotes] =
-    await Promise.all([
-      getMembershipAccess(),
-      getLatestArticles(5),
-      getDashboardMarketIntelligence(
-        DEFAULT_WATCHLIST.map((item) => item.symbol),
-      ),
-      getDashboardQuotes(),
-    ]);
+  const access = await getMembershipAccess();
   const { hasPremiumAccess, profile, user } = access;
 
   if (!user) redirect("/login?next=/dashboard");
+
+  const [
+    articles,
+    watchlists,
+    alerts,
+    notifications,
+    unreadCount,
+    assistantUsage,
+    academyEnrollments,
+  ] = await Promise.all([
+    getLatestArticles(5),
+    getUserWatchlists().catch(() => []),
+    getUserAlerts(20).catch(() => []),
+    getUserNotifications(5).catch(() => []),
+    getUnreadNotificationCount().catch(() => 0),
+    getAssistantUsage(user.id, hasPremiumAccess).catch(() => null),
+    listUserEnrollments(20, 0).catch(() => []),
+  ]);
+  const academyEnrollment =
+    academyEnrollments.find((item) => item.status === "in_progress") ??
+    academyEnrollments.find((item) => item.status === "enrolled") ??
+    academyEnrollments[0] ??
+    null;
+  const academyCourse = academyEnrollment
+    ? await getAcademyCourse(academyEnrollment.courseSlug).catch(() => null)
+    : null;
+  const defaultWatchlist =
+    watchlists.find((item) => item.isDefault) ?? watchlists[0] ?? null;
+  const watchlistInstruments =
+    defaultWatchlist?.items
+      .map((item) => getInstrument(item.instrumentSlug))
+      .filter((item): item is NonNullable<typeof item> => Boolean(item)) ?? [];
+  const [marketIntelligence, marketQuotes, watchlistQuotes] = await Promise.all(
+    [
+      getDashboardMarketIntelligence(
+        watchlistInstruments.map((item) => item.symbol),
+      ),
+      getDashboardQuotes(),
+      getMarketQuotes(watchlistInstruments),
+    ],
+  );
 
   const displayName =
     profile?.full_name ||
     user.user_metadata.full_name ||
     user.email?.split("@")[0] ||
     "Trader";
-  const membershipStatus = profile?.membership_status || "free";
-
   return (
     <main className="dashboard-page">
       <Header />
@@ -75,6 +121,14 @@ export default async function DashboardPage() {
           </header>
 
           <div className="dashboard-grid">
+            <ChartWidget
+              instrument={watchlistInstruments[0] ?? null}
+              quote={watchlistQuotes[0] ?? null}
+            />
+            <AIAssistantWidget
+              usage={assistantUsage}
+              premium={hasPremiumAccess}
+            />
             <MarketOutlook
               outlooks={marketIntelligence}
               quotes={marketQuotes}
@@ -82,15 +136,19 @@ export default async function DashboardPage() {
             <LatestAnalysis articles={articles} />
             <EconomicCalendar />
             <WebinarWidget />
-            <Watchlist />
-            <AcademyProgress />
+            <Watchlist watchlist={defaultWatchlist} quotes={watchlistQuotes} />
+            <SmartAlerts alerts={alerts} />
+            <AcademyProgress
+              courseTitle={academyCourse?.title}
+              enrollment={academyEnrollment}
+            />
             <MembershipCard
               hasPremiumAccess={hasPremiumAccess}
               profile={profile}
             />
             <Notifications
-              articleCount={articles.length}
-              membershipStatus={membershipStatus}
+              notifications={notifications}
+              unreadCount={unreadCount}
             />
           </div>
         </div>

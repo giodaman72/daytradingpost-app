@@ -6,26 +6,33 @@ import { getMarketDataConfig } from "../marketDataValidation";
 import { unavailableQuote } from "../marketDataMapper";
 import type { MarketDataProvider } from "./MarketDataProvider";
 
-function unavailableProvider(message: string): MarketDataProvider {
+function unavailableProvider(
+  message: string,
+  {
+    configured = false,
+    healthy = false,
+    id = "unconfigured",
+  }: { configured?: boolean; healthy?: boolean; id?: string } = {},
+): MarketDataProvider {
   return {
-    id: "unconfigured",
+    id,
     simulated: false,
     async getQuote(instrument) {
-      return unavailableQuote(instrument, "unconfigured", message);
+      return unavailableQuote(instrument, id, message);
     },
     async getQuotes(instruments) {
       return instruments.map((instrument) =>
-        unavailableQuote(instrument, "unconfigured", message),
+        unavailableQuote(instrument, id, message),
       );
     },
     async getDailySnapshot(instrument) {
-      return unavailableQuote(instrument, "unconfigured", message);
+      return unavailableQuote(instrument, id, message);
     },
     async healthCheck() {
       return {
-        configured: false,
-        healthy: false,
-        provider: "unconfigured",
+        configured,
+        healthy,
+        provider: id,
         checkedAt: new Date().toISOString(),
         message,
       };
@@ -35,6 +42,11 @@ function unavailableProvider(message: string): MarketDataProvider {
 
 export function getMarketDataProvider() {
   const config = getMarketDataConfig();
+  if (config.provider === "disabled")
+    return unavailableProvider(
+      "Market-data quotes are intentionally disabled for launch.",
+      { configured: true, healthy: true, id: "disabled" },
+    );
   if (config.provider === "development") {
     if (process.env.NODE_ENV === "production")
       return unavailableProvider(

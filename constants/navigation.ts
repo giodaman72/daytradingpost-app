@@ -3,8 +3,11 @@ import { ROUTES } from "./routes";
 export const MAIN_NAVIGATION = [
   { href: "/#markets", label: "Markets" },
   { href: ROUTES.analysis, label: "Analysis" },
+  { href: ROUTES.charts, label: "Charts" },
   { href: ROUTES.economicCalendar, label: "Calendar" },
   { authenticatedOnly: true, href: ROUTES.dashboard, label: "Dashboard" },
+  { authenticatedOnly: true, href: ROUTES.assistant, label: "AI Assistant" },
+  { authenticatedOnly: true, href: ROUTES.watchlists, label: "Watchlists" },
   { href: ROUTES.academy, label: "Academy" },
   { href: ROUTES.premium, label: "Premium" },
   { href: ROUTES.newsletter, label: "Newsletter" },
@@ -12,25 +15,70 @@ export const MAIN_NAVIGATION = [
 
 export const ACCOUNT_NAVIGATION = [
   { href: ROUTES.dashboard, label: "Trader dashboard", section: "dashboard" },
+  { href: ROUTES.assistant, label: "AI Assistant", section: "assistant" },
+  { href: ROUTES.charts, label: "Advanced charts", section: "charts" },
   { href: ROUTES.account, label: "Account overview", section: "overview" },
   { href: ROUTES.billing, label: "Billing & membership", section: "billing" },
+  { href: ROUTES.watchlists, label: "Watchlists", section: "watchlists" },
+  { href: ROUTES.alerts, label: "Smart alerts", section: "alerts" },
   { href: ROUTES.premium, label: "Premium plans", section: "premium" },
   { href: ROUTES.analysis, label: "Market analysis", section: "analysis" },
 ] as const;
 
 export const DASHBOARD_NAVIGATION = [
-  { href: "#market-outlook", id: "market-outlook", label: "Market outlook" },
-  { href: "#latest-analysis", id: "latest-analysis", label: "Latest analysis" },
   {
-    href: "#economic-calendar",
+    href: "/dashboard#advanced-chart",
+    id: "advanced-chart",
+    label: "Advanced chart",
+  },
+  {
+    href: "/dashboard#market-outlook",
+    id: "market-outlook",
+    label: "Market outlook",
+  },
+  {
+    href: "/dashboard#latest-analysis",
+    id: "latest-analysis",
+    label: "Latest analysis",
+  },
+  {
+    href: "/dashboard#economic-calendar",
     id: "economic-calendar",
     label: "Economic calendar",
   },
-  { href: "#webinar", id: "webinar", label: "Webinars" },
-  { href: "#watchlist", id: "watchlist", label: "Watchlist" },
-  { href: "#academy-progress", id: "academy-progress", label: "Academy" },
-  { href: "#membership", id: "membership", label: "Membership" },
-  { href: "#notifications", id: "notifications", label: "Notifications" },
+  { href: "/dashboard#webinar", id: "webinar", label: "Webinars" },
+  { href: "/dashboard#watchlist", id: "watchlist", label: "Watchlist" },
+  {
+    href: "/dashboard#smart-alerts",
+    id: "smart-alerts",
+    label: "Smart alerts",
+  },
+  {
+    href: "/dashboard#academy-progress",
+    id: "academy-progress",
+    label: "Academy",
+  },
+  {
+    href: ROUTES.dashboardLearningPaths,
+    id: "learning-paths",
+    label: "Learning paths",
+  },
+  {
+    href: ROUTES.dashboardLearningRecommendations,
+    id: "recommendations",
+    label: "Recommended learning",
+  },
+  {
+    href: ROUTES.dashboardCertificates,
+    id: "certificates",
+    label: "Certificates",
+  },
+  { href: "/dashboard#membership", id: "membership", label: "Membership" },
+  {
+    href: ROUTES.dashboardLearningNotifications,
+    id: "notifications",
+    label: "Notifications",
+  },
 ] as const;
 
 export const FOOTER_NAVIGATION = [

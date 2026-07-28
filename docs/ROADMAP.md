@@ -1,5 +1,17 @@
 # DayTradingPost product roadmap
 
+## Recommended Sprint 15 follow-up
+
+Add licensed production historical OHLC, richer Academy chart lessons, reviewed
+overlay editing, multi-chart layouts and browser end-to-end coverage.
+
+## Recommended follow-up after Sprint 13
+
+Add distributed rate limiting, automated retention, reviewed shared-summary
+caching, richer Academy documents, webinar transcripts, multilingual prompt
+packs, and provider-neutral read-only tools. Embeddings remain deferred until a
+substantial published long-form corpus exists.
+
 This roadmap records delivered foundations and the intended sequence for future
 work. A sprint is complete only after lint, production build, and its acceptance
 checks pass. Future scope may be refined before implementation.
@@ -97,10 +109,12 @@ checks pass. Future scope may be refined before implementation.
 - Timezone-aware schedules, caching, pagination, rate limiting, and tests
 - Future alert contracts without notification delivery
 
-### Sprint 12 — Watchlists
+### Sprint 12 — Watchlists and Smart Alerts
 
-- Persist member watchlists in Supabase
-- Add RLS, ordering, defaults, and instrument validation
+- Private multi-watchlist management with RLS and membership limits
+- Provider-neutral market, editorial, analysis, and economic alert evaluator
+- Trigger history, dashboard notifications, header indicator, and email adapter boundary
+- Protected scheduler endpoint, cooldowns, stale-data rejection, and idempotency
 
 ### Sprint 13 — AI Assistant
 
@@ -114,6 +128,13 @@ checks pass. Future scope may be refined before implementation.
 ### Sprint 15 — Community
 
 - Moderated member discussions, profiles, reporting, and conduct controls
+
+### Sprint 15 — Trading Academy AI Tutor
+
+- Authenticated general, course and lesson Tutor workspaces
+- Published, entitlement-aware Academy retrieval with citations
+- Assessment, answer-key, certification and premium-extraction safeguards
+- Streaming, history, usage, feedback, privacy deletion and lesson actions
 
 ### Sprint 16 — PWA
 
@@ -162,3 +183,62 @@ Implement authenticated watchlists while separately evaluating licensed
 economic and market-data providers. Add distributed limiting, ingestion
 observability, migration automation, provider contract tests, and end-to-end
 Route Handler coverage before enabling production economic ingestion.
+
+## Sprint 15 Part 1 — Trading Academy 2.0 backend
+
+Adds hybrid Sanity/Supabase LMS content and state, access/enrollment,
+progress/scoring/prerequisites, certificate verification, private learner
+utilities, API foundations, tests, and documentation.
+
+## Sprint 15 Part 2A — learner-facing foundation
+
+Adds the responsive Academy landing and catalog, SEO course pages, enrollment,
+private curriculum and canonical lesson routes, centralized lesson renderers,
+video checkpoints and resume, protected resources, bookmarks, private notes,
+graded assessments, policy-controlled results, retakes, analytics, and a compact
+dashboard continuation card.
+
+## Recommended Sprint 15 Part 2B
+
+Build on the completed learning-path and course-certificate foundations with
+advanced progress analytics, a complete Academy Tutor, reviews, accessible
+administrator course/certificate management, end-to-end browser coverage, and
+final launch polish.
+
+## Sprint 15 Volume 2 — learning paths
+
+Adds the published path catalog, dynamic path detail pages, authenticated path
+dashboard, idempotent server-side enrollment, required/optional progression,
+explicit course states, milestones, accessible ordered maps, explainable
+rules-based recommendations, analytics and versioning guidance.
+
+## Sprint 15 Volume 3 — certificates
+
+Adds server-controlled transactional course-certificate issuance, private
+wallet/detail pages, branded PDF and QR/text verification, privacy-safe public
+status, sharing, idempotent notifications/events and audited administrator
+revocation.
+
+## Recommended Academy follow-up
+
+Add administrator reconciliation for material path-version changes,
+replacement-course migrations, database-emulator RLS tests, browser automation,
+distributed verification rate limiting and learning-path certificates. Approve
+a separate correction policy before allowing changes to certificate snapshot
+facts; Volume 6 reissue intentionally preserves those facts.
+
+## Sprint 15 Volume 6 — admin and instructor operations
+
+Adds server-enforced administrator and instructor workspaces, verified
+instructor-course assignments, safe course and assessment metadata, enrollment
+operations, certificate lifecycle controls, review reporting and moderation,
+privacy-thresholded analytics, and transactional audit logging.
+
+## After Academy Volume 6
+
+Add a dedicated assignment-management UI with dual approval, Sanity webhook
+reconciliation into Supabase audit reporting, high-volume SQL analytics rollups,
+CSV export with privacy review, richer lesson-level drop-off funnels and
+database-emulator authorization tests. Approve the certificate correction and
+dual-approval policy before allowing snapshot corrections; the shipped reissue
+flow only replaces a revoked record without changing its completion facts.

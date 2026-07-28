@@ -50,7 +50,8 @@ export default async function PremiumPage() {
                 </span>
                 <h2>{MEMBERSHIP_PLANS[plan].name}</h2>
                 <p className="membership-price-note">
-                  Final price and currency are shown securely by Revolut.
+                  {MEMBERSHIP_PLANS[plan].priceLabel}. Checkout is processed
+                  securely by Revolut.
                 </p>
                 <ul className="premium-list">
                   {PREMIUM_BENEFITS.map((benefit) => (

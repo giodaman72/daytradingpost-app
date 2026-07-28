@@ -2,10 +2,15 @@ import "server-only";
 
 import { cache } from "react";
 import { hasActiveMembership } from "@/lib/payments/membershipStatus";
+import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 import type { BillingProfile } from "@/types/profile";
 
 export const getMembershipAccess = cache(async () => {
+  if (!isSupabaseAuthConfigured()) {
+    return { user: null, profile: null, hasPremiumAccess: false };
+  }
+
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
   const user = authData.user;

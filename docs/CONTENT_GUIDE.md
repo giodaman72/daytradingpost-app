@@ -1,8 +1,23 @@
 # Market analysis content guide
 
+Chart copy must distinguish third-party data, DayTradingPost provider snapshots,
+editorial levels, user layouts, delayed data and development fixtures. Never
+describe a chart as a trade signal or imply guaranteed outcomes.
+
+## AI retrieval readiness
+
+Use stable slugs, concise excerpts, accurate instruments, publication times,
+access levels, educational explanations, and explicit editorial bias. Never
+place instructions to the assistant in article content. Citations may show a
+short excerpt; avoid third-party copyrighted passages in source text.
+
 This guide defines how DayTradingPost articles are prepared in Sanity. Content
 is educational and informational. It must not present personalized investment
 advice, guaranteed outcomes, or live prices when the values are illustrative.
+
+## Alert copy
+
+Alert names and notifications must describe the configured condition without promising an outcome or recommending a trade. Always distinguish price data from editorial bias, disclose delayed data, label educational context, and never describe fixtures as real triggers. Email and dashboard messages must link to preferences and include the educational-risk disclaimer.
 
 ## Editorial workflow
 
@@ -172,3 +187,29 @@ Sanity. Use the registry symbol, select an explicit valid date, treat every leve
 as an editorial snapshot, and write both bullish and bearish conditions. Link
 the Sanity slug rather than copying article body text. Never use “live,”
 “guaranteed,” or signal language for an editorial bias.
+
+## Trading Academy content
+
+Create instructors and assessments before lessons, lessons before modules, and
+modules before courses. Use references and generated Sanity IDs. Published
+courses need objectives and at least one module; published modules need a
+lesson. Increment versions deliberately and create a new assessment version for
+answer-key or scoring changes. Never place provider secrets, embed HTML,
+personalized recommendations, fabricated credentials, or learner notes in
+Sanity. Keep the dataset private before graded assessments are published.
+
+For learner-facing lessons, choose the renderer intentionally: text, video,
+mixed, quiz, assessment, downloadable, webinar replay, chart practice, or
+external resource. Supply transcript and caption metadata only when it exists.
+Webinar replays and market examples must show their original date and state that
+historical commentary is not current analysis. Chart-practice material must
+identify delayed, historical, or illustrative data and include a textual
+alternative. Resource files need a useful title, format, size, and safe HTTPS
+location. External-resource lessons must name the source and explain that the
+learner is leaving DayTradingPost.
+
+Assessment review settings are product controls, not presentation hints.
+`showCorrectAnswers` and `showExplanations` must reflect the intended policy for
+failed attempts and retakes. Never place an answer key in excerpts, question
+media metadata, explanations visible before submission, analytics, or Tutor
+prompts.

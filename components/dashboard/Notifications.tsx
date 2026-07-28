@@ -1,59 +1,38 @@
 import Link from "next/link";
-import { BellRing, CircleCheck, Newspaper } from "lucide-react";
-import { formatDisplayLabel } from "@/lib/utils";
+import type { Notification } from "@/types/notification";
 import { DashboardPanel } from "./DashboardPanel";
-
 export function Notifications({
-  articleCount,
-  membershipStatus,
+  notifications,
+  unreadCount,
 }: {
-  articleCount: number;
-  membershipStatus: string;
+  notifications: Notification[];
+  unreadCount: number;
 }) {
-  const items = [
-    {
-      icon: Newspaper,
-      title: articleCount
-        ? `${articleCount} recent briefings available`
-        : "Analysis notifications ready",
-      detail: articleCount
-        ? "Your Sanity research feed is up to date."
-        : "New briefings will be highlighted after publication.",
-    },
-    {
-      icon: CircleCheck,
-      title: "Secure account session",
-      detail: `Membership status: ${formatDisplayLabel(membershipStatus)}.`,
-    },
-    {
-      icon: BellRing,
-      title: "Notification center initialized",
-      detail:
-        "Email and in-app alert preferences will be configurable in a future release.",
-    },
-  ];
-
   return (
     <DashboardPanel
       id="notifications"
-      eyebrow="Member updates"
+      eyebrow={`${unreadCount} unread`}
       title="Notifications"
     >
-      <ul className="dashboard-notifications">
-        {items.map(({ detail, icon: Icon, title }) => (
-          <li key={title}>
-            <span>
-              <Icon size={17} aria-hidden="true" />
-            </span>
-            <div>
-              <strong>{title}</strong>
-              <p>{detail}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-      <Link href="/account" className="text-link">
-        Manage account →
+      {notifications.length ? (
+        <ul className="dashboard-notifications">
+          {notifications.slice(0, 4).map((item) => (
+            <li key={item.id}>
+              <span aria-hidden="true">!</span>
+              <div>
+                <strong>{item.title}</strong>
+                <p>{item.message}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="dashboard-empty">
+          <p>No member notifications yet.</p>
+        </div>
+      )}
+      <Link href="/alerts/history" className="text-link">
+        Review alert history →
       </Link>
     </DashboardPanel>
   );

@@ -1,5 +1,108 @@
 # Changelog
 
+## [Unreleased] — Production readiness
+
+- Patched Next.js, React, Sanity, and integration dependencies and added
+  reviewed PostCSS/Sharp overrides for current runtime advisories.
+- Added public robots and sitemap metadata, global baseline security headers,
+  production environment validation, and a Vercel smart-alert schedule.
+- Replaced launch-preview membership, support, market, privacy, and terms copy
+  with production-oriented states and policy drafts.
+- Expanded deployment documentation with complete migration ordering, support,
+  legal approval, dependency audit, and production-environment gates.
+
+## [Unreleased] — Academy Volume 6
+
+- Added typed Academy mutation rate limits across learner and administrator
+  mutation domains plus a bounded background-job runner foundation.
+- Added protected Academy course, assessment, enrollment, certificate, review
+  and analytics administration routes.
+- Added explicit instructor-course assignments and a privacy-conscious
+  instructor dashboard.
+- Added audited transactional enrollment actions and assessment invalidation.
+- Added confirmed, audited and idempotent revoked-certificate reissue with
+  immutable superseding history and rotated public identifiers.
+- Added review reporting plus moderated instructor replies.
+- Added privacy-thresholded Academy aggregate analytics and operational docs.
+
+## [Unreleased] — Academy Volume 5
+
+- Added deterministic explainable learning recommendations and continue priority.
+- Added verified learner reviews with owner controls and admin moderation.
+- Added Academy notification preferences, reminder rules and safe deep links.
+- Added the personalization/reviews Supabase migration, tests and operations docs.
+
+## [Unreleased] — Sprint 15 Volume 4
+
+- Added protected general, course and lesson Academy AI Tutor routes
+- Added ten Tutor learning modes, explicit lesson actions, streaming, history,
+  citations, usage, feedback, stop/copy controls and responsive states
+- Added server-authorized lesson and final-assessment-feedback retrieval with
+  premium downgrade filtering and recursive answer-key removal
+- Added deterministic assessment, certification, prompt-injection, profit and
+  locked-content safeguards plus the 15-case Tutor evaluation set
+- Added privacy-minimized provider requests with disabled provider storage and a
+  hashed safety identifier
+
+## [Unreleased] — Sprint 15 Volume 3
+
+- Added a protected certificate wallet and private certificate detail pages
+- Added transactional eligibility-based issuance with immutable snapshots,
+  idempotent analytics and learner notifications
+- Added branded server-generated PDFs, QR/text verification and safe sharing
+- Added privacy-limited public status plus permissioned, confirmed, audited and
+  non-destructive administrator revocation
+- Added lifecycle, ownership, privacy, QR, PDF and idempotency test coverage
+
+## [Unreleased] — Sprint 15 Volume 2
+
+- Added public learning-path catalog and dynamic detail routes plus a protected
+  learner path dashboard
+- Added idempotent path enrollment, first-course initialization, verified
+  required/optional progress and explicit unavailable states
+- Added accessible ordered course maps, milestones, explainable
+  recommendations, analytics and responsive loading/empty/locked states
+- Documented path version changes, historical completion and remaining
+  certificate/reconciliation limitations
+
+## [Unreleased] — Sprint 15 Part 2A
+
+- Added the public Trading Academy landing page, catalog, search and SEO course
+  detail pages
+- Added private curriculum, lesson player, video checkpoints, resources,
+  lesson completion, bookmarks and learner notes
+- Added refresh-safe assessment attempts, accessible question interfaces and
+  assessment results without exposing grading keys
+- Connected dashboard Academy progress to Supabase enrollments
+- Added authenticated Academy analytics ingestion and responsive learner states
+
+## [Unreleased] — Sprint 15 Part 1
+
+- Added Trading Academy 2.0 Sanity course, module, lesson, instructor,
+  assessment, resource, video, certificate-template and learning-path schemas
+- Added Supabase learner-state/RLS migration and transactional enrollment/grading
+- Added LMS authorization, progress, scoring, prerequisite and certificate
+  foundations plus owner-scoped API routes
+- Added deterministic Academy backend tests and operating documentation
+
+## Sprint 14 — Advanced Charts
+
+Added advanced chart routes, public TradingView adapter, truthful first-party
+datafeed fallback, saved/shared layouts, integrations, RLS and tests.
+
+## Sprint 13 — AI Trading Assistant
+
+Added authenticated source-grounded chat, OpenAI Responses API integration,
+development fixtures, retrieval and citations, financial-safety controls,
+history, usage and feedback, dashboard/content entry points, admin metrics,
+database migration, tests, and documentation.
+
+## Sprint 12 — Watchlists and Smart Alerts
+
+- Added authenticated watchlists, supported instruments, notes, defaults, and plan limits.
+- Added smart alerts, fixed-scale evaluation, history, dashboard notifications, economic reminders, and protected scheduling.
+- Added provider-neutral email formatting with production delivery disabled until configured.
+
 ## [1.0.0] — 2026-07-14
 
 ### Sprint 10 — Market Data Service

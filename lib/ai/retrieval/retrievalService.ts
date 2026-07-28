@@ -1,0 +1,94 @@
+import "server-only";
+import { ASSISTANT_CONTEXT_RULES } from "@/constants/ai-assistant";
+import type { AssistantRequest } from "@/types/ai-assistant";
+import type { RetrievalDocument, RetrievalResult } from "@/types/ai-context";
+import { AssistantError } from "../assistantErrors";
+import { canUseAssistantMode } from "../assistantPolicy";
+import { getAssistantConfig } from "../assistantConfig";
+import { retrieveAcademyContent } from "./academyRetriever";
+import { retrieveAcademyTutorContent } from "./academyTutorRetriever";
+import { rankAndDeduplicateDocuments } from "./contextAssembler";
+import { retrieveEconomicEvents } from "./economicRetriever";
+import { retrieveMarketData } from "./marketDataRetriever";
+import { retrieveMarketIntelligence } from "./marketIntelligenceRetriever";
+import { retrieveSanityArticles } from "./sanityRetriever";
+import { retrieveWatchlistContext } from "./watchlistRetriever";
+
+const MAX_WATCHLIST_INSTRUMENTS = 8;
+
+export async function retrieveAssistantContext(
+  request: AssistantRequest,
+  userId: string,
+  hasPremiumAccess: boolean,
+): Promise<RetrievalResult> {
+  const rule = ASSISTANT_CONTEXT_RULES[request.contextMode];
+  if (!canUseAssistantMode(request.contextMode, hasPremiumAccess))
+    throw new AssistantError(
+      "FORBIDDEN",
+      "Watchlist summaries are available to premium members.",
+      403,
+    );
+  const allowed = new Set(rule.sources);
+  const tasks: Promise<RetrievalDocument[]>[] = [];
+  let watchlistInstrumentSlugs: string[] | null = null;
+  if (allowed.has("watchlist")) {
+    const watchlist = await retrieveWatchlistContext(
+      userId,
+      request.watchlistId ?? null,
+    );
+    tasks.push(Promise.resolve(watchlist.documents));
+    watchlistInstrumentSlugs = watchlist.instrumentSlugs.slice(
+      0,
+      MAX_WATCHLIST_INSTRUMENTS,
+    );
+  }
+  if (allowed.has("article"))
+    tasks.push(
+      retrieveSanityArticles(request.articleSlug ?? null, hasPremiumAccess),
+    );
+  if (allowed.has("market_intelligence")) {
+    if (watchlistInstrumentSlugs)
+      tasks.push(
+        ...watchlistInstrumentSlugs.map((slug) =>
+          retrieveMarketIntelligence(slug),
+        ),
+      );
+    else tasks.push(retrieveMarketIntelligence(request.instrumentSlug ?? null));
+  }
+  if (allowed.has("market_data")) {
+    if (watchlistInstrumentSlugs)
+      tasks.push(
+        ...watchlistInstrumentSlugs.map((slug) => retrieveMarketData(slug)),
+      );
+    else tasks.push(retrieveMarketData(request.instrumentSlug ?? null));
+  }
+  if (allowed.has("economic_event"))
+    tasks.push(retrieveEconomicEvents(request.economicEventId ?? null));
+  if (allowed.has("academy")) {
+    if (
+      request.contextMode === "academy_tutor" &&
+      (request.academyCourseSlug || request.academyAttemptId)
+    )
+      tasks.push(Promise.resolve(await retrieveAcademyTutorContent(request)));
+    else tasks.push(retrieveAcademyContent(hasPremiumAccess));
+  }
+
+  const settled = await Promise.allSettled(tasks);
+  const accessError = settled.find(
+    (item) =>
+      item.status === "rejected" &&
+      item.reason instanceof AssistantError &&
+      item.reason.code === "FORBIDDEN",
+  );
+  if (accessError?.status === "rejected") throw accessError.reason;
+  const warnings = settled
+    .filter((item) => item.status === "rejected")
+    .map(
+      () => "A configured DayTradingPost source was temporarily unavailable.",
+    );
+  const documents = rankAndDeduplicateDocuments(
+    settled.flatMap((item) => (item.status === "fulfilled" ? item.value : [])),
+    getAssistantConfig().maximumContextCharacters,
+  );
+  return { documents, warnings, generatedAt: new Date().toISOString() };
+}

@@ -1,5 +1,18 @@
 # Deployment guide
 
+## Chart deployment
+
+Apply `supabase-chart-layouts.sql`, configure the chart environment variables,
+and permit `s3.tradingview.com` plus TradingView frames. Review widget licensing
+and symbol availability before production.
+
+## AI Assistant launch
+
+Apply `docs/supabase-ai-assistant.sql`, then add server-only `AI_*` and
+`OPENAI_*` values from `.env.example` to Vercel. Never use the development
+provider in production. Review model, usage, timeout, retention, and optional
+pricing values independently per environment.
+
 ## Environments
 
 DayTradingPost uses three logical environments:
@@ -87,6 +100,7 @@ The production dataset containing premium bodies must be private.
 | `NEXT_PUBLIC_REVOLUT_MONTHLY_PAYMENT_LINK` | Public hosted URL                   |
 | `NEXT_PUBLIC_REVOLUT_ANNUAL_PAYMENT_LINK`  | Public hosted URL                   |
 | `NEXT_PUBLIC_SITE_URL`                     | Public canonical application origin |
+| `NEXT_PUBLIC_SUPPORT_EMAIL`                | Public monitored support address    |
 
 ### Economic intelligence
 
@@ -94,6 +108,35 @@ The production dataset containing premium bodies must be private.
 | ------------------------ | ---------------------------------------------- |
 | `ECONOMIC_DATA_PROVIDER` | Server setting; use `development` locally only |
 | `ECONOMIC_CACHE_SECONDS` | Server cache duration; defaults to 300 seconds |
+
+### Market data
+
+| Variable                   | Exposure                                                    |
+| -------------------------- | ----------------------------------------------------------- |
+| `MARKET_DATA_PROVIDER`     | Server setting; use `disabled` until a provider is licensed |
+| `MARKET_DATA_API_KEY`      | Server-only secret; required only for `generic_http`        |
+| `MARKET_DATA_API_BASE_URL` | Server API origin; required only for `generic_http`         |
+
+### Smart alerts
+
+| Variable                         | Purpose                                         |
+| -------------------------------- | ----------------------------------------------- |
+| `ALERT_CRON_SECRET`              | Server-only evaluator bearer secret             |
+| `CRON_SECRET`                    | Vercel Cron bearer secret; preferred in hosting |
+| `ALERT_EVALUATION_BATCH_SIZE`    | Batch size, default 25 and maximum 100          |
+| `ALERT_DATA_MAX_AGE_SECONDS`     | Maximum accepted quote age, default 900         |
+| `ALERT_DEFAULT_COOLDOWN_MINUTES` | Default cooldown, 60 minutes                    |
+| `ALERT_EMAIL_PROVIDER`           | Keep disabled until an approved adapter exists  |
+
+### Academy certificates
+
+| Variable                                    | Purpose                                    |
+| ------------------------------------------- | ------------------------------------------ |
+| `ACADEMY_CERTIFICATE_VERIFICATION_BASE_URL` | Canonical public HTTPS verification origin |
+| `NEXT_PUBLIC_SITE_URL`                      | Existing public site-origin fallback       |
+
+Use the final production domain; do not print a Vercel Preview origin in
+Production certificate PDFs.
 
 ## Supabase preparation
 
@@ -103,6 +146,14 @@ For a new environment, run the SQL in this order:
 2. `docs/supabase-newsletter.sql`
 3. `docs/supabase-revolut.sql`
 4. `docs/supabase-economic.sql`
+5. `docs/supabase-market-intelligence.sql`
+6. `docs/supabase-market-data.sql`
+7. `docs/supabase-watchlists-alerts.sql`
+8. `docs/supabase-chart-layouts.sql`
+9. `docs/supabase-ai-assistant.sql`
+10. `docs/supabase-trading-academy-lms.sql`
+11. `docs/supabase-academy-personalization.sql`
+12. `docs/supabase-academy-admin.sql`
 
 Then verify:
 
@@ -117,6 +168,10 @@ Then verify:
 - anon/authenticated roles cannot write protected membership fields;
 - service-role operations run only from server code;
 - local and production Auth callback URLs are allow-listed.
+- issuance retry produces one certificate, notification and event;
+- owner A cannot download owner B's certificate;
+- public verification returns no private account fields;
+- administrator revocation immediately changes public status.
 
 Treat future schema changes as versioned migrations. Back up production and test
 reversible changes before applying destructive SQL.
@@ -157,12 +212,25 @@ For payment-link mode:
 4. Use `npm run build` as the build command.
 5. Confirm the production domain and `NEXT_PUBLIC_SITE_URL` match exactly.
 6. Update Supabase, Sanity, and Revolut allow-lists/webhooks for the domain.
+7. Set a monitored `NEXT_PUBLIC_SUPPORT_EMAIL` and complete owner/legal review
+   of `/privacy` and `/terms`.
+8. Configure `CRON_SECRET`; `vercel.json` schedules smart-alert evaluation
+   every 15 minutes.
 
 The Vercel GitHub integration creates an isolated Preview deployment for each
 pull request. Use that URL for responsive, authentication, CMS, and membership
 acceptance checks. A merge to `main` remains the production deployment trigger.
 GitHub Actions validates the same commit independently and does not replace the
 Vercel build.
+
+Before production promotion, execute against the Vercel Production environment:
+
+```bash
+vercel env run --environment=production -- npm run check:production
+```
+
+The readiness command reports missing variable names and unsafe development
+configuration without printing secret values.
 
 ## Troubleshooting CI
 
@@ -186,6 +254,8 @@ and push a new commit so concurrency cancels the obsolete run.
 - [ ] Pull request approved and CI green
 - [ ] `npm run check` passes
 - [ ] No secrets or `.env.local` in the diff
+- [ ] `npm run check:production` passes with the Production environment
+- [ ] Production dependency audit has no critical advisory
 - [ ] Database migrations applied and verified
 - [ ] Sanity dataset is private and Viewer token works
 - [ ] Auth registration, confirmation, login, logout, recovery, and reset pass
@@ -196,6 +266,8 @@ and push a new commit so concurrency cancels the obsolete run.
 - [ ] Desktop/mobile layouts and keyboard navigation pass
 - [ ] Error and empty states are understandable
 - [ ] Monitoring owner and rollback commit are identified
+- [ ] Privacy policy, terms, support address, and financial-risk wording are
+      approved by the responsible business/legal owner
 - [ ] Market-data display and redistribution rights are contractually confirmed
 - [ ] Server-only market-data variables are configured; fixtures are absent
 - [ ] Quote unavailable, stale, delayed, rate-limit, and health paths are tested
@@ -203,6 +275,15 @@ and push a new commit so concurrency cancels the obsolete run.
 - [ ] Economic event RLS, indexes, and fixture rejection are verified
 - [ ] Production economic provider rights, attribution, and adapter are approved
 - [ ] Economic fixtures are disabled and calendar timezone/filter flows pass
+- [ ] Academy SQL is applied and every `academy_*` table has RLS enabled
+- [ ] Sanity dataset is private before graded assessments are published
+- [ ] Academy Viewer token, course projections, enrollment and grading work
+- [ ] Cross-user Academy isolation and protected calculated fields are verified
+- [ ] Academy configuration values are set for Preview and Production
+- [ ] Re-run the Academy SQL event-constraint section so Part 2A video, resume,
+      and note events are accepted
+- [ ] Canonical lesson, attempt, result, and protected-resource routes pass
+- [ ] Assessment review policy is verified with both reveal settings disabled
 
 ## Rollback
 

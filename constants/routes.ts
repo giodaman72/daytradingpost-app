@@ -1,7 +1,12 @@
 export const ROUTES = {
   account: "/account",
   academy: "/academy",
+  academyCertificates: "/academy/certificates",
+  academyLearningPaths: "/academy/learning-paths",
   analysis: "/analysis",
+  alerts: "/alerts",
+  assistant: "/assistant",
+  charts: "/charts",
   api: {
     newsletter: "/api/newsletter",
     revolutWebhook: "/api/webhooks/revolut",
@@ -16,6 +21,10 @@ export const ROUTES = {
   },
   billing: "/account/billing",
   dashboard: "/dashboard",
+  dashboardCertificates: "/dashboard/learning/certificates",
+  dashboardLearningPaths: "/dashboard/learning/paths",
+  dashboardLearningRecommendations: "/dashboard/learning/recommendations",
+  dashboardLearningNotifications: "/dashboard/learning/notifications",
   economicCalendar: "/economic-calendar",
   home: "/",
   membership: {
@@ -25,5 +34,6 @@ export const ROUTES = {
   },
   newsletter: "/#newsletter",
   premium: "/premium",
+  watchlists: "/watchlists",
   webinars: "/webinars",
 } as const;

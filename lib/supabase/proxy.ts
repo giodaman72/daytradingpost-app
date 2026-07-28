@@ -7,6 +7,10 @@ import { isSupabaseAuthConfigured, getSupabaseAuthConfig } from "./config";
 const protectedPrefixes = [
   ROUTES.account,
   ROUTES.dashboard,
+  ROUTES.watchlists,
+  ROUTES.alerts,
+  "/assistant",
+  "/admin/ai",
   "/members",
   ROUTES.membership.success,
   ROUTES.membership.pending,

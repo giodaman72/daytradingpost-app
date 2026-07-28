@@ -1,5 +1,16 @@
 # DayTradingPost design system
 
+Chart surfaces use the existing dark neutral palette, gold focus/accent state,
+semantic up/down colors with accompanying text, keyboard-accessible controls,
+responsive overflow handling and a nonvisual data summary.
+
+## Assistant patterns
+
+Assistant surfaces reuse the dark navy, gold accent, restrained borders, Geist
+type, and existing controls. Answer status is conveyed by text as well as color.
+Chat, composer, stop/copy/feedback controls, history, citations, errors, and
+usage require keyboard and screen-reader labels, with reduced motion respected.
+
 The existing dark fintech appearance is the source of truth. This document
 describes it; it does not authorize visual redesign during infrastructure work.
 
@@ -151,3 +162,20 @@ Test at 320, 375, 768, 1024, and 1440 px, plus zoom at 200%.
 - touch targets appropriate for mobile
 - decorative elements hidden from assistive technology
 - meaningful loading and error announcements
+
+## Academy learner patterns
+
+- Course cards use one primary canonical link, consistent cover-image ratios,
+  restrained access/difficulty badges, and textual progress.
+- Curriculum modules use native disclosure controls. Completion, premium,
+  optional, current, and locked states always include text rather than color or
+  icon alone.
+- Lesson content keeps a comfortable reading width while the curriculum moves
+  from a desktop sidebar to a native mobile disclosure.
+- Assessment options use `fieldset` and `legend`; question navigation exposes
+  current, answered, open, and flagged status in text. Ordering includes
+  keyboard Move up/Move down controls.
+- Mutation feedback uses inline `status` or `alert` regions and disables
+  duplicate submissions while persistence is pending.
+- Academy motion follows the global reduced-motion rule; video never autoplays
+  because a resume position exists.

@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { DEFAULT_WATCHLIST } from "@/constants/markets";
-import type { WatchlistItem } from "@/types/watchlist";
+import type { StaticWatchlistItem } from "@/types/watchlist";
 
 export function useWatchlist(
-  initialItems: readonly WatchlistItem[] = DEFAULT_WATCHLIST,
+  initialItems: readonly StaticWatchlistItem[] = DEFAULT_WATCHLIST,
 ) {
-  const [items, setItems] = useState<WatchlistItem[]>([...initialItems]);
+  const [items, setItems] = useState<StaticWatchlistItem[]>([...initialItems]);
 
-  function addItem(item: WatchlistItem) {
+  function addItem(item: StaticWatchlistItem) {
     setItems((current) =>
       current.some(({ symbol }) => symbol === item.symbol)
         ? current

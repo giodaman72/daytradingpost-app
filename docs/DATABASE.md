@@ -1,5 +1,18 @@
 # Data model and storage
 
+## Chart persistence
+
+Apply `docs/supabase-chart-layouts.sql` for private preferences, saved layouts,
+RLS ownership policies and server-controlled sharing fields.
+
+## AI Assistant
+
+`ai_conversations`, `ai_messages`, `ai_usage`, and `ai_feedback` are private to
+their owner under RLS. Browser clients have read-only grants; mutations and
+provider metadata use trusted server code. `ai_request_logs` contains
+aggregate-safe telemetry and is service-role only. Apply
+`supabase-ai-assistant.sql` after the authentication/profile migration.
+
 DayTradingPost uses two persistence systems:
 
 - **Supabase Postgres** for identity-linked operational data.
@@ -254,3 +267,44 @@ RLS is enabled; browser roles have no table or sequence privileges and no write
 policies. The service-role client writes only usable non-simulated quotes.
 Indexes support instrument/provider timestamp lookup. Apply the documented
 seven-day retention job; this is not a historical market database.
+
+## Watchlists, alerts, history, and notifications
+
+`docs/supabase-watchlists-alerts.sql` creates `watchlists`, `watchlist_items`, `alerts`, `alert_history`, and `notifications`. One profile owns all private records; watchlist items store centralized instrument slugs and prevent duplicates. Alert history uses unique source deduplication keys. RLS restricts records to `auth.uid()`, while column grants prevent browsers from writing trigger state, history insertion, or notification insertion.
+
+## Trading Academy learner state
+
+`docs/supabase-trading-academy-lms.sql` creates enrollments, lesson/module
+progress, attempts/responses, bookmarks, private notes, certificates,
+learning-path enrollments, privacy-safe events, and an admin audit log. Browser
+roles can select only their own learner state and cannot mutate calculated
+fields. Transactional service-role functions initialize enrollment and grade
+submissions. Sanity IDs and versions preserve the editorial boundary.
+
+`academy_learning_path_enrollments` stores one active enrollment per user and
+Sanity path ID, the enrolled path version, current course pointer and
+server-synchronized percentage. Owner RLS is read-only for browser roles.
+Course enrollment rows remain the authoritative evidence for path completion;
+the path row is a resumable snapshot, not an independent completion grant.
+
+`academy_certificates` stores immutable issuance snapshots, opaque verification
+codes and non-destructive lifecycle status. A partial unique index permits one
+active learner/course/version certificate. `issue_academy_certificate` locks
+and rechecks database eligibility; `revoke_academy_certificate` updates status
+and writes `academy_admin_audit` transactionally. Enrollment certificate holds
+block issuance. Superseding relationship columns preserve future replacement
+history, but reissue is disabled until a policy exists.
+
+When `notifications` exists, the LMS migration adds a nullable
+`idempotency_key` and per-user unique index for safe issuance/revocation retry.
+Public verification uses a service-role-only RPC with a fixed privacy-safe
+return shape.
+
+## Academy Volume 5
+
+`supabase-academy-personalization.sql` adds private
+`academy_learner_preferences` and moderated `academy_course_reviews`. Browser
+roles have no direct access; owner/public projections are server-enforced. A
+partial unique index permits one active review per learner/course. Only
+published, non-deleted rows are queried for public aggregates. The migration
+also extends the Academy analytics event allowlist.

@@ -1,5 +1,44 @@
 # API and server boundary reference
 
+## Chart routes
+
+`GET /api/charts/bars` and `GET /api/charts/config/[instrument]` expose safe
+normalized data/configuration. `/api/chart-layouts` requires authentication and
+ownership. `GET /api/charts/share/[shareId]` returns a constrained public
+projection without owner identity or private alert state.
+
+## AI Assistant routes
+
+- `POST /api/assistant/chat` — authenticated SSE generation stream.
+- `GET /api/assistant/conversations` — paginated owned history.
+- `GET|PATCH|DELETE /api/assistant/conversations/:id` — owned messages and
+  lifecycle.
+- `POST /api/assistant/feedback` — rate-limited structured feedback.
+- `GET /api/assistant/usage` — current user daily usage and allowance.
+
+Errors use stable public codes and never expose raw provider errors, prompts,
+retrieval context, credentials, or traces.
+
+Academy Tutor requests use the same chat stream with `contextMode` set to
+`academy_tutor`:
+
+```json
+{
+  "message": "Explain the key idea in this lesson.",
+  "contextMode": "academy_tutor",
+  "academyCourseSlug": "risk-foundations",
+  "academyLessonSlug": "position-sizing",
+  "academyAttemptId": null,
+  "academyTutorMode": "explain_lesson",
+  "requestId": "browser-generated-unique-id"
+}
+```
+
+Course/lesson context is optional in general Tutor mode. A lesson requires its
+course. Attempt IDs are owner-checked and active attempts are rejected. The
+server ignores client claims about enrollment, membership, publication or
+assessment status and resolves each from its source of truth.
+
 This reference documents currently implemented HTTP routes and Server Actions.
 Future route names are clearly marked as planned.
 
@@ -236,3 +275,83 @@ event responses contain `data`, `total`, `pagination`, and `meta`; `meta`
 includes generation time and the simulated-data flag. Responses are cached for
 120 seconds with stale-while-revalidate and rate-limit responses include
 `Retry-After`. No endpoint exposes provider credentials or raw provider shapes.
+
+## Smart feature server boundaries
+
+Watchlist, alert, and notification member mutations use authenticated Server Actions under `app/watchlists/actions.ts`, `app/alerts/actions.ts`, and `app/notifications/actions.ts`. Ownership and membership limits are rechecked server-side without duplicating REST endpoints.
+
+`POST /api/internal/alerts/evaluate` requires a server-only bearer secret, accepts no browser-supplied trigger data, evaluates a bounded batch, and returns statistics. `401` means invalid scheduler authentication, `409` means the current instance is already evaluating, and `500` reports a safely contained batch failure.
+
+## Trading Academy
+
+| Method       | Route                                                    | Access        |
+| ------------ | -------------------------------------------------------- | ------------- |
+| GET          | `/api/academy/courses`                                   | Published     |
+| GET          | `/api/academy/courses/[courseSlug]`                      | Published     |
+| POST         | `/api/academy/courses/[courseSlug]/enroll`               | Member        |
+| POST         | `/api/academy/learning-paths/[pathSlug]/enroll`          | Member        |
+| GET          | `/api/academy/enrollments`                               | Owner         |
+| POST         | `/api/academy/lessons/[lessonId]/start`                  | Enrolled      |
+| PATCH        | `/api/academy/lessons/[lessonId]/progress`               | Enrolled      |
+| POST         | `/api/academy/lessons/[lessonId]/complete`               | Enrolled      |
+| POST         | `/api/academy/assessments/[assessmentId]/attempts`       | Enrolled      |
+| POST         | `/api/academy/attempts/[attemptId]/submit`               | Attempt owner |
+| GET/POST     | `/api/academy/bookmarks`                                 | Owner         |
+| PATCH/DELETE | `/api/academy/bookmarks/[id]`                            | Owner         |
+| GET/POST     | `/api/academy/notes`                                     | Owner         |
+| PATCH/DELETE | `/api/academy/notes/[id]`                                | Owner         |
+| GET/POST     | `/api/academy/certificates`                              | Owner         |
+| GET          | `/api/academy/certificates/[certificateId]/download`     | Owner         |
+| GET          | `/api/academy/certificates/verify/[verificationCode]`    | Public safe   |
+| POST         | `/api/admin/academy/certificates/[certificateId]/revoke` | Academy admin |
+| GET          | `/api/academy/attempts/[attemptId]`                      | Attempt owner |
+| POST         | `/api/academy/events`                                    | Member        |
+| GET          | `/api/academy/resources/[resourceId]`                    | Enrolled      |
+
+Mutation routes validate server-side and use typed `ACADEMY_*` error codes.
+Enrollment and submission accept an `Idempotency-Key` header. No route exposes
+draft content, answer keys, private notes from another user, or raw providers.
+Full lesson bodies are loaded by authorized server components and intentionally
+have no public API endpoint.
+
+Learning-path enrollment requires JSON with an `idempotencyKey` (or the
+`Idempotency-Key` header). The server validates path publication, membership,
+prerequisite paths and ownership, then reuses an existing active enrollment or
+returns the newly created enrollment. Path progress has no browser-write API.
+
+Certificate issuance requires JSON `enrollmentId` and `idempotencyKey`; all
+eligibility and snapshot fields are server-loaded. Download is owner-scoped and
+private. Revocation requires `academy:manage-certificates` plus JSON `reason`,
+`confirmation` equal to `REVOKE`, and a unique `requestId`. Public verification
+uses only the allowlist in `docs/CERTIFICATE_VERIFICATION.md`.
+
+## Academy Personalization APIs
+
+- `GET/PATCH /api/academy/preferences`: owner-only notification preferences and
+  selected interests.
+- `GET /api/academy/courses/[courseSlug]/reviews`: public moderated reviews.
+- `POST /api/academy/courses/[courseSlug]/reviews`: eligible enrolled learner.
+- `PATCH/DELETE /api/academy/reviews/[reviewId]`: owner-only edit/delete.
+- `PATCH /api/admin/academy/reviews/[reviewId]/moderate`: admin-only publish or
+  reject.
+
+All mutations validate JSON size/content, apply authenticated authorization and
+rate limits where learner-controlled. Private Supabase keys remain server-only.
+
+## Academy Admin and Instructor APIs
+
+- `POST /api/academy/reviews/[reviewId]/report`: authenticated, rate-limited
+  review reporting; the reviewer cannot report their own review.
+- `POST /api/instructor/academy/reviews/[reviewId]/reply`: assigned instructor
+  only; creates or updates a pending moderated reply.
+- `PATCH /api/admin/academy/review-replies/[replyId]/moderate`: administrator
+  publish/reject with a required reason and audit record.
+- `POST /api/admin/academy/certificates/[certificateId]/revoke`: admin-only,
+  reasoned and explicitly confirmed certificate revocation.
+- `POST /api/admin/academy/certificates/[certificateId]/reissue`: admin-only
+  replacement of a revoked certificate. Requires `REISSUE`, a reason and a
+  request ID; returns the same replacement when safely retried.
+
+Enrollment and assessment administrative mutations use Server Actions backed by
+service-role-only RPCs. Each action rechecks the relevant permission and records
+a request-idempotent audit entry.

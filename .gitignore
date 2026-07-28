@@ -33,6 +33,7 @@
 .idea/
 .vscode/
 *.swp
+* 2.*
 
 # debug
 npm-debug.log*

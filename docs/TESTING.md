@@ -1,5 +1,16 @@
 # Testing strategy
 
+Chart tests cover canonical symbols/timeframes, OHLC normalization, bounded
+ranges, deterministic indicator math, plan rules, fixture labeling, TradingView
+loader idempotency and accessible fallbacks.
+
+## AI Assistant
+
+Standard tests use deterministic fixtures and mocked boundaries; they never call
+OpenAI, Supabase, Sanity, market-data, economic-data, email, or payment
+providers. The evaluation suite covers 20 groundedness, access, data-status,
+injection, refusal, citation, fixture, validation, and limit cases.
+
 ## Local setup
 
 Use Node.js 24 from `.nvmrc`:
@@ -23,6 +34,7 @@ only when deliberately adding, removing, or updating a package.
 | `npm run typecheck`     | Run strict `tsc --noEmit` validation                                 |
 | `npm test`              | Start Vitest in watch mode for local development                     |
 | `npm run test:run`      | Run the deterministic test suite once                                |
+| `npm run test:ai-eval`  | Run the 20-case deterministic AI evaluation without live providers   |
 | `npm run test:coverage` | Run tests with text, JSON, and HTML coverage reports                 |
 | `npm run build`         | Create the optimized Next.js production build                        |
 | `npm run check`         | Run format, lint, typecheck, tests, and build in order               |
@@ -32,6 +44,32 @@ targeted thresholds when Sprint 9 introduces the market-intelligence domain.
 
 Tests must not call live Supabase, Sanity, Revolut, or other external services.
 Mock provider boundaries and keep domain tests deterministic.
+
+Sprint 15 Part 2A tests cover catalog filtering and media URL normalization,
+answer-key removal from public assessment questions, catalog empty states, and
+available versus locked curriculum links. Route handlers and server components
+retain the Part 1 service authorization boundary and are validated by the
+production build.
+
+Sprint 15 Volume 4 adds deterministic Tutor tests for request validation,
+recursive answer-key removal, premium-history filtering, assessment refusals,
+post-assessment allowance, source-marker validation, safe markdown links,
+stream parsing, feedback/deletion reuse and accessible context/disclaimer
+components. `academyTutorEvaluationCases.ts` records the required 15 acceptance
+cases: summary, simplify, glossary, premium, draft, answer key, active
+assessment, post-assessment feedback, injection, hidden prompt, profit promise,
+no source, provider outage, citation validity and cross-user denial.
+
+Manual Tutor checks must use two learner accounts and both free/premium states:
+
+1. Confirm anonymous routes redirect to login.
+2. Confirm unenrolled, locked, draft and premium lessons cannot be retrieved.
+3. Confirm another learner's conversation and attempt return not found/denied.
+4. Confirm lesson actions prefill without sending a network generation request.
+5. Confirm stop, retry, copy, citation links, feedback, archive and permanent
+   deletion work with keyboard and mobile layouts.
+6. Confirm active assessment and answer-key prompts receive deterministic
+   refusals while policy-permitted final feedback can be explained.
 
 ## Git hooks
 
@@ -229,3 +267,115 @@ formatting, fixture labeling, and reusable table/card accessibility. Tests must
 not contact Supabase or a commercial calendar provider. Manually verify desktop
 table and mobile card layouts, keyboard filter submission, timezone changes,
 pagination, detail not-found handling, and the visible simulated-data warning.
+
+## Sprint 12 watchlist and alert tests
+
+Deterministic tests cover ownership, normalization, default selection, duplicates, plan limits, alert-type validation, fixed-scale comparisons, price/percentage/bias/economic conditions, cooldowns, expiration, stale/simulated rejection, stable deduplication, scheduler authorization, bounded pagination, notification formatting, escaped email output, disabled-provider behavior, unread counts, cards, status text, and empty states. External services are not called.
+
+## Sprint 15 Academy tests
+
+Deterministic tests cover public/premium/draft access, course prerequisites,
+lesson enrollment, attempt windows/limits, required/optional progress, video
+thresholds, historical completion, deterministic randomization, six graded
+question types, explicit partial credit, unknown response rejection, decimal
+totals, prerequisite cycles, and certificate eligibility. External providers
+are not called.
+
+Manual database checklist after applying the SQL:
+
+1. With user A's authenticated client, select user A's enrollment.
+2. Confirm user B cannot select it.
+3. Confirm `anon` cannot select any Academy table.
+4. Confirm `authenticated` cannot insert/update/delete enrollment, progress,
+   attempt, response, certificate, event, or admin-audit rows.
+5. Confirm user A can read only user A's bookmark, note, and certificate.
+6. Call certificate verification through the server endpoint and confirm no
+   user ID/email is returned.
+7. Repeat enrollment/submission with the same idempotency key and confirm one
+   record/result.
+8. Verify unique active enrollment, attempt number, certificate number, and
+   verification-code constraints.
+
+Part 2A adds deterministic coverage for catalog parameter validation, filtering,
+sorting and pagination persistence; lesson renderer selection; video resume
+normalization and provider host rejection; assessment unanswered counts and
+payload normalization; public answer-key redaction; curriculum availability;
+and Academy component semantics. `npm run test:run` is the closest existing
+automated command for unit and component coverage. This repository has no
+Academy end-to-end, axe, database-emulator, RLS-test, or bundle-analysis script.
+
+Volume 2 adds deterministic coverage for published path query boundaries,
+premium and sequential locks, required versus optional counts, next-course
+selection, progress calculation, archived states, preserved enrollment
+versions, explainable non-sensitive recommendations, the ordered accessible map
+and empty states. Persistence contract tests verify active-enrollment uniqueness
+and owner scoping in both repository filters and SQL. Supabase integration still
+requires the manual owner/non-owner checklist above.
+
+Volume 3 adds deterministic certificate coverage for eligibility and holds,
+duplicate prevention, identifier entropy, lifecycle and disabled reissue,
+public privacy, invalid/revoked/superseded presentation, owner predicates,
+notification retry idempotency, safe sharing, QR payloads, PDF structure and
+accessible wallet states.
+
+Manual certificate checklist:
+
+1. Complete an eligible enrollment and required final assessment.
+2. Issue twice with one idempotency key; confirm one certificate, event and
+   notification.
+3. Retry with a new key; confirm the active-certificate constraint prevents a
+   duplicate.
+4. As user B, request user A's detail/download URL; confirm no record details.
+5. Verify logged out and confirm only documented public fields.
+6. Try malformed/unknown codes and confirm the generic not-verified result.
+7. Scan QR and compare printed URL; confirm neither contains internal IDs.
+8. Inspect the PDF branding, data, certificate number and disclaimer.
+9. Attempt non-admin/unconfirmed revocation; confirm rejection.
+10. Revoke as an authorized admin; confirm audit, notification, retained row
+    and public revoked status.
+11. Retry the request ID; confirm no duplicate audit or notification.
+12. Confirm reissue is rejected while its business rule is disabled.
+
+## Academy Volume 5 checklist
+
+Automated tests cover recommendation priority and explanations, enrolled/unmet
+prerequisite exclusions, rating and text validation, published aggregate math,
+moderation validation, review uniqueness, cross-user SQL isolation, notification
+deep links/idempotency, inactivity/expiry rules, category consent, unsubscribe
+and email opt-in. Reminders are pure test inputs and never send email.
+
+Manual: sign in as a learner, verify recommendations and reasons, submit/edit/
+delete an eligible review, confirm it stays hidden pending moderation, publish
+as an admin, and verify notification preferences survive a reload.
+
+## Academy Volume 6 checklist
+
+Academy tests also cover typed mutation-rate-limit behavior and the bounded,
+failure-isolated background-job runner. They do not call Supabase, Sanity,
+OpenAI, video, email, notification or payment providers.
+
+Automated tests cover the admin/editor permission boundary, explicit instructor
+ownership, publication validation, archived-course filtering, analytics filter
+validation, small-cohort suppression, transactional manual enrollment and
+progress-reset contracts, assessment-history retention, audit logging, review
+reporting, and source scans preventing private notes or answer keys in admin
+read models. Existing certificate lifecycle and review moderation tests remain
+part of the full suite.
+
+Manual setup and flows:
+
+1. Apply `supabase-academy-admin.sql`.
+2. Add an explicit instructor assignment using `ACADEMY_INSTRUCTOR.md`.
+3. Sign in as editor; verify learner, certificate, moderation and analytics
+   routes reject access.
+4. Sign in as admin; inspect course validation and Studio links.
+5. Manually enroll, pause and restore a test learner; verify one audit row each.
+6. Reset test progress only after typing `RESET PROGRESS`; verify attempts are
+   invalidated while responses remain.
+7. Report a published review, moderate it and moderate an instructor reply.
+8. Filter analytics to a cohort below five and confirm sensitive rates are
+   suppressed.
+9. Revoke a test certificate with `REVOKE`, then reissue it with `REISSUE`.
+   Confirm the old verification page says superseded, the replacement is valid,
+   retries do not create another certificate, and both audit rows retain their
+   reasons.
