@@ -35,6 +35,20 @@ describe("production readiness evaluation", () => {
     expect(result.warnings).toHaveLength(1);
   });
 
+  it("accepts an intentional launch without market-data credentials", () => {
+    const result = evaluateProductionReadiness({
+      ...validEnvironment,
+      MARKET_DATA_API_BASE_URL: "",
+      MARKET_DATA_API_KEY: "",
+      MARKET_DATA_PROVIDER: "disabled",
+    });
+    expect(result.ready).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(result.warnings.join("\n")).toContain(
+      "Market-data quotes are disabled",
+    );
+  });
+
   it("rejects missing services, insecure URLs, fixtures and weak cron secrets", () => {
     const result = evaluateProductionReadiness({
       ...validEnvironment,
@@ -48,6 +62,9 @@ describe("production readiness evaluation", () => {
     expect(result.errors.join("\n")).toContain("must use HTTPS");
     expect(result.errors.join("\n")).toContain(
       "ECONOMIC_DATA_PROVIDER must be supabase",
+    );
+    expect(result.errors.join("\n")).toContain(
+      "MARKET_DATA_PROVIDER must be disabled or generic_http",
     );
     expect(result.errors.join("\n")).toContain("OPENAI_API_KEY");
     expect(result.errors.join("\n")).toContain("at least 32 characters");

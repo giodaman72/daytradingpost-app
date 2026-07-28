@@ -109,6 +109,14 @@ The production dataset containing premium bodies must be private.
 | `ECONOMIC_DATA_PROVIDER` | Server setting; use `development` locally only |
 | `ECONOMIC_CACHE_SECONDS` | Server cache duration; defaults to 300 seconds |
 
+### Market data
+
+| Variable                   | Exposure                                                    |
+| -------------------------- | ----------------------------------------------------------- |
+| `MARKET_DATA_PROVIDER`     | Server setting; use `disabled` until a provider is licensed |
+| `MARKET_DATA_API_KEY`      | Server-only secret; required only for `generic_http`        |
+| `MARKET_DATA_API_BASE_URL` | Server API origin; required only for `generic_http`         |
+
 ### Smart alerts
 
 | Variable                         | Purpose                                         |

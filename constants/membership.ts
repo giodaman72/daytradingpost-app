@@ -4,12 +4,17 @@ export const MEMBERSHIP_PLANS = {
   annual: {
     label: "Annual membership",
     name: "One annual membership",
+    priceLabel: "€49.99 EUR per year",
   },
   monthly: {
     label: "Monthly membership",
     name: "Flexible monthly access",
+    priceLabel: "€19.99 EUR per month",
   },
-} as const satisfies Record<MembershipPlan, { label: string; name: string }>;
+} as const satisfies Record<
+  MembershipPlan,
+  { label: string; name: string; priceLabel: string }
+>;
 
 export const PREMIUM_BENEFITS = [
   "Full premium market analysis",

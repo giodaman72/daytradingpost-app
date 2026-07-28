@@ -37,7 +37,7 @@ export async function getMarketQuotes(instruments: InstrumentDefinition[]) {
   try {
     const quotes = await provider.getQuotes(enabled);
     const usable = quotes.some((quote) => quote.price !== null);
-    if (!usable && provider.id !== "unconfigured")
+    if (!usable && provider.id !== "disabled" && provider.id !== "unconfigured")
       throw new Error("Provider returned no usable quotes.");
     circuit.success();
     quoteCache.set(slugs, quotes);
