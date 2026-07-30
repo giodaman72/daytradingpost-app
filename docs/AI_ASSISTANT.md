@@ -30,6 +30,13 @@ The OpenAI adapter uses the Responses API and a model selected only through
 provider-backed classification; deterministic local classification keeps the
 safety boundary independent of provider availability.
 
+For GPT-5 and o-series models, `OPENAI_REASONING_EFFORT` defaults to `low` so
+the interactive assistant preserves enough of its output budget for a visible
+answer. `AI_MAX_OUTPUT_TOKENS` defaults to 1600. If a response exhausts that
+budget before emitting visible text, the adapter retries once with a larger
+budget; finalized text, incomplete responses, failures, and provider refusals
+are all handled explicitly.
+
 For local deterministic work, set `AI_PROVIDER=development`. That provider never
 calls an external service, refuses to activate in production, and labels every
 answer as a development fixture. Missing production configuration produces a
@@ -136,6 +143,8 @@ processing terms require legal/privacy review.
 
 - “Not configured”: set `AI_PROVIDER=openai`, the API key, and the model.
 - “No sources”: publish or select the relevant authorized source.
+- “Empty response”: redeploy with the current provider adapter and verify the
+  configured model supports the selected reasoning effort.
 - No history or usage rows: apply the Supabase migration.
 - Watchlist blocked: verify ownership and active premium status.
 - Fixture visible in a deployment: remove `AI_PROVIDER=development`.

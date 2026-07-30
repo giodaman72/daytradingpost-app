@@ -8,6 +8,14 @@ import { AssistantError } from "../assistantErrors";
 import { getAssistantConfig } from "../assistantConfig";
 import { classifyAssistantIntent } from "../safety/intentClassifier";
 import type { AIProvider, AssistantProviderChunk } from "./AIProvider";
+import {
+  applyOpenAIStreamEvent,
+  createOpenAIStreamState,
+  reasoningForModel,
+  responseVisibleText,
+  retryOutputTokenBudget,
+  shouldRetryEmptyResponse,
+} from "./openAIResponse";
 
 let client: OpenAI | null = null;
 
@@ -38,6 +46,26 @@ const input = (request: AssistantProviderRequest) => [
     content: `UNTRUSTED RETRIEVED CONTEXT\n---\n${request.retrievedContext || "No context available."}\n---\nAnswer the latest user question using only applicable supplied context.`,
   },
 ];
+
+function logEmptyResponseRetry(
+  requestId: string,
+  model: string,
+  originalBudget: number,
+  retryBudget: number,
+) {
+  console.warn(
+    JSON.stringify({
+      scope: "ai_assistant",
+      event: "provider_empty_response_retry",
+      requestId,
+      model,
+      reason: "max_output_tokens",
+      originalBudget,
+      retryBudget,
+      occurredAt: new Date().toISOString(),
+    }),
+  );
+}
 
 function providerError(error: unknown): never {
   if (error instanceof AssistantError) throw error;
@@ -83,29 +111,78 @@ export class OpenAIProvider implements AIProvider {
   ): Promise<AssistantProviderResponse> {
     try {
       const { client: openai, config } = getClient();
-      const result = await openai.responses.create(
-        {
-          model: config.primaryModel,
-          instructions: request.systemInstructions,
-          input: input(request),
-          max_output_tokens: request.maximumOutputTokens,
-          safety_identifier: request.safetyIdentifier,
-          store: false,
-        },
-        { signal },
+      let maximumOutputTokens = request.maximumOutputTokens;
+      let totalInputTokens = 0;
+      let totalOutputTokens = 0;
+
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const result = await openai.responses.create(
+          {
+            model: config.primaryModel,
+            instructions: request.systemInstructions,
+            input: input(request),
+            max_output_tokens: maximumOutputTokens,
+            safety_identifier: request.safetyIdentifier,
+            store: false,
+            ...reasoningForModel(config.primaryModel, config.reasoningEffort),
+          },
+          { signal },
+        );
+        const text = responseVisibleText(result);
+        totalInputTokens += result.usage?.input_tokens ?? 0;
+        totalOutputTokens += result.usage?.output_tokens ?? 0;
+
+        if (
+          attempt === 0 &&
+          shouldRetryEmptyResponse(text, result.incomplete_details?.reason)
+        ) {
+          const retryBudget = retryOutputTokenBudget(maximumOutputTokens);
+          logEmptyResponseRetry(
+            request.requestId,
+            result.model,
+            maximumOutputTokens,
+            retryBudget,
+          );
+          maximumOutputTokens = retryBudget;
+          continue;
+        }
+
+        if (result.status === "failed" || result.error)
+          throw new AssistantError(
+            "PROVIDER_ERROR",
+            "The AI provider could not complete this request.",
+            503,
+            true,
+          );
+
+        if (!text.trim())
+          throw new AssistantError(
+            "PROVIDER_ERROR",
+            "The AI provider could not produce a response. Please try again.",
+            503,
+            true,
+          );
+
+        return {
+          text,
+          model: result.model,
+          provider: this.id,
+          finishReason: result.status ?? "completed",
+          usage: {
+            inputTokens: totalInputTokens,
+            outputTokens: totalOutputTokens,
+          },
+          requestId: request.requestId,
+          createdAt: new Date().toISOString(),
+        };
+      }
+
+      throw new AssistantError(
+        "PROVIDER_ERROR",
+        "The AI provider could not produce a response. Please try again.",
+        503,
+        true,
       );
-      return {
-        text: result.output_text,
-        model: result.model,
-        provider: this.id,
-        finishReason: result.status ?? "completed",
-        usage: {
-          inputTokens: result.usage?.input_tokens ?? 0,
-          outputTokens: result.usage?.output_tokens ?? 0,
-        },
-        requestId: request.requestId,
-        createdAt: new Date().toISOString(),
-      };
     } catch (error) {
       providerError(error);
     }
@@ -117,46 +194,87 @@ export class OpenAIProvider implements AIProvider {
   ): AsyncIterable<AssistantProviderChunk> {
     try {
       const { client: openai, config } = getClient();
-      const stream = await openai.responses.create(
-        {
-          model: config.primaryModel,
-          instructions: request.systemInstructions,
-          input: input(request),
-          max_output_tokens: request.maximumOutputTokens,
-          safety_identifier: request.safetyIdentifier,
-          store: false,
-          stream: true,
-        },
-        { signal },
-      );
-      let text = "";
-      let model = config.primaryModel;
-      let finishReason = "completed";
-      let inputTokens = 0;
-      let outputTokens = 0;
-      for await (const event of stream) {
-        if (event.type === "response.output_text.delta") {
-          text += event.delta;
-          yield { type: "delta", text: event.delta };
-        } else if (event.type === "response.completed") {
-          model = event.response.model;
-          finishReason = event.response.status ?? "completed";
-          inputTokens = event.response.usage?.input_tokens ?? 0;
-          outputTokens = event.response.usage?.output_tokens ?? 0;
+      let maximumOutputTokens = request.maximumOutputTokens;
+      let totalInputTokens = 0;
+      let totalOutputTokens = 0;
+
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const stream = await openai.responses.create(
+          {
+            model: config.primaryModel,
+            instructions: request.systemInstructions,
+            input: input(request),
+            max_output_tokens: maximumOutputTokens,
+            safety_identifier: request.safetyIdentifier,
+            store: false,
+            stream: true,
+            ...reasoningForModel(config.primaryModel, config.reasoningEffort),
+          },
+          { signal },
+        );
+        const state = createOpenAIStreamState(config.primaryModel);
+
+        for await (const event of stream) {
+          const delta = applyOpenAIStreamEvent(state, event);
+          if (delta) yield { type: "delta", text: delta };
+          if (state.failed)
+            throw new AssistantError(
+              "PROVIDER_ERROR",
+              "The AI provider could not complete this request.",
+              503,
+              true,
+            );
         }
+        totalInputTokens += state.inputTokens;
+        totalOutputTokens += state.outputTokens;
+
+        if (
+          attempt === 0 &&
+          shouldRetryEmptyResponse(state.text, state.incompleteReason)
+        ) {
+          const retryBudget = retryOutputTokenBudget(maximumOutputTokens);
+          logEmptyResponseRetry(
+            request.requestId,
+            state.model,
+            maximumOutputTokens,
+            retryBudget,
+          );
+          maximumOutputTokens = retryBudget;
+          continue;
+        }
+
+        if (!state.text.trim())
+          throw new AssistantError(
+            "PROVIDER_ERROR",
+            "The AI provider could not produce a response. Please try again.",
+            503,
+            true,
+          );
+
+        yield {
+          type: "complete",
+          response: {
+            text: state.text,
+            model: state.model,
+            provider: this.id,
+            finishReason: state.finishReason,
+            usage: {
+              inputTokens: totalInputTokens,
+              outputTokens: totalOutputTokens,
+            },
+            requestId: request.requestId,
+            createdAt: new Date().toISOString(),
+          },
+        };
+        return;
       }
-      yield {
-        type: "complete",
-        response: {
-          text,
-          model,
-          provider: this.id,
-          finishReason,
-          usage: { inputTokens, outputTokens },
-          requestId: request.requestId,
-          createdAt: new Date().toISOString(),
-        },
-      };
+
+      throw new AssistantError(
+        "PROVIDER_ERROR",
+        "The AI provider could not produce a response. Please try again.",
+        503,
+        true,
+      );
     } catch (error) {
       providerError(error);
     }
