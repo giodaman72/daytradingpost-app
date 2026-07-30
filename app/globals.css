@@ -279,10 +279,11 @@ button {
 
 .header-inner {
   display: flex;
+  width: min(calc(100% - 40px), 1600px);
   min-height: 76px;
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
+  gap: clamp(16px, 1.8vw, 32px);
 }
 
 .brand {
@@ -323,7 +324,7 @@ button {
 .desktop-navigation {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: clamp(14px, 1.55vw, 30px);
   margin-left: auto;
 }
 
@@ -344,8 +345,9 @@ button {
 
 .header-actions {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
-  gap: 20px;
+  gap: clamp(12px, 1.2vw, 20px);
 }
 
 .button {
@@ -1582,6 +1584,18 @@ button {
 
   .inner-panel {
     padding: 26px;
+  }
+}
+
+@media (max-width: 1500px) {
+  .account-email {
+    display: none;
+  }
+}
+
+@media (min-width: 1081px) and (max-width: 1300px) {
+  .brand-name {
+    display: none;
   }
 }
 
