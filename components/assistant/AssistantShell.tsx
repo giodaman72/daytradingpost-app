@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ASSISTANT_SUGGESTED_PROMPTS } from "@/constants/ai-assistant";
+import { buildAssistantContextQuestion } from "@/lib/ai/assistantContextQuestion";
 import { parseAssistantEventBuffer } from "@/lib/ai/streamParser";
 import type {
   AssistantConversation,
@@ -44,14 +45,16 @@ export function AssistantShell({
   initialContext: Context;
 }) {
   const router = useRouter();
+  const initialInstrument = initialContext.instrumentSlug ?? "";
   const [messages, setMessages] = useState(initialMessages);
   const [conversationId, setConversationId] = useState(initialConversationId);
   const [usage, setUsage] = useState(initialUsage);
   const [mode, setMode] = useState(initialContext.mode);
-  const [instrument, setInstrument] = useState(
-    initialContext.instrumentSlug ?? "",
+  const [instrument, setInstrument] = useState(initialInstrument);
+  const [question, setQuestion] = useState(
+    initialContext.prompt ??
+      buildAssistantContextQuestion(initialContext.mode, initialInstrument),
   );
-  const [question, setQuestion] = useState(initialContext.prompt ?? "");
   const [error, setError] = useState("");
   const [streaming, setStreaming] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
@@ -64,6 +67,26 @@ export function AssistantShell({
     setConversationId(null);
     setError("");
     router.replace("/assistant");
+  }
+
+  function updateMode(nextMode: AssistantContextMode) {
+    const currentContextQuestion = buildAssistantContextQuestion(
+      mode,
+      instrument,
+    );
+    setMode(nextMode);
+    if (!question.trim() || question === currentContextQuestion)
+      setQuestion(buildAssistantContextQuestion(nextMode, instrument));
+  }
+
+  function updateInstrument(nextInstrument: string) {
+    const currentContextQuestion = buildAssistantContextQuestion(
+      mode,
+      instrument,
+    );
+    setInstrument(nextInstrument);
+    if (!question.trim() || question === currentContextQuestion)
+      setQuestion(buildAssistantContextQuestion(mode, nextInstrument));
   }
 
   async function submit() {
@@ -243,8 +266,8 @@ export function AssistantShell({
           disabled={streaming || usage.remaining <= 0}
           streaming={streaming}
           onValue={setQuestion}
-          onMode={setMode}
-          onInstrument={setInstrument}
+          onMode={updateMode}
+          onInstrument={updateInstrument}
           onSubmit={() => void submit()}
           onStop={() => abortRef.current?.abort()}
         />
