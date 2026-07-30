@@ -5,6 +5,21 @@ const integer = (value: string | undefined, fallback: number, min: number) => {
   return Number.isInteger(parsed) && parsed >= min ? parsed : fallback;
 };
 
+const reasoningEfforts = [
+  "none",
+  "minimal",
+  "low",
+  "medium",
+  "high",
+  "xhigh",
+  "max",
+] as const;
+
+const reasoningEffort = (value: string | undefined) => {
+  const normalized = value?.trim().toLowerCase();
+  return reasoningEfforts.find((effort) => effort === normalized) ?? "low";
+};
+
 export function getAssistantConfig() {
   const provider = process.env.AI_PROVIDER?.trim() || "unconfigured";
   const development =
@@ -14,8 +29,9 @@ export function getAssistantConfig() {
     provider: development ? "development" : provider,
     primaryModel: process.env.OPENAI_ASSISTANT_MODEL?.trim() || "",
     classifierModel: process.env.OPENAI_CLASSIFIER_MODEL?.trim() || "",
+    reasoningEffort: reasoningEffort(process.env.OPENAI_REASONING_EFFORT),
     requestTimeoutMs: integer(process.env.AI_REQUEST_TIMEOUT_MS, 30_000, 1_000),
-    maximumOutputTokens: integer(process.env.AI_MAX_OUTPUT_TOKENS, 700, 100),
+    maximumOutputTokens: integer(process.env.AI_MAX_OUTPUT_TOKENS, 1_600, 100),
     maximumInputCharacters: integer(
       process.env.AI_MAX_INPUT_CHARACTERS,
       4_000,
