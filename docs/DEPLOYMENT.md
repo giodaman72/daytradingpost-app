@@ -89,18 +89,20 @@ The production dataset containing premium bodies must be private.
 
 ### Revolut
 
-| Variable                                   | Exposure                            |
-| ------------------------------------------ | ----------------------------------- |
-| `PAYMENT_PROVIDER_MODE`                    | Server configuration                |
-| `REVOLUT_API_SECRET`                       | Server-only secret                  |
-| `REVOLUT_WEBHOOK_SECRET`                   | Server-only signing secret          |
-| `REVOLUT_API_BASE_URL`                     | Server API origin                   |
-| `REVOLUT_MONTHLY_PLAN_ID`                  | Server plan variation ID            |
-| `REVOLUT_ANNUAL_PLAN_ID`                   | Server plan variation ID            |
-| `NEXT_PUBLIC_REVOLUT_MONTHLY_PAYMENT_LINK` | Public hosted URL                   |
-| `NEXT_PUBLIC_REVOLUT_ANNUAL_PAYMENT_LINK`  | Public hosted URL                   |
-| `NEXT_PUBLIC_SITE_URL`                     | Public canonical application origin |
-| `NEXT_PUBLIC_SUPPORT_EMAIL`                | Public monitored support address    |
+| Variable                                   | Exposure                              |
+| ------------------------------------------ | ------------------------------------- |
+| `PAYMENT_PROVIDER_MODE`                    | Server configuration                  |
+| `REVOLUT_API_SECRET`                       | Server-only secret                    |
+| `REVOLUT_WEBHOOK_SECRET`                   | Server-only signing secret            |
+| `REVOLUT_API_BASE_URL`                     | Server API origin                     |
+| `REVOLUT_MONTHLY_PLAN_ID`                  | Server plan variation ID              |
+| `REVOLUT_ANNUAL_PLAN_ID`                   | Server plan variation ID              |
+| `NEXT_PUBLIC_REVOLUT_MONTHLY_PAYMENT_LINK` | Public hosted URL                     |
+| `NEXT_PUBLIC_REVOLUT_ANNUAL_PAYMENT_LINK`  | Public hosted URL                     |
+| `NEXT_PUBLIC_SITE_URL`                     | Public canonical application origin   |
+| `NEXT_PUBLIC_SUPPORT_EMAIL`                | Public monitored support address      |
+| `RESEND_API_KEY`                           | Server-only transactional email key   |
+| `PURCHASE_EMAIL_FROM`                      | Verified purchase-confirmation sender |
 
 ### Economic intelligence
 
@@ -145,15 +147,16 @@ For a new environment, run the SQL in this order:
 1. `docs/supabase-auth.sql`
 2. `docs/supabase-newsletter.sql`
 3. `docs/supabase-revolut.sql`
-4. `docs/supabase-economic.sql`
-5. `docs/supabase-market-intelligence.sql`
-6. `docs/supabase-market-data.sql`
-7. `docs/supabase-watchlists-alerts.sql`
-8. `docs/supabase-chart-layouts.sql`
-9. `docs/supabase-ai-assistant.sql`
-10. `docs/supabase-trading-academy-lms.sql`
-11. `docs/supabase-academy-personalization.sql`
-12. `docs/supabase-academy-admin.sql`
+4. `docs/supabase-purchase-confirmations.sql`
+5. `docs/supabase-economic.sql`
+6. `docs/supabase-market-intelligence.sql`
+7. `docs/supabase-market-data.sql`
+8. `docs/supabase-watchlists-alerts.sql`
+9. `docs/supabase-chart-layouts.sql`
+10. `docs/supabase-ai-assistant.sql`
+11. `docs/supabase-trading-academy-lms.sql`
+12. `docs/supabase-academy-personalization.sql`
+13. `docs/supabase-academy-admin.sql`
 
 Then verify:
 

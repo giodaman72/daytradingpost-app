@@ -23,6 +23,8 @@ const validEnvironment = {
   OPENAI_ASSISTANT_MODEL: "model",
   OPENAI_CLASSIFIER_MODEL: "classifier",
   PAYMENT_PROVIDER_MODE: "revolut_payment_links",
+  PURCHASE_EMAIL_FROM: "DayTradingPost <hello@example.com>",
+  RESEND_API_KEY: "resend-secret",
   SANITY_API_READ_TOKEN: "sanity-secret",
   SUPABASE_SERVICE_ROLE_KEY: "service-secret",
 };
@@ -68,5 +70,18 @@ describe("production readiness evaluation", () => {
     );
     expect(result.errors.join("\n")).toContain("OPENAI_API_KEY");
     expect(result.errors.join("\n")).toContain("at least 32 characters");
+  });
+
+  it("requires a valid purchase-confirmation sender in payment-link mode", () => {
+    const result = evaluateProductionReadiness({
+      ...validEnvironment,
+      PURCHASE_EMAIL_FROM: "hello@example.com",
+      RESEND_API_KEY: "",
+    });
+    expect(result.ready).toBe(false);
+    expect(result.errors.join("\n")).toContain("RESEND_API_KEY");
+    expect(result.errors.join("\n")).toContain(
+      "PURCHASE_EMAIL_FROM must use the format",
+    );
   });
 });

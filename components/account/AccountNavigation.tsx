@@ -4,8 +4,10 @@ import { ACCOUNT_NAVIGATION } from "@/constants/navigation";
 
 export function AccountNavigation({
   current = "overview",
+  isAdmin = false,
 }: {
   current?: "overview" | "billing";
+  isAdmin?: boolean;
 }) {
   return (
     <nav className="account-navigation" aria-label="Account navigation">
@@ -18,6 +20,9 @@ export function AccountNavigation({
           {item.label}
         </Link>
       ))}
+      {isAdmin ? (
+        <Link href="/admin/memberships">Payment administration</Link>
+      ) : null}
       <form action={logoutAction}>
         <button type="submit">Sign out</button>
       </form>

@@ -77,6 +77,8 @@ PAYMENT_PROVIDER_MODE=revolut_payment_links
 NEXT_PUBLIC_REVOLUT_MONTHLY_PAYMENT_LINK=
 NEXT_PUBLIC_REVOLUT_ANNUAL_PAYMENT_LINK=
 NEXT_PUBLIC_SITE_URL=https://YOUR_DOMAIN
+RESEND_API_KEY=
+PURCHASE_EMAIL_FROM=DayTradingPost <hello@daytradingpost.com>
 ```
 
 Before redirecting, DayTradingPost creates a `pending` request with a unique
@@ -84,7 +86,25 @@ payment reference. A hosted payment-link return never activates premium access.
 
 ### Verify a payment-link request
 
-1. In Supabase **SQL Editor**, list the pending verification queue with:
+1. Run `docs/supabase-purchase-confirmations.sql` once and set the payment
+   operator's `profiles.app_role` to `admin`.
+2. Open `/admin/memberships`. It lists pending and verified payment-link
+   requests with the authenticated buyer email and selected plan.
+3. Compare the Revolut transaction, member email, selected plan, amount, and
+   approximate payment time with the pending request. Personal payment links
+   may not copy the application's internal payment reference into Revolut, so
+   never approve a request using the application reference alone.
+4. Enter the unique Revolut transaction reference and select
+   **Confirm & email**. The server atomically records the operator and provider
+   reference, activates access, and asks Resend to deliver the purchase
+   confirmation.
+
+If the email provider fails after access is activated, the verified request
+remains in the queue with a **Retry email** action. Resend receives a
+deterministic idempotency key for the membership request.
+
+As an emergency dashboard-only fallback, first list the queue in Supabase SQL
+Editor:
 
 ```sql
 select
@@ -99,24 +119,22 @@ where membership_requests.status = 'pending'
 order by membership_requests.created_at;
 ```
 
-2. Compare the Revolut transaction, member email, selected plan, amount, and
-   approximate payment time with the pending request. Personal payment links
-   may not copy the application's internal payment reference into Revolut, so
-   do not approve a request using the reference alone.
-3. Copy the request's `id`.
-4. In Supabase **SQL Editor**, approve it with:
+Then approve the matched request with the request UUID, Revolut reference, and
+administrator user UUID:
 
 ```sql
 select public.verify_membership_request(
   'MEMBERSHIP_REQUEST_UUID',
   true,
-  'Verified against Revolut transaction REFERENCE'
+  'Verified against Revolut transaction REFERENCE',
+  'REVOLUT_TRANSACTION_REFERENCE',
+  'ADMIN_AUTH_USER_UUID'
 );
 ```
 
-To reject an unmatched request, run the same function with `false`. The
-function is unavailable to normal browser users and updates the request and
-profile together.
+The function is unavailable to browser users, rejects non-administrators,
+prevents repeated approvals from extending access, and updates the request and
+profile in one transaction.
 
 ## Production checks
 
@@ -126,6 +144,8 @@ profile together.
 - Confirm duplicate webhook deliveries do not create duplicate changes.
 - Confirm a free user sees only a premium preview and an active, verified user
   can read the full article.
+- Confirm Resend accepts exactly one confirmation for each verified purchase
+  and the buyer receives both HTML and plain-text versions.
 - Keep the Sanity dataset private and configure `SANITY_API_READ_TOKEN`; a public
   dataset would let visitors bypass the application and query article bodies.
 - Confirm cancelling or overdue subscription events remove premium access.

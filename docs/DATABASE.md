@@ -107,20 +107,23 @@ This is the implemented operational **memberships** workflow table. The current
 membership entitlement is stored on `profiles`; each checkout attempt or manual
 verification request is stored here.
 
-| Column                    | Type          | Rules                                                       |
-| ------------------------- | ------------- | ----------------------------------------------------------- |
-| `id`                      | `uuid`        | Primary key; generated UUID                                 |
-| `user_id`                 | `uuid`        | Required foreign key to `auth.users.id`; cascade delete     |
-| `membership_plan`         | `text`        | `monthly` or `annual`                                       |
-| `provider_mode`           | `text`        | `revolut_api` or `revolut_payment_links`                    |
-| `status`                  | `text`        | `pending`, `verified`, `rejected`, `cancelled`, or `failed` |
-| `payment_reference`       | `uuid`        | Required and unique                                         |
-| `payment_subscription_id` | `text`        | Nullable; unique when present                               |
-| `verified_at`             | `timestamptz` | Nullable                                                    |
-| `verified_by`             | `uuid`        | Nullable foreign key to `auth.users.id`; set null on delete |
-| `admin_notes`             | `text`        | Nullable; never exposed publicly                            |
-| `created_at`              | `timestamptz` | Required; UTC default                                       |
-| `updated_at`              | `timestamptz` | Required; trigger maintained                                |
+| Column                           | Type          | Rules                                                       |
+| -------------------------------- | ------------- | ----------------------------------------------------------- |
+| `id`                             | `uuid`        | Primary key; generated UUID                                 |
+| `user_id`                        | `uuid`        | Required foreign key to `auth.users.id`; cascade delete     |
+| `membership_plan`                | `text`        | `monthly` or `annual`                                       |
+| `provider_mode`                  | `text`        | `revolut_api` or `revolut_payment_links`                    |
+| `status`                         | `text`        | `pending`, `verified`, `rejected`, `cancelled`, or `failed` |
+| `payment_reference`              | `uuid`        | Required application reference; unique                      |
+| `payment_subscription_id`        | `text`        | Nullable; unique when present                               |
+| `provider_transaction_reference` | `text`        | Nullable; unique audited Revolut reference                  |
+| `verified_at`                    | `timestamptz` | Nullable                                                    |
+| `verified_by`                    | `uuid`        | Nullable foreign key to `auth.users.id`; set null on delete |
+| `admin_notes`                    | `text`        | Nullable; never exposed publicly                            |
+| `confirmation_email_sent_at`     | `timestamptz` | Nullable; set after Resend accepts the confirmation         |
+| `confirmation_email_id`          | `text`        | Nullable Resend email identifier                            |
+| `created_at`                     | `timestamptz` | Required; UTC default                                       |
+| `updated_at`                     | `timestamptz` | Required; trigger maintained                                |
 
 Indexes:
 
@@ -128,12 +131,14 @@ Indexes:
 - composite index on `(user_id, created_at desc)`;
 - unique index on `payment_reference`;
 - unique partial index on `payment_subscription_id`.
+- unique partial expression index on `lower(provider_transaction_reference)`.
 
 Security:
 
 - members can select only their own requests;
 - browser roles cannot insert or update payment state;
-- `verify_membership_request` is executable only by the service role.
+- `verify_membership_request` is executable only by the service role and
+  requires an authenticated operator whose profile role is `admin`.
 
 ### `payment_webhook_events`
 
