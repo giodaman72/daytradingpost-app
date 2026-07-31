@@ -8,6 +8,7 @@ import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatDisplayLabel } from "@/lib/utils";
 import type { Profile } from "@/types/profile";
+import type { AppRole } from "@/lib/auth/authorizationRoles";
 
 export const metadata: Metadata = {
   title: "Your account",
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 type AccountProfile = Pick<
   Profile,
   "created_at" | "email" | "full_name" | "membership_plan" | "membership_status"
->;
+> & { app_role: AppRole };
 
 export default async function AccountPage() {
   if (!isSupabaseAuthConfigured()) {
@@ -31,7 +32,9 @@ export default async function AccountPage() {
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
-    .select("full_name, email, membership_status, membership_plan, created_at")
+    .select(
+      "full_name, email, membership_status, membership_plan, created_at, app_role",
+    )
     .eq("id", user.id)
     .maybeSingle<AccountProfile>();
 
@@ -49,7 +52,7 @@ export default async function AccountPage() {
             <span className="section-kicker">Member area</span>
             <h1>{fullName}</h1>
             <p>{email}</p>
-            <AccountNavigation />
+            <AccountNavigation isAdmin={data?.app_role === "admin"} />
           </aside>
 
           <div className="account-content">

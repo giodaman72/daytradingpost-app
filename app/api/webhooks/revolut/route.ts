@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
+import { deliverPurchaseConfirmation } from "@/lib/email/purchaseConfirmation";
 import { getPlanVariationId } from "@/lib/membership/config";
 import type { MembershipPlan, MembershipStatus } from "@/types/membership";
 import {
@@ -204,11 +205,23 @@ export async function POST(request: Request) {
       .from("membership_requests")
       .update({
         payment_subscription_id: subscription.id,
+        provider_transaction_reference: subscription.id,
         status: requestStatus,
         ...(verifiedAt ? { verified_at: verifiedAt } : {}),
       })
       .eq("id", membershipRequest.id);
     if (membershipRequestError) throw membershipRequestError;
+
+    if (requestStatus === "verified") {
+      try {
+        await deliverPurchaseConfirmation(membershipRequest.id);
+      } catch (error) {
+        console.error(
+          "Membership activated but purchase confirmation email failed:",
+          error instanceof Error ? error.message : "Unknown email error",
+        );
+      }
+    }
 
     await admin
       .from("payment_webhook_events")

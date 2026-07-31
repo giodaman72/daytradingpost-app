@@ -40,18 +40,29 @@ create table if not exists public.membership_requests (
     check (status in ('pending', 'verified', 'rejected', 'cancelled', 'failed')),
   payment_reference uuid not null unique,
   payment_subscription_id text,
+  provider_transaction_reference text,
   verified_at timestamptz,
   verified_by uuid references auth.users (id) on delete set null,
   admin_notes text,
+  confirmation_email_sent_at timestamptz,
+  confirmation_email_id text,
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now())
 );
+
+alter table public.membership_requests
+  add column if not exists provider_transaction_reference text,
+  add column if not exists confirmation_email_sent_at timestamptz,
+  add column if not exists confirmation_email_id text;
 
 create index if not exists membership_requests_user_created_idx
   on public.membership_requests (user_id, created_at desc);
 create unique index if not exists membership_requests_subscription_key
   on public.membership_requests (payment_subscription_id)
   where payment_subscription_id is not null;
+create unique index if not exists membership_requests_provider_transaction_key
+  on public.membership_requests (lower(provider_transaction_reference))
+  where provider_transaction_reference is not null;
 
 create table if not exists public.payment_webhook_events (
   event_key text primary key,
@@ -96,7 +107,9 @@ for each row execute procedure public.set_membership_request_updated_at();
 create or replace function public.verify_membership_request(
   request_id uuid,
   approve boolean,
-  notes text default null
+  notes text,
+  provider_reference text,
+  operator_id uuid
 )
 returns void
 language plpgsql
@@ -107,6 +120,14 @@ declare
   target public.membership_requests%rowtype;
   verified_time timestamptz := timezone('utc', now());
 begin
+  if not exists (
+    select 1
+    from public.profiles
+    where id = operator_id and app_role = 'admin'
+  ) then
+    raise exception 'Administrator access is required';
+  end if;
+
   select * into target
   from public.membership_requests
   where id = request_id
@@ -120,10 +141,25 @@ begin
     raise exception 'Only payment-link requests use manual verification';
   end if;
 
+  if target.status <> 'pending' then
+    raise exception 'Only pending membership requests can be verified';
+  end if;
+
+  if approve and (
+    provider_reference is null
+    or length(trim(provider_reference)) < 3
+    or length(trim(provider_reference)) > 200
+  ) then
+    raise exception 'A valid Revolut transaction reference is required';
+  end if;
+
   update public.membership_requests
   set
     status = case when approve then 'verified' else 'rejected' end,
     verified_at = case when approve then verified_time else null end,
+    verified_by = operator_id,
+    provider_transaction_reference =
+      case when approve then trim(provider_reference) else null end,
     admin_notes = notes
   where id = target.id;
 
@@ -141,6 +177,9 @@ begin
         end,
       payment_verified_at = verified_time
     where id = target.user_id;
+    if not found then
+      raise exception 'Membership profile not found';
+    end if;
   elsif exists (
     select 1 from public.profiles
     where id = target.user_id and payment_reference = target.payment_reference
@@ -152,8 +191,10 @@ begin
 end;
 $$;
 
-revoke all on function public.verify_membership_request(uuid, boolean, text) from public, anon, authenticated;
-grant execute on function public.verify_membership_request(uuid, boolean, text) to service_role;
+revoke all on function public.verify_membership_request(uuid, boolean, text, text, uuid)
+  from public, anon, authenticated;
+grant execute on function public.verify_membership_request(uuid, boolean, text, text, uuid)
+  to service_role;
 
 -- Verification query: browser roles should have no access to webhook rows and
 -- members should only see their own membership requests through RLS.
