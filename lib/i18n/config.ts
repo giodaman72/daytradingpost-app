@@ -9,6 +9,7 @@ const SPANISH_PUBLIC_PATHS = [
   "/about",
   "/academy",
   "/analysis",
+  "/auth",
   "/charts",
   "/contact",
   "/economic-calendar",

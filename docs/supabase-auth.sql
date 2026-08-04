@@ -142,8 +142,11 @@ order by users.created_at desc;
 --      http://localhost:3001/auth/callback
 --      https://YOUR_PRODUCTION_DOMAIN/auth/callback
 -- 2. Authentication > Email Templates
---    Confirm signup:
---    {{ .SiteURL }}/auth/verify?token_hash={{ .TokenHash }}&type=email
+--    Confirm signup subject: paste supabase/templates/confirmation-subject.txt
+--    Confirm signup body: paste supabase/templates/confirmation.html
+--    New signups store `language` in user metadata. The template uses that
+--    value to send English users to /auth/verify and Spanish users to
+--    /es/auth/verify with the same scanner-safe token flow.
 --    Reset password:
 --    {{ .SiteURL }}/auth/verify?token_hash={{ .TokenHash }}&type=recovery
 --    These links require a human button press before token verification so

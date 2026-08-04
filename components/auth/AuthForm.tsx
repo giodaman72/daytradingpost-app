@@ -130,6 +130,7 @@ export function AuthForm({
       <p className="auth-description">{content.description}</p>
 
       <form action={formAction} className="auth-form" noValidate>
+        <input type="hidden" name="locale" value={locale} />
         {nextPath ? <input type="hidden" name="next" value={nextPath} /> : null}
 
         {mode === "register" ? (

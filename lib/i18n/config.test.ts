@@ -15,6 +15,9 @@ describe("public locale routing", () => {
     expect(localizeHref("/academy/courses/risk", "es")).toBe(
       "/es/academy/courses/risk",
     );
+    expect(localizeHref("/auth/verify?type=email", "es")).toBe(
+      "/es/auth/verify?type=email",
+    );
   });
 
   it("keeps member-only and API routes on their existing URLs", () => {
@@ -34,6 +37,7 @@ describe("public locale routing", () => {
   it("identifies only the supported public Spanish route surface", () => {
     expect(isSpanishPublicPath("/es/charts/xauusd")).toBe(true);
     expect(isSpanishPublicPath("/academy/learning-paths")).toBe(true);
+    expect(isSpanishPublicPath("/es/auth/verify")).toBe(true);
     expect(isSpanishPublicPath("/dashboard")).toBe(false);
   });
 

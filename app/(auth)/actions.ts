@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getSafeNextPath } from "@/lib/auth/redirects";
+import { DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n/config";
 import {
   normalizeEmail,
   normalizeName,
@@ -30,6 +31,13 @@ async function getRequestOrigin() {
   const host = requestHeaders.get("host");
   const protocol = requestHeaders.get("x-forwarded-proto") ?? "http";
   return host ? `${protocol}://${host}` : "http://localhost:3000";
+}
+
+function getFormLocale(formData: FormData): Locale {
+  const locale = formData.get("locale");
+  return typeof locale === "string" && isLocale(locale)
+    ? locale
+    : DEFAULT_LOCALE;
 }
 
 export async function loginAction(
@@ -70,6 +78,8 @@ export async function registerAction(
   _previousState: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  const locale = getFormLocale(formData);
+  const spanish = locale === "es";
   const fullName = normalizeName(formData.get("fullName"));
   const email = normalizeEmail(formData.get("email"));
   const password = readPassword(formData.get("password"));
@@ -88,7 +98,9 @@ export async function registerAction(
   if (Object.values(fieldErrors).some(Boolean)) {
     return {
       status: "error",
-      message: "Check the highlighted fields and try again.",
+      message: spanish
+        ? "Revisa los campos resaltados e inténtalo de nuevo."
+        : "Check the highlighted fields and try again.",
       fieldErrors,
     };
   }
@@ -101,7 +113,7 @@ export async function registerAction(
     email,
     password,
     options: {
-      data: { full_name: fullName },
+      data: { full_name: fullName, language: locale },
       emailRedirectTo: `${origin}/auth/callback?next=/account`,
     },
   });
@@ -111,8 +123,12 @@ export async function registerAction(
       status: "error",
       message:
         error.message === "User already registered"
-          ? "An account already exists for this email."
-          : "We could not create your account. Please try again.",
+          ? spanish
+            ? "Ya existe una cuenta con este correo electrónico."
+            : "An account already exists for this email."
+          : spanish
+            ? "No pudimos crear tu cuenta. Inténtalo de nuevo."
+            : "We could not create your account. Please try again.",
     };
   }
 
@@ -122,8 +138,9 @@ export async function registerAction(
 
   return {
     status: "success",
-    message:
-      "Check your inbox and confirm your email address to activate your account.",
+    message: spanish
+      ? "Revisa tu bandeja de entrada y confirma tu correo electrónico para activar la cuenta."
+      : "Check your inbox and confirm your email address to activate your account.",
   };
 }
 

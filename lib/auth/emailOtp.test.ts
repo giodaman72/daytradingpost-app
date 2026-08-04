@@ -15,7 +15,9 @@ describe("email OTP routing", () => {
 
   it("sends recovery sessions to the password form", () => {
     expect(getEmailOtpSuccessPath("recovery")).toBe("/reset-password");
+    expect(getEmailOtpSuccessPath("recovery", "es")).toBe("/es/reset-password");
     expect(getEmailOtpSuccessPath("email")).toBe("/account");
+    expect(getEmailOtpSuccessPath("email", "es")).toBe("/account");
   });
 
   it("returns an actionable retry destination for invalid links", () => {
@@ -23,6 +25,10 @@ describe("email OTP routing", () => {
     expect(getEmailOtpFailurePath("email")).toContain("/login");
     expect(decodeURIComponent(getEmailOtpFailurePath(null))).toContain(
       "invalid or expired",
+    );
+    expect(getEmailOtpFailurePath("email", "es")).toContain("/es/login");
+    expect(decodeURIComponent(getEmailOtpFailurePath("email", "es"))).toContain(
+      "inválido o ha caducado",
     );
   });
 });

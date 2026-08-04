@@ -1,4 +1,5 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
+import { DEFAULT_LOCALE, localizeHref, type Locale } from "@/lib/i18n/config";
 
 export type SupportedEmailOtpType = Extract<EmailOtpType, "email" | "recovery">;
 
@@ -8,16 +9,25 @@ export function parseSupportedEmailOtpType(
   return value === "email" || value === "recovery" ? value : null;
 }
 
-export function getEmailOtpSuccessPath(type: SupportedEmailOtpType) {
-  return type === "recovery" ? "/reset-password" : "/account";
+export function getEmailOtpSuccessPath(
+  type: SupportedEmailOtpType,
+  locale: Locale = DEFAULT_LOCALE,
+) {
+  return type === "recovery"
+    ? localizeHref("/reset-password", locale)
+    : "/account";
 }
 
-export function getEmailOtpFailurePath(type: SupportedEmailOtpType | null) {
+export function getEmailOtpFailurePath(
+  type: SupportedEmailOtpType | null,
+  locale: Locale = DEFAULT_LOCALE,
+) {
   const message = encodeURIComponent(
-    "This secure email link is invalid or expired. Request a new one and try again.",
+    locale === "es"
+      ? "Este enlace seguro es inválido o ha caducado. Solicita uno nuevo e inténtalo de nuevo."
+      : "This secure email link is invalid or expired. Request a new one and try again.",
   );
 
-  return type === "recovery"
-    ? `/forgot-password?error=${message}`
-    : `/login?error=${message}`;
+  const pathname = type === "recovery" ? "/forgot-password" : "/login";
+  return `${localizeHref(pathname, locale)}?error=${message}`;
 }
