@@ -54,8 +54,8 @@ export const INSTRUMENTS = [
     "USD",
     2,
     "us-equities",
-    "NASDAQ:NDX",
-    "NASDAQ",
+    "CAPITALCOM:US100",
+    "CAPITALCOM",
   ],
   [
     "sp-500",
@@ -65,8 +65,8 @@ export const INSTRUMENTS = [
     "USD",
     2,
     "us-equities",
-    "SP:SPX",
-    "SP",
+    "CAPITALCOM:US500",
+    "CAPITALCOM",
   ],
   [
     "dow-jones",
@@ -76,8 +76,8 @@ export const INSTRUMENTS = [
     "USD",
     0,
     "us-equities",
-    "DJ:DJI",
-    "DJ",
+    "CAPITALCOM:US30",
+    "CAPITALCOM",
   ],
   [
     "wti-crude-oil",
@@ -98,8 +98,8 @@ export const INSTRUMENTS = [
     "USD",
     3,
     "energy",
-    "NYMEX:NG1!",
-    "NYMEX",
+    "CAPITALCOM:NATURALGAS",
+    "CAPITALCOM",
   ],
   [
     "copper",

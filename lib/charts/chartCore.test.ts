@@ -38,10 +38,15 @@ const candle = (timestamp: number, close = 10): ChartCandle => ({
 describe("advanced chart core", () => {
   it("maps canonical instruments to TradingView symbols", () =>
     expect(getInstrument("gold")?.tradingViewSymbol).toBe("OANDA:XAUUSD"));
-  it("uses a Copper symbol supported by the public widget", () =>
-    expect(getInstrument("copper")?.tradingViewSymbol).toBe(
-      "CAPITALCOM:COPPER",
-    ));
+  it.each([
+    ["nasdaq-100", "CAPITALCOM:US100"],
+    ["sp-500", "CAPITALCOM:US500"],
+    ["dow-jones", "CAPITALCOM:US30"],
+    ["natural-gas", "CAPITALCOM:NATURALGAS"],
+    ["copper", "CAPITALCOM:COPPER"],
+  ])("uses a public-widget symbol for %s", (instrument, expectedSymbol) =>
+    expect(getInstrument(instrument)?.tradingViewSymbol).toBe(expectedSymbol),
+  );
   it("rejects unsupported instruments", () =>
     expect(resolveChartSymbol("made-up")).toBeNull());
   it("maps timeframes", () => {
