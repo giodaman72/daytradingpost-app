@@ -5,16 +5,20 @@ import { CountryFlag } from "./CountryFlag";
 import { CurrencyBadge } from "./CurrencyBadge";
 import { EconomicCountdown } from "./EconomicCountdown";
 import { ImpactBadge } from "./ImpactBadge";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 
 export function EconomicCard({
   event,
   timeZone = "America/New_York",
   showCountdown = false,
+  locale = "en",
 }: {
   event: EconomicEvent;
   timeZone?: string;
   showCountdown?: boolean;
+  locale?: Locale;
 }) {
+  const spanish = locale === "es";
   return (
     <article className="economic-card">
       <header>
@@ -22,42 +26,54 @@ export function EconomicCard({
           <CountryFlag code={event.country} name={event.countryName} />
           <CurrencyBadge currency={event.currency} />
         </div>
-        <ImpactBadge impact={event.impact} />
+        <ImpactBadge impact={event.impact} locale={locale} />
       </header>
       <h3>
-        <Link href={`/economic-calendar/${event.id}`}>{event.title}</Link>
+        <Link href={localizeHref(`/economic-calendar/${event.id}`, locale)}>
+          {event.title}
+        </Link>
       </h3>
       <time dateTime={event.scheduledTime}>
         {formatEconomicTime(event.scheduledTime, timeZone)}
       </time>
       {showCountdown ? (
-        <EconomicCountdown scheduledTime={event.scheduledTime} />
+        <EconomicCountdown
+          scheduledTime={event.scheduledTime}
+          locale={locale}
+        />
       ) : null}
       <dl>
         <div>
-          <dt>Forecast</dt>
+          <dt>{spanish ? "Previsión" : "Forecast"}</dt>
           <dd>{event.forecast ?? "—"}</dd>
         </div>
         <div>
-          <dt>Previous</dt>
+          <dt>{spanish ? "Anterior" : "Previous"}</dt>
           <dd>{event.previous ?? "—"}</dd>
         </div>
         <div>
-          <dt>Actual</dt>
-          <dd>{event.actual ?? "Pending"}</dd>
+          <dt>{spanish ? "Dato real" : "Actual"}</dt>
+          <dd>{event.actual ?? (spanish ? "Pendiente" : "Pending")}</dd>
         </div>
       </dl>
       {event.isFixture ? (
         <p className="economic-fixture">
-          <strong>Simulated schedule:</strong> Development fixture, not a
-          verified event.
+          <strong>
+            {spanish ? "Calendario simulado:" : "Simulated schedule:"}
+          </strong>{" "}
+          {spanish
+            ? "Ejemplo de desarrollo; no es un evento verificado."
+            : "Development fixture, not a verified event."}
         </p>
       ) : null}
       <Link
         className="economic-reminder-link"
-        href={`/alerts/new?type=economic_event_upcoming&event=${encodeURIComponent(event.id)}&minutes=60`}
+        href={localizeHref(
+          `/alerts/new?type=economic_event_upcoming&event=${encodeURIComponent(event.id)}&minutes=60`,
+          locale,
+        )}
       >
-        Set 1-hour reminder
+        {spanish ? "Crear recordatorio de 1 hora" : "Set 1-hour reminder"}
       </Link>
     </article>
   );

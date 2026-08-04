@@ -17,10 +17,12 @@ export function TradingViewChart({
   symbol,
   timeframe,
   name,
+  locale = "en",
 }: {
   symbol: string;
   timeframe: ChartTimeframe;
   name: string;
+  locale?: "en" | "es";
 }) {
   const id = `tv-${useId().replaceAll(":", "")}`;
   const [error, setError] = useState("");
@@ -31,18 +33,24 @@ export function TradingViewChart({
       .then(() => {
         if (!active || !window.TradingView) return;
         widget = new window.TradingView.widget(
-          tradingViewWidgetConfig(id, symbol, timeframe),
+          tradingViewWidgetConfig(id, symbol, timeframe, locale),
         );
       })
       .catch(
-        () => active && setError("TradingView is temporarily unavailable."),
+        () =>
+          active &&
+          setError(
+            locale === "es"
+              ? "TradingView no está disponible temporalmente."
+              : "TradingView is temporarily unavailable.",
+          ),
       );
     return () => {
       active = false;
       widget?.remove?.();
       document.getElementById(id)?.replaceChildren();
     };
-  }, [id, symbol, timeframe]);
+  }, [id, locale, symbol, timeframe]);
   if (error)
     return (
       <div className="chart-unavailable" role="alert">
@@ -51,10 +59,14 @@ export function TradingViewChart({
     );
   return (
     <div className="chart-frame">
-      <div id={id} aria-label={`${name} TradingView chart`} />
+      <div
+        id={id}
+        aria-label={`${name} ${locale === "es" ? "gráfico de TradingView" : "TradingView chart"}`}
+      />
       <p>
-        Chart and third-party market data supplied by TradingView.
-        DayTradingPost does not own this data.
+        {locale === "es"
+          ? "TradingView proporciona el gráfico y los datos de mercado de terceros. DayTradingPost no es propietario de estos datos."
+          : "Chart and third-party market data supplied by TradingView. DayTradingPost does not own this data."}
       </p>
     </div>
   );

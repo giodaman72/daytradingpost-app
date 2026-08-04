@@ -9,8 +9,25 @@ const labels: Record<MarketStatus, string> = {
   unknown: "Status unknown",
 };
 
-export function MarketStatusBadge({ status }: { status: MarketStatus }) {
+const spanishLabels: Record<MarketStatus, string> = {
+  open: "Mercado abierto",
+  closed: "Mercado cerrado",
+  premarket: "Premercado",
+  afterhours: "Fuera de horario",
+  unavailable: "Estado no disponible",
+  unknown: "Estado desconocido",
+};
+
+export function MarketStatusBadge({
+  status,
+  locale = "en",
+}: {
+  status: MarketStatus;
+  locale?: "en" | "es";
+}) {
   return (
-    <span className={`md-status md-status-${status}`}>{labels[status]}</span>
+    <span className={`md-status md-status-${status}`}>
+      {(locale === "es" ? spanishLabels : labels)[status]}
+    </span>
   );
 }

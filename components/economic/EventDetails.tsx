@@ -1,40 +1,60 @@
 import type { EconomicEvent } from "@/types/economic-event";
 
-export function EventDetails({ event }: { event: EconomicEvent }) {
+export function EventDetails({
+  event,
+  locale = "en",
+}: {
+  event: EconomicEvent;
+  locale?: "en" | "es";
+}) {
+  const spanish = locale === "es";
   return (
     <div className="economic-event-details">
       <section>
-        <h2>Description</h2>
-        <p>{event.description ?? "No verified description is available."}</p>
+        <h2>{spanish ? "Descripción" : "Description"}</h2>
+        <p>
+          {event.description ??
+            (spanish
+              ? "No hay una descripción verificada disponible."
+              : "No verified description is available.")}
+        </p>
       </section>
       <dl>
         <div>
-          <dt>Forecast</dt>
-          <dd>{event.forecast ?? "Not available"}</dd>
+          <dt>{spanish ? "Previsión" : "Forecast"}</dt>
+          <dd>
+            {event.forecast ?? (spanish ? "No disponible" : "Not available")}
+          </dd>
         </div>
         <div>
-          <dt>Previous</dt>
-          <dd>{event.previous ?? "Not available"}</dd>
+          <dt>{spanish ? "Anterior" : "Previous"}</dt>
+          <dd>
+            {event.previous ?? (spanish ? "No disponible" : "Not available")}
+          </dd>
         </div>
         <div>
-          <dt>Actual</dt>
-          <dd>{event.actual ?? "Pending"}</dd>
+          <dt>{spanish ? "Dato real" : "Actual"}</dt>
+          <dd>{event.actual ?? (spanish ? "Pendiente" : "Pending")}</dd>
         </div>
         <div>
-          <dt>Revised</dt>
+          <dt>{spanish ? "Revisado" : "Revised"}</dt>
           <dd>{event.revised ?? "—"}</dd>
         </div>
       </dl>
       <section>
-        <h2>Educational explanation</h2>
+        <h2>{spanish ? "Explicación educativa" : "Educational explanation"}</h2>
         <p>
           {event.educationalExplanation ??
             event.description ??
-            "No verified explanation is available."}
+            (spanish
+              ? "No hay una explicación verificada disponible."
+              : "No verified explanation is available.")}
         </p>
       </section>
       <section>
-        <h2>Trading considerations</h2>
+        <h2>
+          {spanish ? "Consideraciones de trading" : "Trading considerations"}
+        </h2>
         {event.tradingConsiderations.length ? (
           <ul>
             {event.tradingConsiderations.map((item) => (
@@ -42,11 +62,15 @@ export function EventDetails({ event }: { event: EconomicEvent }) {
             ))}
           </ul>
         ) : (
-          <p>No planning notes are available.</p>
+          <p>
+            {spanish
+              ? "No hay notas de planificación disponibles."
+              : "No planning notes are available."}
+          </p>
         )}
       </section>
       <section>
-        <h2>Related markets</h2>
+        <h2>{spanish ? "Mercados relacionados" : "Related markets"}</h2>
         {event.relatedMarkets.length ? (
           <ul className="economic-related-markets">
             {event.relatedMarkets.map((market) => (
@@ -54,7 +78,11 @@ export function EventDetails({ event }: { event: EconomicEvent }) {
             ))}
           </ul>
         ) : (
-          <p>No related markets are mapped.</p>
+          <p>
+            {spanish
+              ? "No hay mercados relacionados asignados."
+              : "No related markets are mapped."}
+          </p>
         )}
       </section>
     </div>

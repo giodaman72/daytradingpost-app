@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { AcademyEnrollment } from "@/types/academy";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 import {
   academyIdempotencyKey,
   academyRequest,
@@ -16,6 +17,7 @@ type EnrollmentButtonProps = {
   courseSlug: string;
   disabledReason?: string | null;
   enrollment: AcademyEnrollment | null;
+  locale?: Locale;
 };
 
 export function EnrollmentButton({
@@ -24,7 +26,9 @@ export function EnrollmentButton({
   courseSlug,
   disabledReason,
   enrollment,
+  locale = "en",
 }: EnrollmentButtonProps) {
+  const spanish = locale === "es";
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -32,20 +36,27 @@ export function EnrollmentButton({
     return (
       <Link
         className="button academy-primary-action"
-        href={`/login?next=${encodeURIComponent(`/academy/courses/${courseSlug}`)}`}
+        href={localizeHref(
+          `/login?next=${encodeURIComponent(`/academy/courses/${courseSlug}`)}`,
+          locale,
+        )}
       >
-        Sign in to enroll
+        {spanish ? "Inicia sesión para inscribirte" : "Sign in to enroll"}
       </Link>
     );
   if (enrollment)
     return (
       <Link
         className="button academy-primary-action"
-        href={`/academy/courses/${courseSlug}/learn`}
+        href={localizeHref(`/academy/courses/${courseSlug}/learn`, locale)}
       >
         {enrollment.status === "completed"
-          ? "Review course"
-          : "Continue learning"}
+          ? spanish
+            ? "Repasar curso"
+            : "Review course"
+          : spanish
+            ? "Continuar aprendiendo"
+            : "Continue learning"}
       </Link>
     );
 
@@ -67,13 +78,15 @@ export function EnrollmentButton({
         courseId,
         name: "academy_course_enrolled",
       });
-      router.push(`/academy/courses/${courseSlug}/learn`);
+      router.push(localizeHref(`/academy/courses/${courseSlug}/learn`, locale));
       router.refresh();
     } catch (requestError) {
       setError(
         requestError instanceof Error
           ? requestError.message
-          : "Enrollment could not be completed.",
+          : spanish
+            ? "No se pudo completar la inscripción."
+            : "Enrollment could not be completed.",
       );
     } finally {
       setLoading(false);
@@ -88,7 +101,13 @@ export function EnrollmentButton({
         onClick={enroll}
         disabled={loading || Boolean(disabledReason)}
       >
-        {loading ? "Enrolling…" : "Enroll in course"}
+        {loading
+          ? spanish
+            ? "Inscribiendo…"
+            : "Enrolling…"
+          : spanish
+            ? "Inscribirse en el curso"
+            : "Enroll in course"}
       </button>
       {disabledReason ? (
         <p className="academy-action-note">{disabledReason}</p>

@@ -1,25 +1,32 @@
 import Link from "next/link";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 
 export function CalendarHeader({
   range,
   timeZone,
+  locale = "en",
 }: {
   range: string;
   timeZone: string;
+  locale?: Locale;
 }) {
+  const spanish = locale === "es";
   const ranges = [
-    ["today", "Today"],
-    ["tomorrow", "Tomorrow"],
-    ["week", "This week"],
+    ["today", spanish ? "Hoy" : "Today"],
+    ["tomorrow", spanish ? "Mañana" : "Tomorrow"],
+    ["week", spanish ? "Esta semana" : "This week"],
   ];
   return (
     <div className="economic-calendar-header">
-      <nav aria-label="Calendar range">
+      <nav aria-label={spanish ? "Periodo del calendario" : "Calendar range"}>
         {ranges.map(([value, label]) => (
           <Link
             className={range === value ? "active" : ""}
             aria-current={range === value ? "page" : undefined}
-            href={`/economic-calendar?range=${value}&timeZone=${encodeURIComponent(timeZone)}`}
+            href={localizeHref(
+              `/economic-calendar?range=${value}&timeZone=${encodeURIComponent(timeZone)}`,
+              locale,
+            )}
             key={value}
           >
             {label}
@@ -29,7 +36,7 @@ export function CalendarHeader({
       <form method="get">
         <input type="hidden" name="range" value={range} />
         <label>
-          Timezone
+          {spanish ? "Zona horaria" : "Timezone"}
           <select name="timeZone" defaultValue={timeZone}>
             <option value="America/New_York">New York</option>
             <option value="America/Bogota">Bogotá</option>
@@ -40,7 +47,7 @@ export function CalendarHeader({
             <option value="UTC">UTC</option>
           </select>
         </label>
-        <button type="submit">Update</button>
+        <button type="submit">{spanish ? "Actualizar" : "Update"}</button>
       </form>
     </div>
   );

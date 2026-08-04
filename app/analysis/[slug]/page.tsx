@@ -10,6 +10,8 @@ import {
 import { getMembershipAccess } from "@/lib/payments";
 import { getMarketIntelligenceByInstrument } from "@/lib/market/marketIntelligenceService";
 import { getQuoteByInstrument } from "@/lib/market-data/marketDataService";
+import { languageAlternates, localizeHref } from "@/lib/i18n/config";
+import { getRequestLocale } from "@/lib/i18n/server";
 
 type AnalysisArticlePageProps = {
   params: Promise<{ slug: string }>;
@@ -25,24 +27,31 @@ export async function generateMetadata({
   params,
 }: AnalysisArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticleSummaryBySlug(slug);
+  const [locale, article] = await Promise.all([
+    getRequestLocale(),
+    getArticleSummaryBySlug(slug),
+  ]);
 
   if (!article) {
     return {
-      title: "Analysis not found",
+      title: locale === "es" ? "Análisis no encontrado" : "Analysis not found",
       robots: { index: false, follow: false },
     };
   }
 
   const title = article.seoTitle || article.title;
   const description = article.seoDescription || article.excerpt;
-  const url = `/analysis/${article.slug}`;
+  const baseUrl = `/analysis/${article.slug}`;
+  const url = localizeHref(baseUrl, locale);
   const imageUrl = getSanityImageUrl(article.featuredImage, 1200, 630);
 
   return {
     title,
     description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      languages: languageAlternates(baseUrl),
+    },
     openGraph: {
       title: `${title} | DayTradingPost`,
       description,
@@ -74,7 +83,10 @@ export default async function AnalysisArticlePage({
   params,
 }: AnalysisArticlePageProps) {
   const { slug } = await params;
-  const summary = await getArticleSummaryBySlug(slug);
+  const [locale, summary] = await Promise.all([
+    getRequestLocale(),
+    getArticleSummaryBySlug(slug),
+  ]);
 
   if (!summary) {
     notFound();
@@ -97,6 +109,7 @@ export default async function AnalysisArticlePage({
           intelligence={intelligence}
           marketQuote={quote}
           locked
+          locale={locale}
         />
       );
     }
@@ -110,6 +123,7 @@ export default async function AnalysisArticlePage({
       article={article}
       intelligence={intelligence}
       marketQuote={quote}
+      locale={locale}
     />
   );
 }

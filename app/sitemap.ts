@@ -6,6 +6,7 @@ import {
 import { getPublicSiteUrl } from "@/lib/config";
 import { getArticleSlugs } from "@/lib/sanity/client";
 import { sitePagePaths } from "@/lib/site-pages";
+import { localizeHref } from "@/lib/i18n/config";
 
 const staticPaths = [
   "",
@@ -47,9 +48,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ]),
   ];
 
-  return paths.map((path) => ({
-    changeFrequency: path === "" ? "daily" : "weekly",
-    priority: path === "" ? 1 : path.includes("/") ? 0.7 : 0.8,
-    url: new URL(path, `${siteUrl}/`).toString(),
-  }));
+  return paths.flatMap((path) => {
+    const pathname = path ? `/${path}` : "/";
+    const englishUrl = new URL(pathname, `${siteUrl}/`).toString();
+    const spanishUrl = new URL(
+      localizeHref(pathname, "es"),
+      `${siteUrl}/`,
+    ).toString();
+    const shared = {
+      alternates: { languages: { en: englishUrl, es: spanishUrl } },
+      changeFrequency: path === "" ? ("daily" as const) : ("weekly" as const),
+      priority: path === "" ? 1 : path.includes("/") ? 0.7 : 0.8,
+    };
+    return [
+      { ...shared, url: englishUrl },
+      { ...shared, url: spanishUrl },
+    ];
+  });
 }

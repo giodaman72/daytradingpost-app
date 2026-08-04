@@ -4,6 +4,8 @@ import { LearningPathEmptyState } from "@/components/academy/learning-paths/Lear
 import { LearningPathGrid } from "@/components/academy/learning-paths/LearningPathGrid";
 import { listAcademyLearningPaths } from "@/lib/academy/learningPaths/learningPathService";
 import type { AcademyAccessLevel, AcademyDifficulty } from "@/types/academy";
+import { languageAlternates, localizeHref } from "@/lib/i18n/config";
+import { getRequestLocale } from "@/lib/i18n/server";
 
 type LearningPathsPageProps = {
   searchParams: Promise<{
@@ -14,12 +16,20 @@ type LearningPathsPageProps = {
   }>;
 };
 
-export const metadata: Metadata = {
-  title: "Academy Learning Paths",
-  description:
-    "Follow guided DayTradingPost Academy course sequences with clear prerequisites, completion rules and verified progress.",
-  alternates: { canonical: "/academy/learning-paths" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  const spanish = locale === "es";
+  return {
+    title: spanish ? "Itinerarios de aprendizaje" : "Academy Learning Paths",
+    description: spanish
+      ? "Sigue secuencias guiadas de cursos con requisitos, reglas de finalización y progreso verificado."
+      : "Follow guided DayTradingPost Academy course sequences with clear prerequisites, completion rules and verified progress.",
+    alternates: {
+      canonical: localizeHref("/academy/learning-paths", locale),
+      languages: languageAlternates("/academy/learning-paths"),
+    },
+  };
+}
 
 const difficultyValues = new Set<AcademyDifficulty>([
   "beginner",
@@ -31,7 +41,8 @@ const accessValues = new Set<AcademyAccessLevel>(["free", "premium"]);
 export default async function LearningPathsPage({
   searchParams,
 }: LearningPathsPageProps) {
-  const raw = await searchParams;
+  const [raw, locale] = await Promise.all([searchParams, getRequestLocale()]);
+  const spanish = locale === "es";
   const firstValue = (value: string | string[] | undefined) =>
     Array.isArray(value) ? value[0] : value;
   const rawQuery = firstValue(raw.query);
@@ -73,16 +84,27 @@ export default async function LearningPathsPage({
       <section className="academy-catalog-hero">
         <div className="hero-grid" aria-hidden="true" />
         <div className="container">
-          <nav aria-label="Breadcrumb">
-            <Link href="/academy">Academy</Link>
+          <nav aria-label={spanish ? "Ruta de navegación" : "Breadcrumb"}>
+            <Link href={localizeHref("/academy", locale)}>
+              {spanish ? "Academia" : "Academy"}
+            </Link>
             <span aria-hidden="true">/</span>
-            <span aria-current="page">Learning paths</span>
+            <span aria-current="page">
+              {spanish ? "Itinerarios" : "Learning paths"}
+            </span>
           </nav>
-          <span className="section-kicker">Guided progression</span>
-          <h1>Turn individual courses into a clear learning journey.</h1>
+          <span className="section-kicker">
+            {spanish ? "Progresión guiada" : "Guided progression"}
+          </span>
+          <h1>
+            {spanish
+              ? "Convierte cursos individuales en un recorrido de aprendizaje claro."
+              : "Turn individual courses into a clear learning journey."}
+          </h1>
           <p>
-            Choose a published path, understand what unlocks next, and track
-            required and optional courses from one server-verified plan.
+            {spanish
+              ? "Elige un itinerario publicado, comprende qué se desbloquea después y sigue los cursos obligatorios y opcionales desde un plan verificado."
+              : "Choose a published path, understand what unlocks next, and track required and optional courses from one server-verified plan."}
           </p>
         </div>
       </section>
@@ -90,23 +112,33 @@ export default async function LearningPathsPage({
         <div className="container">
           <form className="academy-catalog-filters" method="get">
             <div>
-              <label htmlFor="path-query">Search learning paths</label>
+              <label htmlFor="path-query">
+                {spanish ? "Buscar itinerarios" : "Search learning paths"}
+              </label>
               <input
                 id="path-query"
                 name="query"
                 type="search"
                 defaultValue={rawQuery}
-                placeholder="Search by title or audience"
+                placeholder={
+                  spanish
+                    ? "Buscar por título o audiencia"
+                    : "Search by title or audience"
+                }
               />
             </div>
             <div>
-              <label htmlFor="path-category">Category</label>
+              <label htmlFor="path-category">
+                {spanish ? "Categoría" : "Category"}
+              </label>
               <select
                 id="path-category"
                 name="category"
                 defaultValue={category}
               >
-                <option value="">All categories</option>
+                <option value="">
+                  {spanish ? "Todas las categorías" : "All categories"}
+                </option>
                 {categories.map(([slug, title]) => (
                   <option key={slug} value={slug}>
                     {title}
@@ -115,52 +147,72 @@ export default async function LearningPathsPage({
               </select>
             </div>
             <div>
-              <label htmlFor="path-difficulty">Difficulty</label>
+              <label htmlFor="path-difficulty">
+                {spanish ? "Dificultad" : "Difficulty"}
+              </label>
               <select
                 id="path-difficulty"
                 name="difficulty"
                 defaultValue={difficulty ?? ""}
               >
-                <option value="">All levels</option>
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
+                <option value="">
+                  {spanish ? "Todos los niveles" : "All levels"}
+                </option>
+                <option value="beginner">
+                  {spanish ? "Principiante" : "Beginner"}
+                </option>
+                <option value="intermediate">
+                  {spanish ? "Intermedio" : "Intermediate"}
+                </option>
+                <option value="advanced">
+                  {spanish ? "Avanzado" : "Advanced"}
+                </option>
               </select>
             </div>
             <div>
-              <label htmlFor="path-access">Access</label>
+              <label htmlFor="path-access">
+                {spanish ? "Acceso" : "Access"}
+              </label>
               <select
                 id="path-access"
                 name="access"
                 defaultValue={access ?? ""}
               >
-                <option value="">All access</option>
-                <option value="free">Free</option>
+                <option value="">
+                  {spanish ? "Todos los accesos" : "All access"}
+                </option>
+                <option value="free">{spanish ? "Gratis" : "Free"}</option>
                 <option value="premium">Premium</option>
               </select>
             </div>
             <button className="button" type="submit">
-              Apply filters
+              {spanish ? "Aplicar filtros" : "Apply filters"}
             </button>
           </form>
           <p className="academy-catalog-count" role="status">
-            {filtered.length} published learning{" "}
-            {filtered.length === 1 ? "path" : "paths"}
+            {filtered.length}{" "}
+            {spanish
+              ? filtered.length === 1
+                ? "itinerario publicado"
+                : "itinerarios publicados"
+              : `published learning ${filtered.length === 1 ? "path" : "paths"}`}
           </p>
           {filtered.length ? (
-            <LearningPathGrid paths={filtered} />
+            <LearningPathGrid paths={filtered} locale={locale} />
           ) : (
-            <LearningPathEmptyState />
+            <LearningPathEmptyState locale={locale} />
           )}
         </div>
       </section>
       <section className="academy-disclaimer">
         <div className="container">
-          <strong>Educational risk notice</strong>
+          <strong>
+            {spanish ? "Aviso educativo de riesgo" : "Educational risk notice"}
+          </strong>
           <p>
-            Learning paths organize educational content. They are not
-            personalized investment advice and do not predict or guarantee
-            trading results.
+            {spanish
+              ? "Los itinerarios organizan contenido educativo. No son asesoramiento de inversión personalizado ni predicen o garantizan resultados de trading."
+              : "Learning paths organize educational content. They are not personalized investment advice and do not predict or guarantee trading results."}
           </p>
         </div>
       </section>

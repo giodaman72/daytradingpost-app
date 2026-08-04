@@ -3,18 +3,22 @@ import Link from "next/link";
 import { BookOpenCheck, Clock3, Crown, Gauge } from "lucide-react";
 import { formatAcademyDuration } from "@/lib/academy/academyPresentation";
 import type { AcademyLearningPath } from "@/types/academy";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 
 type LearningPathCardProps = {
   path: AcademyLearningPath;
   progressPercent?: number | null;
   recommendationReason?: string | null;
+  locale?: Locale;
 };
 
 export function LearningPathCard({
   path,
   progressPercent,
   recommendationReason,
+  locale = "en",
 }: LearningPathCardProps) {
+  const spanish = locale === "es";
   return (
     <article className="learning-path-card">
       <div className="learning-path-card-media">
@@ -47,17 +51,21 @@ export function LearningPathCard({
           </span>
           <span>
             <BookOpenCheck aria-hidden="true" />
-            {path.courses.length} courses
+            {path.courses.length} {spanish ? "cursos" : "courses"}
           </span>
         </div>
         <h2>
-          <Link href={`/academy/learning-paths/${path.slug}`}>
+          <Link
+            href={localizeHref(`/academy/learning-paths/${path.slug}`, locale)}
+          >
             {path.title}
           </Link>
         </h2>
         <p>
           {path.targetAudience[0] ??
-            "A guided sequence of Academy courses with verified progression."}
+            (spanish
+              ? "Una secuencia guiada de cursos con progreso verificado."
+              : "A guided sequence of Academy courses with verified progression.")}
         </p>
         {typeof progressPercent === "number" ? (
           <div className="learning-path-card-progress">
@@ -68,18 +76,22 @@ export function LearningPathCard({
                 }}
               />
             </span>
-            <small>{Math.round(progressPercent)}% complete</small>
+            <small>
+              {Math.round(progressPercent)}%{" "}
+              {spanish ? "completado" : "complete"}
+            </small>
           </div>
         ) : null}
         {recommendationReason ? (
           <p className="learning-path-reason">{recommendationReason}</p>
         ) : null}
         <Link
-          href={`/academy/learning-paths/${path.slug}`}
+          href={localizeHref(`/academy/learning-paths/${path.slug}`, locale)}
           className="text-link"
-          aria-label={`View ${path.title} learning path`}
+          aria-label={`${spanish ? "Ver itinerario" : "View learning path"}: ${path.title}`}
         >
-          View learning path <span aria-hidden="true">→</span>
+          {spanish ? "Ver itinerario" : "View learning path"}{" "}
+          <span aria-hidden="true">→</span>
         </Link>
       </div>
     </article>

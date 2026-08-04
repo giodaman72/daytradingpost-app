@@ -8,6 +8,7 @@ import {
   NEWSLETTER_EMAIL_MAX_LENGTH,
   normalizeNewsletterEmail,
 } from "@/lib/validation/newsletter";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 
 type FormStatus =
   | { type: "idle"; message: "" }
@@ -22,7 +23,8 @@ type NewsletterApiResponse = {
 
 const INITIAL_STATUS: FormStatus = { type: "idle", message: "" };
 
-export function NewsletterForm() {
+export function NewsletterForm({ locale = "en" }: { locale?: Locale }) {
+  const spanish = locale === "es";
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<FormStatus>(INITIAL_STATUS);
@@ -41,7 +43,12 @@ export function NewsletterForm() {
     const emailError = getNewsletterEmailError(normalizedEmail);
 
     if (emailError) {
-      setStatus({ type: "error", message: emailError });
+      setStatus({
+        type: "error",
+        message: spanish
+          ? "Introduce una dirección de correo electrónico válida."
+          : emailError,
+      });
       const emailInput = form.elements.namedItem("email");
 
       if (emailInput instanceof HTMLElement) {
@@ -54,12 +61,17 @@ export function NewsletterForm() {
     if (!consent) {
       setStatus({
         type: "error",
-        message: "Confirm that you agree to receive the newsletter.",
+        message: spanish
+          ? "Confirma que aceptas recibir el boletín."
+          : "Confirm that you agree to receive the newsletter.",
       });
       return;
     }
 
-    setStatus({ type: "loading", message: "Submitting your signup…" });
+    setStatus({
+      type: "loading",
+      message: spanish ? "Enviando tu suscripción…" : "Submitting your signup…",
+    });
 
     const formData = new FormData(form);
 
@@ -78,7 +90,9 @@ export function NewsletterForm() {
       if (!response.ok || !result.ok) {
         throw new Error(
           result.message ??
-            "We couldn’t complete your signup. Please try again.",
+            (spanish
+              ? "No pudimos completar la suscripción. Inténtalo de nuevo."
+              : "We couldn’t complete your signup. Please try again."),
         );
       }
 
@@ -86,9 +100,10 @@ export function NewsletterForm() {
       setConsent(false);
       setStatus({
         type: "success",
-        message:
-          result.message ??
-          "You’re subscribed. Watch your inbox for the Daily Market Brief.",
+        message: spanish
+          ? "Ya estás suscrito. Revisa tu correo para recibir el informe diario de mercados."
+          : (result.message ??
+            "You’re subscribed. Watch your inbox for the Daily Market Brief."),
       });
     } catch (error) {
       setStatus({
@@ -96,7 +111,9 @@ export function NewsletterForm() {
         message:
           error instanceof Error
             ? error.message
-            : "We couldn’t complete your signup. Please try again.",
+            : spanish
+              ? "No pudimos completar la suscripción. Inténtalo de nuevo."
+              : "We couldn’t complete your signup. Please try again.",
       });
     }
   }
@@ -108,7 +125,9 @@ export function NewsletterForm() {
           ✓
         </span>
         <div>
-          <strong>Signup confirmed</strong>
+          <strong>
+            {spanish ? "Suscripción confirmada" : "Signup confirmed"}
+          </strong>
           <p>{status.message}</p>
         </div>
       </div>
@@ -126,7 +145,7 @@ export function NewsletterForm() {
       aria-busy={isLoading}
     >
       <label htmlFor="newsletter-email" className="sr-only">
-        Email address
+        {spanish ? "Correo electrónico" : "Email address"}
       </label>
 
       <input
@@ -135,7 +154,11 @@ export function NewsletterForm() {
         type="email"
         inputMode="email"
         autoComplete="email"
-        placeholder="Enter your email address"
+        placeholder={
+          spanish
+            ? "Introduce tu correo electrónico"
+            : "Enter your email address"
+        }
         value={email}
         maxLength={NEWSLETTER_EMAIL_MAX_LENGTH}
         onChange={(event) => {
@@ -149,7 +172,13 @@ export function NewsletterForm() {
       />
 
       <button className="button" type="submit" disabled={isLoading}>
-        {isLoading ? "Subscribing…" : "Subscribe"}
+        {isLoading
+          ? spanish
+            ? "Suscribiendo…"
+            : "Subscribing…"
+          : spanish
+            ? "Suscribirme"
+            : "Subscribe"}
       </button>
 
       <div className="newsletter-consent">
@@ -166,14 +195,28 @@ export function NewsletterForm() {
           required
         />
         <label htmlFor="newsletter-consent">
-          I agree to receive DayTradingPost emails and accept the{" "}
-          <Link href="/privacy">privacy policy</Link>. I can unsubscribe at any
-          time.
+          {spanish ? (
+            <>
+              Acepto recibir correos de DayTradingPost y la{" "}
+              <Link href={localizeHref("/privacy", locale)}>
+                política de privacidad
+              </Link>
+              . Puedo cancelar la suscripción en cualquier momento.
+            </>
+          ) : (
+            <>
+              I agree to receive DayTradingPost emails and accept the{" "}
+              <Link href="/privacy">privacy policy</Link>. I can unsubscribe at
+              any time.
+            </>
+          )}
         </label>
       </div>
 
       <div className="newsletter-honeypot" aria-hidden="true">
-        <label htmlFor="newsletter-company">Company</label>
+        <label htmlFor="newsletter-company">
+          {spanish ? "Empresa" : "Company"}
+        </label>
         <input
           id="newsletter-company"
           name="company"

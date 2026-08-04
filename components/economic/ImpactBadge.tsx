@@ -7,10 +7,23 @@ const labels: Record<EconomicImpact, string> = {
   holiday: "Market holiday",
 };
 
-export function ImpactBadge({ impact }: { impact: EconomicImpact }) {
+const spanishLabels: Record<EconomicImpact, string> = {
+  high: "Impacto alto",
+  medium: "Impacto medio",
+  low: "Impacto bajo",
+  holiday: "Festivo de mercado",
+};
+
+export function ImpactBadge({
+  impact,
+  locale = "en",
+}: {
+  impact: EconomicImpact;
+  locale?: "en" | "es";
+}) {
   return (
     <span className={`economic-impact economic-impact-${impact}`}>
-      {labels[impact]}
+      {(locale === "es" ? spanishLabels : labels)[impact]}
     </span>
   );
 }
