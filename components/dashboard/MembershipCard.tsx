@@ -3,30 +3,42 @@ import { Check, Crown } from "lucide-react";
 import { formatDisplayLabel } from "@/lib/utils";
 import type { BillingProfile } from "@/types/profile";
 import { DashboardPanel } from "./DashboardPanel";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 
 export function MembershipCard({
   hasPremiumAccess,
   profile,
+  locale = "en",
 }: {
   hasPremiumAccess: boolean;
   profile: BillingProfile | null;
+  locale?: Locale;
 }) {
+  const spanish = locale === "es";
   const storedStatus = profile?.membership_status || "free";
   const accessStatus =
     storedStatus === "active" && !hasPremiumAccess ? "expired" : storedStatus;
   const membershipTitle = hasPremiumAccess
-    ? "Premium member"
+    ? spanish
+      ? "Miembro Premium"
+      : "Premium member"
     : accessStatus === "pending"
-      ? "Verification pending"
+      ? spanish
+        ? "Verificación pendiente"
+        : "Verification pending"
       : accessStatus === "expired"
-        ? "Premium access expired"
-        : "Free membership";
+        ? spanish
+          ? "El acceso Premium ha caducado"
+          : "Premium access expired"
+        : spanish
+          ? "Membresía gratuita"
+          : "Free membership";
 
   return (
     <DashboardPanel
       id="membership"
-      eyebrow="Account access"
-      title="Membership Card"
+      eyebrow={spanish ? "Acceso a la cuenta" : "Account access"}
+      title={spanish ? "Tarjeta de membresía" : "Membership Card"}
     >
       <div
         className={`dashboard-membership-card ${hasPremiumAccess ? "active" : "free"}`}
@@ -37,31 +49,54 @@ export function MembershipCard({
           </span>
           <div>
             <strong>{membershipTitle}</strong>
-            <p>{formatDisplayLabel(profile?.membership_plan, "Free")} plan</p>
+            <p>
+              {formatDisplayLabel(
+                profile?.membership_plan,
+                spanish ? "Gratis" : "Free",
+              )}{" "}
+              {spanish ? "plan" : "plan"}
+            </p>
           </div>
           <b>{formatDisplayLabel(accessStatus, "Free")}</b>
         </div>
         <ul>
           <li>
             <Check size={15} aria-hidden="true" />
-            Personal trader dashboard
+            {spanish
+              ? "Panel personal de trading"
+              : "Personal trader dashboard"}
           </li>
           <li>
             <Check size={15} aria-hidden="true" />
-            Published market analysis
+            {spanish
+              ? "Análisis de mercados publicados"
+              : "Published market analysis"}
           </li>
           <li>
             <Check size={15} aria-hidden="true" />
             {hasPremiumAccess
-              ? "Full premium briefings"
-              : "Premium article previews"}
+              ? spanish
+                ? "Informes Premium completos"
+                : "Full premium briefings"
+              : spanish
+                ? "Vistas previas de artículos Premium"
+                : "Premium article previews"}
           </li>
         </ul>
         <Link
-          href={hasPremiumAccess ? "/account/billing" : "/premium"}
+          href={localizeHref(
+            hasPremiumAccess ? "/account/billing" : "/premium",
+            locale,
+          )}
           className="button button-full"
         >
-          {hasPremiumAccess ? "Manage membership" : "Explore Premium"}
+          {hasPremiumAccess
+            ? spanish
+              ? "Gestionar membresía"
+              : "Manage membership"
+            : spanish
+              ? "Explorar Premium"
+              : "Explore Premium"}
         </Link>
       </div>
     </DashboardPanel>

@@ -7,14 +7,22 @@ import { getAuthenticatedUser } from "@/lib/auth";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatDisplayLabel } from "@/lib/utils";
+import { localizeHref } from "@/lib/i18n/config";
+import { getRequestLocale } from "@/lib/i18n/server";
 import type { Profile } from "@/types/profile";
 import type { AppRole } from "@/lib/auth/authorizationRoles";
 
-export const metadata: Metadata = {
-  title: "Your account",
-  description: "Manage your DayTradingPost account and membership.",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  return {
+    title: locale === "es" ? "Tu cuenta" : "Your account",
+    description:
+      locale === "es"
+        ? "Gestiona tu cuenta y membresía de DayTradingPost."
+        : "Manage your DayTradingPost account and membership.",
+    robots: { index: false, follow: false },
+  };
+}
 
 type AccountProfile = Pick<
   Profile,
@@ -22,12 +30,14 @@ type AccountProfile = Pick<
 > & { app_role: AppRole };
 
 export default async function AccountPage() {
+  const locale = await getRequestLocale();
+  const spanish = locale === "es";
   if (!isSupabaseAuthConfigured()) {
-    redirect("/login");
+    redirect(localizeHref("/login", locale));
   }
 
   const user = await getAuthenticatedUser();
-  if (!user) redirect("/login");
+  if (!user) redirect(localizeHref("/login", locale));
 
   const supabase = await createClient();
   const { data } = await supabase
@@ -39,8 +49,13 @@ export default async function AccountPage() {
     .maybeSingle<AccountProfile>();
 
   const fullName =
-    data?.full_name || user.user_metadata.full_name || "DayTradingPost member";
-  const email = data?.email || user.email || "Email unavailable";
+    data?.full_name ||
+    user.user_metadata.full_name ||
+    (spanish ? "Miembro de DayTradingPost" : "DayTradingPost member");
+  const email =
+    data?.email ||
+    user.email ||
+    (spanish ? "Correo no disponible" : "Email unavailable");
 
   return (
     <main className="account-page">
@@ -49,35 +64,64 @@ export default async function AccountPage() {
         <div className="hero-grid" aria-hidden="true" />
         <div className="container account-layout">
           <aside className="account-sidebar">
-            <span className="section-kicker">Member area</span>
+            <span className="section-kicker">
+              {spanish ? "Área de miembros" : "Member area"}
+            </span>
             <h1>{fullName}</h1>
             <p>{email}</p>
-            <AccountNavigation isAdmin={data?.app_role === "admin"} />
+            <AccountNavigation
+              isAdmin={data?.app_role === "admin"}
+              locale={locale}
+            />
           </aside>
 
           <div className="account-content">
             <div className="account-heading">
               <div>
-                <span className="section-kicker">Account overview</span>
-                <h2>Your membership foundation is ready.</h2>
+                <span className="section-kicker">
+                  {spanish ? "Resumen de la cuenta" : "Account overview"}
+                </span>
+                <h2>
+                  {spanish
+                    ? "Tu espacio de membresía está listo."
+                    : "Your membership foundation is ready."}
+                </h2>
               </div>
-              <span className="account-security-badge">Secure session</span>
+              <span className="account-security-badge">
+                {spanish ? "Sesión segura" : "Secure session"}
+              </span>
             </div>
 
             <div className="account-stat-grid">
               <article>
-                <span>Membership status</span>
+                <span>
+                  {spanish ? "Estado de membresía" : "Membership status"}
+                </span>
                 <strong>
-                  {formatDisplayLabel(data?.membership_status, "Free")}
+                  {formatDisplayLabel(
+                    data?.membership_status,
+                    spanish ? "Gratis" : "Free",
+                  )}
                 </strong>
-                <p>Access is checked securely on the server.</p>
+                <p>
+                  {spanish
+                    ? "El acceso se comprueba de forma segura en el servidor."
+                    : "Access is checked securely on the server."}
+                </p>
               </article>
               <article>
-                <span>Membership plan</span>
+                <span>{spanish ? "Plan de membresía" : "Membership plan"}</span>
                 <strong>
-                  {formatDisplayLabel(data?.membership_plan, "Free")}
+                  {formatDisplayLabel(
+                    data?.membership_plan,
+                    spanish ? "Gratis" : "Free",
+                  )}
                 </strong>
-                <p>Manage Revolut payment status from your billing page.</p>
+                <p>
+                  {spanish
+                    ? "Gestiona el estado del pago de Revolut desde la página de facturación."
+                    : "Manage Revolut payment status from your billing page."}
+                </p>
               </article>
             </div>
 
@@ -85,21 +129,26 @@ export default async function AccountPage() {
               className="account-details"
               aria-labelledby="account-details-title"
             >
-              <h2 id="account-details-title">Account details</h2>
+              <h2 id="account-details-title">
+                {spanish ? "Datos de la cuenta" : "Account details"}
+              </h2>
               <dl>
                 <div>
-                  <dt>Full name</dt>
+                  <dt>{spanish ? "Nombre completo" : "Full name"}</dt>
                   <dd>{fullName}</dd>
                 </div>
                 <div>
-                  <dt>Email</dt>
+                  <dt>{spanish ? "Correo electrónico" : "Email"}</dt>
                   <dd>{email}</dd>
                 </div>
                 <div>
-                  <dt>Member since</dt>
+                  <dt>{spanish ? "Miembro desde" : "Member since"}</dt>
                   <dd>
                     {formatDate(data?.created_at, {
-                      fallback: "Profile setup pending",
+                      fallback: spanish
+                        ? "Configuración del perfil pendiente"
+                        : "Profile setup pending",
+                      locale: spanish ? "es-ES" : "en-US",
                     })}
                   </dd>
                 </div>
@@ -108,8 +157,9 @@ export default async function AccountPage() {
 
             {!data ? (
               <div className="account-notice" role="status">
-                Run the Supabase profile SQL to finish connecting membership
-                data.
+                {spanish
+                  ? "Ejecuta el SQL de perfiles de Supabase para terminar de conectar los datos de membresía."
+                  : "Run the Supabase profile SQL to finish connecting membership data."}
               </div>
             ) : null}
           </div>

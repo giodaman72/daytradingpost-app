@@ -16,6 +16,23 @@ import {
 } from "lucide-react";
 import { DASHBOARD_NAVIGATION } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
+
+const spanishLabels: Record<string, string> = {
+  "Advanced chart": "Gráfico avanzado",
+  "Market outlook": "Perspectiva de mercados",
+  "Latest analysis": "Análisis recientes",
+  "Economic calendar": "Calendario económico",
+  Webinars: "Webinars",
+  Watchlist: "Lista de seguimiento",
+  "Smart alerts": "Alertas inteligentes",
+  Academy: "Academia",
+  "Learning paths": "Rutas de aprendizaje",
+  "Recommended learning": "Aprendizaje recomendado",
+  Certificates: "Certificados",
+  Membership: "Membresía",
+  Notifications: "Notificaciones",
+};
 
 const dashboardIcons = {
   "advanced-chart": ChartNoAxesCombined,
@@ -33,37 +50,47 @@ const dashboardIcons = {
   webinar: Radio,
 } as const;
 
-export function DashboardSidebar() {
+export function DashboardSidebar({ locale = "en" }: { locale?: Locale }) {
+  const spanish = locale === "es";
   return (
     <aside
       className="dashboard-sidebar"
-      aria-label="Trader dashboard navigation"
+      aria-label={
+        spanish
+          ? "Navegación del panel de trading"
+          : "Trader dashboard navigation"
+      }
     >
       <div className="dashboard-sidebar-heading">
         <span className="dashboard-sidebar-mark" aria-hidden="true">
           DTP
         </span>
         <div>
-          <strong>Trader Dashboard</strong>
-          <span>Daily command center</span>
+          <strong>{spanish ? "Panel de trading" : "Trader Dashboard"}</strong>
+          <span>
+            {spanish ? "Centro de control diario" : "Daily command center"}
+          </span>
         </div>
       </div>
 
-      <nav aria-label="Dashboard sections">
+      <nav aria-label={spanish ? "Secciones del panel" : "Dashboard sections"}>
         {DASHBOARD_NAVIGATION.map(({ href, id, label }) => {
           const Icon = dashboardIcons[id];
           return (
-            <Link href={href} key={href}>
+            <Link href={localizeHref(href, locale)} key={href}>
               <Icon size={17} strokeWidth={1.8} aria-hidden="true" />
-              <span>{label}</span>
+              <span>{spanish ? (spanishLabels[label] ?? label) : label}</span>
             </Link>
           );
         })}
       </nav>
 
-      <Link href={ROUTES.account} className="dashboard-sidebar-account">
+      <Link
+        href={localizeHref(ROUTES.account, locale)}
+        className="dashboard-sidebar-account"
+      >
         <CircleUserRound size={18} aria-hidden="true" />
-        Account settings
+        {spanish ? "Configuración de la cuenta" : "Account settings"}
       </Link>
     </aside>
   );

@@ -19,6 +19,9 @@ export async function Header() {
     Analysis: "Análisis",
     Charts: "Gráficos",
     Calendar: "Calendario",
+    Dashboard: "Panel",
+    "AI Assistant": "Asistente con IA",
+    Watchlists: "Listas",
     Academy: "Academia",
     Premium: "Premium",
     Newsletter: "Boletín",
@@ -67,7 +70,7 @@ export async function Header() {
             <>
               <NotificationBell />
               <Link
-                href={ROUTES.account}
+                href={localizeHref(ROUTES.account, locale)}
                 className="account-link"
                 aria-label={`Account for ${user.email ?? "signed-in member"}`}
               >

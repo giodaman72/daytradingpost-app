@@ -32,28 +32,44 @@ import {
   getAcademyCourse,
   listUserEnrollments,
 } from "@/lib/academy/academyService";
+import { localizeHref } from "@/lib/i18n/config";
+import { getRequestLocale } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Trader Dashboard",
-  description:
-    "Your private DayTradingPost market outlook, research, watchlist, education and membership dashboard.",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  return {
+    title: locale === "es" ? "Panel de trading" : "Trader Dashboard",
+    description:
+      locale === "es"
+        ? "Tu panel privado de mercados, análisis, listas, formación y membresía."
+        : "Your private DayTradingPost market outlook, research, watchlist, education and membership dashboard.",
+    robots: { index: false, follow: false },
+  };
+}
 
-function marketDate() {
-  return new Intl.DateTimeFormat("en-US", {
+function marketDate(spanish: boolean) {
+  return new Intl.DateTimeFormat(spanish ? "es-ES" : "en-US", {
     dateStyle: "full",
     timeZone: "America/New_York",
   }).format(new Date());
 }
 
 export default async function DashboardPage() {
-  if (!isSupabaseAuthConfigured()) redirect("/login?next=/dashboard");
+  const locale = await getRequestLocale();
+  const spanish = locale === "es";
+  const dashboardPath = localizeHref("/dashboard", locale);
+  if (!isSupabaseAuthConfigured())
+    redirect(
+      `${localizeHref("/login", locale)}?next=${encodeURIComponent(dashboardPath)}`,
+    );
 
   const access = await getMembershipAccess();
   const { hasPremiumAccess, profile, user } = access;
 
-  if (!user) redirect("/login?next=/dashboard");
+  if (!user)
+    redirect(
+      `${localizeHref("/login", locale)}?next=${encodeURIComponent(dashboardPath)}`,
+    );
 
   const [
     articles,
@@ -105,18 +121,28 @@ export default async function DashboardPage() {
     <main className="dashboard-page">
       <Header />
       <div className="dashboard-shell">
-        <DashboardSidebar />
+        <DashboardSidebar locale={locale} />
 
         <div className="dashboard-main">
           <header className="dashboard-welcome">
             <div>
-              <span className="section-kicker">Private trader workspace</span>
-              <h1>Good to see you, {displayName}.</h1>
-              <p>{marketDate()} · New York market time</p>
+              <span className="section-kicker">
+                {spanish
+                  ? "Espacio privado de trading"
+                  : "Private trader workspace"}
+              </span>
+              <h1>
+                {spanish ? "Nos alegra verte" : "Good to see you"},{" "}
+                {displayName}.
+              </h1>
+              <p>
+                {marketDate(spanish)} ·{" "}
+                {spanish ? "Hora de Nueva York" : "New York market time"}
+              </p>
             </div>
             <div className="dashboard-session-status" role="status">
               <span aria-hidden="true" />
-              Dashboard connected
+              {spanish ? "Panel conectado" : "Dashboard connected"}
             </div>
           </header>
 
@@ -124,31 +150,41 @@ export default async function DashboardPage() {
             <ChartWidget
               instrument={watchlistInstruments[0] ?? null}
               quote={watchlistQuotes[0] ?? null}
+              locale={locale}
             />
             <AIAssistantWidget
               usage={assistantUsage}
               premium={hasPremiumAccess}
+              locale={locale}
             />
             <MarketOutlook
               outlooks={marketIntelligence}
               quotes={marketQuotes}
+              locale={locale}
             />
-            <LatestAnalysis articles={articles} />
-            <EconomicCalendar />
-            <WebinarWidget />
-            <Watchlist watchlist={defaultWatchlist} quotes={watchlistQuotes} />
-            <SmartAlerts alerts={alerts} />
+            <LatestAnalysis articles={articles} locale={locale} />
+            <EconomicCalendar locale={locale} />
+            <WebinarWidget locale={locale} />
+            <Watchlist
+              watchlist={defaultWatchlist}
+              quotes={watchlistQuotes}
+              locale={locale}
+            />
+            <SmartAlerts alerts={alerts} locale={locale} />
             <AcademyProgress
               courseTitle={academyCourse?.title}
               enrollment={academyEnrollment}
+              locale={locale}
             />
             <MembershipCard
               hasPremiumAccess={hasPremiumAccess}
               profile={profile}
+              locale={locale}
             />
             <Notifications
               notifications={notifications}
               unreadCount={unreadCount}
+              locale={locale}
             />
           </div>
         </div>

@@ -90,7 +90,7 @@ export async function updateSession(
 
   if (isAuthenticated && guestOnlyRoutes.includes(pathname)) {
     const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/account";
+    redirectUrl.pathname = `${options.localePrefix ?? ""}/account`;
     redirectUrl.search = "";
     return NextResponse.redirect(redirectUrl);
   }

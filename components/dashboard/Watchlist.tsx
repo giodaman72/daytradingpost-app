@@ -3,18 +3,24 @@ import { getInstrument } from "@/constants/instruments";
 import type { MarketQuote } from "@/types/market-data";
 import type { WatchlistWithItems } from "@/types/watchlist";
 import { DashboardPanel } from "./DashboardPanel";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 export function Watchlist({
   watchlist,
   quotes,
+  locale = "en",
 }: {
   watchlist: WatchlistWithItems | null;
   quotes: MarketQuote[];
+  locale?: Locale;
 }) {
+  const spanish = locale === "es";
   return (
     <DashboardPanel
       id="watchlist"
-      eyebrow="Default watchlist"
-      title={watchlist?.name ?? "Watchlist"}
+      eyebrow={spanish ? "Lista predeterminada" : "Default watchlist"}
+      title={
+        watchlist?.name ?? (spanish ? "Lista de seguimiento" : "Watchlist")
+      }
     >
       {watchlist?.items.length ? (
         <ul className="dashboard-watchlist">
@@ -29,14 +35,21 @@ export function Watchlist({
                   <strong>{instrument?.name ?? item.instrumentSlug}</strong>
                   <span>{instrument?.symbol}</span>
                 </div>
-                <span>{quote?.price ?? "Unavailable"}</span>
+                <span>
+                  {quote?.price ?? (spanish ? "No disponible" : "Unavailable")}
+                </span>
                 <span className="watchlist-status">
                   <i aria-hidden="true" />
                   {quote?.delayed
-                    ? "Delayed"
+                    ? spanish
+                      ? "Con retraso"
+                      : "Delayed"
                     : quote?.simulated
-                      ? "Simulated"
-                      : (quote?.marketStatus ?? "Tracking")}
+                      ? spanish
+                        ? "Simulado"
+                        : "Simulated"
+                      : (quote?.marketStatus ??
+                        (spanish ? "En seguimiento" : "Tracking"))}
                 </span>
               </li>
             );
@@ -44,17 +57,26 @@ export function Watchlist({
         </ul>
       ) : (
         <div className="dashboard-empty">
-          <p>Your default watchlist is empty.</p>
+          <p>
+            {spanish
+              ? "Tu lista de seguimiento predeterminada está vacía."
+              : "Your default watchlist is empty."}
+          </p>
         </div>
       )}
       <p className="dashboard-data-note">
-        Verified provider snapshots only · Editorial outlooks remain separate
+        {spanish
+          ? "Solo datos verificados del proveedor · Las perspectivas editoriales permanecen separadas"
+          : "Verified provider snapshots only · Editorial outlooks remain separate"}
       </p>
       <Link
-        href={watchlist ? `/watchlists/${watchlist.id}` : "/watchlists"}
+        href={localizeHref(
+          watchlist ? `/watchlists/${watchlist.id}` : "/watchlists",
+          locale,
+        )}
         className="text-link"
       >
-        Manage watchlists →
+        {spanish ? "Gestionar listas" : "Manage watchlists"} →
       </Link>
     </DashboardPanel>
   );

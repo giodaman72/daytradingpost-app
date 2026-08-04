@@ -263,7 +263,7 @@ export function AuthForm({
           >
             {state.message}
             {mode === "reset" && state.status === "success" ? (
-              <Link href="/account">
+              <Link href={localizeHref("/account", locale)}>
                 {spanish ? "Continuar a la cuenta →" : "Continue to account →"}
               </Link>
             ) : null}

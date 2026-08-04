@@ -8,17 +8,29 @@ import { WatchlistGrid } from "@/components/watchlists/WatchlistGrid";
 import { getMembershipAccess } from "@/lib/membership/access";
 import { getUserWatchlists } from "@/lib/watchlists";
 import { getSmartFeatureLimits } from "@/constants/smart-alerts";
-export const metadata: Metadata = {
-  title: "Watchlists",
-  robots: { index: false, follow: false },
-};
+import { localizeHref } from "@/lib/i18n/config";
+import { getRequestLocale } from "@/lib/i18n/server";
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  return {
+    title: locale === "es" ? "Listas de seguimiento" : "Watchlists",
+    robots: { index: false, follow: false },
+  };
+}
 export default async function WatchlistsPage({
   searchParams,
 }: {
   searchParams: Promise<{ notice?: string; error?: string }>;
 }) {
+  const locale = await getRequestLocale();
+  const spanish = locale === "es";
   const access = await getMembershipAccess();
-  if (!access.user) redirect("/login?next=/watchlists");
+  if (!access.user)
+    redirect(
+      `${localizeHref("/login", locale)}?next=${encodeURIComponent(
+        localizeHref("/watchlists", locale),
+      )}`,
+    );
   const [watchlists, query] = await Promise.all([
     getUserWatchlists(),
     searchParams,
@@ -29,11 +41,16 @@ export default async function WatchlistsPage({
       <Header />
       <section className="smart-hero">
         <div className="container">
-          <span className="section-kicker">Private market workspace</span>
-          <h1>Watchlists</h1>
+          <span className="section-kicker">
+            {spanish
+              ? "Espacio privado de mercados"
+              : "Private market workspace"}
+          </span>
+          <h1>{spanish ? "Listas de seguimiento" : "Watchlists"}</h1>
           <p>
-            Keep verified market data and editorial intelligence separate while
-            following the instruments that matter to you.
+            {spanish
+              ? "Mantén separados los datos verificados y la inteligencia editorial mientras sigues los instrumentos que te importan."
+              : "Keep verified market data and editorial intelligence separate while following the instruments that matter to you."}
           </p>
         </div>
       </section>
@@ -42,9 +59,10 @@ export default async function WatchlistsPage({
           <div>
             <div className="smart-heading">
               <div>
-                <h2>Your watchlists</h2>
+                <h2>{spanish ? "Tus listas" : "Your watchlists"}</h2>
                 <p>
-                  {watchlists.length} of {limits.watchlists} available
+                  {watchlists.length} {spanish ? "de" : "of"}{" "}
+                  {limits.watchlists} {spanish ? "disponibles" : "available"}
                 </p>
               </div>
             </div>
@@ -61,12 +79,18 @@ export default async function WatchlistsPage({
             <WatchlistGrid watchlists={watchlists} />
           </div>
           <aside className="smart-aside">
-            <h2>Create watchlist</h2>
+            <h2>{spanish ? "Crear lista" : "Create watchlist"}</h2>
             <CreateWatchlistForm />
             {!access.hasPremiumAccess ? (
               <p className="smart-upgrade">
-                Free members can create one watchlist with five instruments.{" "}
-                <Link href="/premium">Upgrade for higher limits.</Link>
+                {spanish
+                  ? "Los miembros gratuitos pueden crear una lista con cinco instrumentos. "
+                  : "Free members can create one watchlist with five instruments. "}
+                <Link href={localizeHref("/premium", locale)}>
+                  {spanish
+                    ? "Mejora tu plan para obtener límites mayores."
+                    : "Upgrade for higher limits."}
+                </Link>
               </p>
             ) : null}
           </aside>

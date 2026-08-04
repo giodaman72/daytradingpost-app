@@ -3,6 +3,7 @@ import { initialAuthState } from "@/lib/validation/auth";
 
 const mocks = vi.hoisted(() => ({
   redirect: vi.fn(),
+  signInWithPassword: vi.fn(),
   signUp: vi.fn(),
 }));
 
@@ -23,10 +24,15 @@ vi.mock("@/lib/supabase/config", () => ({
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(async () => ({ auth: { signUp: mocks.signUp } })),
+  createClient: vi.fn(async () => ({
+    auth: {
+      signInWithPassword: mocks.signInWithPassword,
+      signUp: mocks.signUp,
+    },
+  })),
 }));
 
-import { registerAction } from "./actions";
+import { loginAction, registerAction } from "./actions";
 
 function registrationForm(locale?: string) {
   const formData = new FormData();
@@ -38,10 +44,24 @@ function registrationForm(locale?: string) {
   return formData;
 }
 
+function loginForm(locale?: string, next?: string) {
+  const formData = new FormData();
+  formData.set("email", "maria@example.com");
+  formData.set("password", "secure-password");
+  if (locale) formData.set("locale", locale);
+  if (next) formData.set("next", next);
+  return formData;
+}
+
 describe("registration confirmation locale", () => {
   beforeEach(() => {
     mocks.redirect.mockReset();
+    mocks.signInWithPassword.mockReset();
     mocks.signUp.mockReset();
+    mocks.signInWithPassword.mockResolvedValue({
+      data: { user: { user_metadata: { language: "en" } } },
+      error: null,
+    });
     mocks.signUp.mockResolvedValue({ data: { session: null }, error: null });
   });
 
@@ -57,7 +77,7 @@ describe("registration confirmation locale", () => {
       options: {
         data: { full_name: "María Trader", language: "es" },
         emailRedirectTo:
-          "https://daytradingpost.test/auth/callback?next=/account",
+          "https://daytradingpost.test/auth/callback?next=%2Fes%2Faccount",
       },
     });
     expect(result).toEqual({
@@ -77,5 +97,22 @@ describe("registration confirmation locale", () => {
         }),
       }),
     );
+  });
+
+  it("keeps Spanish-created users in Spanish member routes after login", async () => {
+    mocks.signInWithPassword.mockResolvedValue({
+      data: { user: { user_metadata: { language: "es" } } },
+      error: null,
+    });
+
+    await loginAction(initialAuthState, loginForm("en", "/dashboard"));
+
+    expect(mocks.redirect).toHaveBeenCalledWith("/es/dashboard");
+  });
+
+  it("honors the Spanish login route for any member", async () => {
+    await loginAction(initialAuthState, loginForm("es", "/account/billing"));
+
+    expect(mocks.redirect).toHaveBeenCalledWith("/es/account/billing");
   });
 });

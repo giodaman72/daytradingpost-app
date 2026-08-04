@@ -17,7 +17,7 @@ describe("email OTP routing", () => {
     expect(getEmailOtpSuccessPath("recovery")).toBe("/reset-password");
     expect(getEmailOtpSuccessPath("recovery", "es")).toBe("/es/reset-password");
     expect(getEmailOtpSuccessPath("email")).toBe("/account");
-    expect(getEmailOtpSuccessPath("email", "es")).toBe("/account");
+    expect(getEmailOtpSuccessPath("email", "es")).toBe("/es/account");
   });
 
   it("returns an actionable retry destination for invalid links", () => {

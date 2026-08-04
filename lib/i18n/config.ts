@@ -7,20 +7,26 @@ export const SPANISH_PREFIX = "/es";
 
 const SPANISH_PUBLIC_PATHS = [
   "/about",
+  "/account",
   "/academy",
+  "/alerts",
   "/analysis",
+  "/assistant",
   "/auth",
   "/charts",
   "/contact",
+  "/dashboard",
   "/economic-calendar",
   "/forgot-password",
   "/login",
   "/markets",
+  "/membership",
   "/premium",
   "/privacy",
   "/register",
   "/reset-password",
   "/terms",
+  "/watchlists",
   "/webinars",
 ] as const;
 

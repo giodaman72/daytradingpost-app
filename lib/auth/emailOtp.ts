@@ -15,7 +15,7 @@ export function getEmailOtpSuccessPath(
 ) {
   return type === "recovery"
     ? localizeHref("/reset-password", locale)
-    : "/account";
+    : localizeHref("/account", locale);
 }
 
 export function getEmailOtpFailurePath(
