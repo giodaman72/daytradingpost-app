@@ -2,37 +2,61 @@ import Link from "next/link";
 import type { Alert } from "@/types/alert";
 import { DashboardPanel } from "./DashboardPanel";
 import { AlertStatusBadge } from "@/components/alerts/AlertStatusBadge";
-export function SmartAlerts({ alerts }: { alerts: Alert[] }) {
+import { localizeHref, type Locale } from "@/lib/i18n/config";
+export function SmartAlerts({
+  alerts,
+  locale = "en",
+}: {
+  alerts: Alert[];
+  locale?: Locale;
+}) {
+  const spanish = locale === "es";
   const active = alerts.filter((item) => item.status === "active");
   const recent = alerts.filter((item) => item.lastTriggeredAt).slice(0, 3);
   return (
     <DashboardPanel
       id="smart-alerts"
-      eyebrow={`${active.length} active`}
-      title="Smart alerts"
-      action={<Link href="/alerts/new">Quick create</Link>}
+      eyebrow={`${active.length} ${spanish ? "activas" : "active"}`}
+      title={spanish ? "Alertas inteligentes" : "Smart alerts"}
+      action={
+        <Link href={localizeHref("/alerts/new", locale)}>
+          {spanish ? "Creación rápida" : "Quick create"}
+        </Link>
+      }
     >
       <div className="dashboard-alert-summary">
         <strong>{active.length}</strong>
-        <span>conditions evaluated server-side</span>
+        <span>
+          {spanish
+            ? "condiciones evaluadas en el servidor"
+            : "conditions evaluated server-side"}
+        </span>
       </div>
       {recent.length ? (
         <ul>
           {recent.map((alert) => (
             <li key={alert.id}>
               <AlertStatusBadge status={alert.status} />
-              <Link href={`/alerts/${alert.id}`}>{alert.name}</Link>
+              <Link href={localizeHref(`/alerts/${alert.id}`, locale)}>
+                {alert.name}
+              </Link>
               <time dateTime={alert.lastTriggeredAt!}>
-                {new Date(alert.lastTriggeredAt!).toLocaleDateString("en-US")}
+                {new Date(alert.lastTriggeredAt!).toLocaleDateString(
+                  spanish ? "es-ES" : "en-US",
+                )}
               </time>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No recently triggered alerts.</p>
+        <p>
+          {spanish
+            ? "No hay alertas activadas recientemente."
+            : "No recently triggered alerts."}
+        </p>
       )}
-      <Link className="text-link" href="/alerts">
-        Manage alerts →
+      <Link className="text-link" href={localizeHref("/alerts", locale)}>
+        {spanish ? "Gestionar alertas" : "Manage alerts"} →
       </Link>
     </DashboardPanel>
   );

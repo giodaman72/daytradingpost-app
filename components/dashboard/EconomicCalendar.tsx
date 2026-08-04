@@ -9,8 +9,10 @@ import {
 } from "@/lib/economic/economicService";
 import { DashboardPanel } from "./DashboardPanel";
 import { DashboardEmptyState } from "./DashboardEmptyState";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 
-export async function EconomicCalendar() {
+export async function EconomicCalendar({ locale = "en" }: { locale?: Locale }) {
+  const spanish = locale === "es";
   const [today, tomorrow, week, upcoming, recent] = await Promise.all([
     getEconomicToday(),
     getEconomicTomorrow(),
@@ -19,25 +21,30 @@ export async function EconomicCalendar() {
     getRecentEconomicReleases(4),
   ]);
   const groups = [
-    ["Today’s events", today.events],
-    ["Tomorrow", tomorrow.events],
-    ["This week", week.events],
+    [spanish ? "Eventos de hoy" : "Today’s events", today.events],
+    [spanish ? "Mañana" : "Tomorrow", tomorrow.events],
+    [spanish ? "Esta semana" : "This week", week.events],
     [
-      "Upcoming high impact",
+      spanish ? "Próximos de alto impacto" : "Upcoming high impact",
       upcoming.events.filter((event) => event.impact === "high"),
     ],
-    ["Recently released", recent.events],
+    [spanish ? "Publicados recientemente" : "Recently released", recent.events],
   ] as const;
   const hasEvents = groups.some(([, events]) => events.length);
   return (
     <DashboardPanel
       id="economic-calendar"
-      eyebrow="Scheduled market risk"
-      title="Economic Intelligence"
+      eyebrow={
+        spanish ? "Riesgo programado de mercado" : "Scheduled market risk"
+      }
+      title={spanish ? "Inteligencia económica" : "Economic Intelligence"}
       className="dashboard-panel-wide"
       action={
-        <Link href="/economic-calendar" className="dashboard-panel-link">
-          Full calendar →
+        <Link
+          href={localizeHref("/economic-calendar", locale)}
+          className="dashboard-panel-link"
+        >
+          {spanish ? "Calendario completo" : "Full calendar"} →
         </Link>
       }
     >
@@ -49,21 +56,40 @@ export async function EconomicCalendar() {
               {events.length ? (
                 <div className="economic-card-grid">
                   {events
-                    .slice(0, label === "This week" ? 4 : 2)
+                    .slice(
+                      0,
+                      label === (spanish ? "Esta semana" : "This week") ? 4 : 2,
+                    )
                     .map((event) => (
-                      <EconomicCard event={event} key={event.id} />
+                      <EconomicCard
+                        event={event}
+                        key={event.id}
+                        locale={locale}
+                      />
                     ))}
                 </div>
               ) : (
-                <p>No verified events.</p>
+                <p>
+                  {spanish
+                    ? "No hay eventos verificados."
+                    : "No verified events."}
+                </p>
               )}
             </section>
           ))}
         </div>
       ) : (
         <DashboardEmptyState
-          title="No verified economic events"
-          description="Connect a production provider or explicitly enable the simulated development calendar outside production."
+          title={
+            spanish
+              ? "No hay eventos económicos verificados"
+              : "No verified economic events"
+          }
+          description={
+            spanish
+              ? "Conecta un proveedor de producción o activa explícitamente el calendario simulado fuera de producción."
+              : "Connect a production provider or explicitly enable the simulated development calendar outside production."
+          }
         />
       )}
     </DashboardPanel>

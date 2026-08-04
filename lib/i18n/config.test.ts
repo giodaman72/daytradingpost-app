@@ -15,11 +15,17 @@ describe("public locale routing", () => {
     expect(localizeHref("/academy/courses/risk", "es")).toBe(
       "/es/academy/courses/risk",
     );
+    expect(localizeHref("/auth/verify?type=email", "es")).toBe(
+      "/es/auth/verify?type=email",
+    );
   });
 
-  it("keeps member-only and API routes on their existing URLs", () => {
-    expect(localizeHref("/dashboard", "es")).toBe("/dashboard");
-    expect(localizeHref("/assistant", "es")).toBe("/assistant");
+  it("prefixes Spanish member routes and keeps API routes unchanged", () => {
+    expect(localizeHref("/account", "es")).toBe("/es/account");
+    expect(localizeHref("/dashboard", "es")).toBe("/es/dashboard");
+    expect(localizeHref("/assistant", "es")).toBe("/es/assistant");
+    expect(localizeHref("/watchlists", "es")).toBe("/es/watchlists");
+    expect(localizeHref("/alerts/new", "es")).toBe("/es/alerts/new");
     expect(localizeHref("/api/charts/bars", "es")).toBe("/api/charts/bars");
   });
 
@@ -34,7 +40,9 @@ describe("public locale routing", () => {
   it("identifies only the supported public Spanish route surface", () => {
     expect(isSpanishPublicPath("/es/charts/xauusd")).toBe(true);
     expect(isSpanishPublicPath("/academy/learning-paths")).toBe(true);
-    expect(isSpanishPublicPath("/dashboard")).toBe(false);
+    expect(isSpanishPublicPath("/es/auth/verify")).toBe(true);
+    expect(isSpanishPublicPath("/dashboard")).toBe(true);
+    expect(isSpanishPublicPath("/es/account/billing")).toBe(true);
   });
 
   it("publishes English, Spanish, and default alternates", () => {

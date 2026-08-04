@@ -4,6 +4,12 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getSafeNextPath } from "@/lib/auth/redirects";
 import {
+  DEFAULT_LOCALE,
+  isLocale,
+  localizeHref,
+  type Locale,
+} from "@/lib/i18n/config";
+import {
   normalizeEmail,
   normalizeName,
   readPassword,
@@ -32,10 +38,19 @@ async function getRequestOrigin() {
   return host ? `${protocol}://${host}` : "http://localhost:3000";
 }
 
+function getFormLocale(formData: FormData): Locale {
+  const locale = formData.get("locale");
+  return typeof locale === "string" && isLocale(locale)
+    ? locale
+    : DEFAULT_LOCALE;
+}
+
 export async function loginAction(
   _previousState: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  const locale = getFormLocale(formData);
+  const spanish = locale === "es";
   const email = normalizeEmail(formData.get("email"));
   const password = readPassword(formData.get("password"));
   const fieldErrors = {
@@ -46,7 +61,9 @@ export async function loginAction(
   if (fieldErrors.email || fieldErrors.password) {
     return {
       status: "error",
-      message: "Check the highlighted fields and try again.",
+      message: spanish
+        ? "Revisa los campos resaltados e inténtalo de nuevo."
+        : "Check the highlighted fields and try again.",
       fieldErrors,
     };
   }
@@ -54,22 +71,34 @@ export async function loginAction(
   if (!isSupabaseAuthConfigured()) return configurationError();
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
   if (error) {
     return {
       status: "error",
-      message: "The email or password is incorrect.",
+      message: spanish
+        ? "El correo electrónico o la contraseña son incorrectos."
+        : "The email or password is incorrect.",
     };
   }
 
-  redirect(getSafeNextPath(formData.get("next")));
+  const storedLanguage = data.user?.user_metadata.language;
+  const destinationLocale: Locale =
+    locale === "es" || storedLanguage === "es" ? "es" : DEFAULT_LOCALE;
+  redirect(
+    localizeHref(getSafeNextPath(formData.get("next")), destinationLocale),
+  );
 }
 
 export async function registerAction(
   _previousState: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  const locale = getFormLocale(formData);
+  const spanish = locale === "es";
   const fullName = normalizeName(formData.get("fullName"));
   const email = normalizeEmail(formData.get("email"));
   const password = readPassword(formData.get("password"));
@@ -88,7 +117,9 @@ export async function registerAction(
   if (Object.values(fieldErrors).some(Boolean)) {
     return {
       status: "error",
-      message: "Check the highlighted fields and try again.",
+      message: spanish
+        ? "Revisa los campos resaltados e inténtalo de nuevo."
+        : "Check the highlighted fields and try again.",
       fieldErrors,
     };
   }
@@ -101,8 +132,10 @@ export async function registerAction(
     email,
     password,
     options: {
-      data: { full_name: fullName },
-      emailRedirectTo: `${origin}/auth/callback?next=/account`,
+      data: { full_name: fullName, language: locale },
+      emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(
+        localizeHref("/account", locale),
+      )}`,
     },
   });
 
@@ -111,19 +144,24 @@ export async function registerAction(
       status: "error",
       message:
         error.message === "User already registered"
-          ? "An account already exists for this email."
-          : "We could not create your account. Please try again.",
+          ? spanish
+            ? "Ya existe una cuenta con este correo electrónico."
+            : "An account already exists for this email."
+          : spanish
+            ? "No pudimos crear tu cuenta. Inténtalo de nuevo."
+            : "We could not create your account. Please try again.",
     };
   }
 
   if (data.session) {
-    redirect("/account");
+    redirect(localizeHref("/account", locale));
   }
 
   return {
     status: "success",
-    message:
-      "Check your inbox and confirm your email address to activate your account.",
+    message: spanish
+      ? "Revisa tu bandeja de entrada y confirma tu correo electrónico para activar la cuenta."
+      : "Check your inbox and confirm your email address to activate your account.",
   };
 }
 
@@ -204,11 +242,12 @@ export async function resetPasswordAction(
   };
 }
 
-export async function logoutAction() {
+export async function logoutAction(formData?: FormData) {
+  const locale = formData ? getFormLocale(formData) : DEFAULT_LOCALE;
   if (isSupabaseAuthConfigured()) {
     const supabase = await createClient();
     await supabase.auth.signOut();
   }
 
-  redirect("/login");
+  redirect(localizeHref("/login", locale));
 }

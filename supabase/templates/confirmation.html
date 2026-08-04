@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="{{ .Data.language }}">
+  <body
+    style="
+      background: #08111f;
+      color: #e8eef8;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    "
+  >
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      style="background: #08111f; padding: 32px 16px"
+    >
+      <tr>
+        <td align="center">
+          <table
+            role="presentation"
+            width="100%"
+            cellspacing="0"
+            cellpadding="0"
+            style="
+              background: #101c2e;
+              border: 1px solid #263853;
+              border-radius: 14px;
+              max-width: 560px;
+              padding: 36px;
+            "
+          >
+            <tr>
+              <td>
+                <p
+                  style="
+                    color: #d6aa43;
+                    font-size: 13px;
+                    font-weight: 700;
+                    letter-spacing: 0.12em;
+                    margin: 0 0 18px;
+                    text-transform: uppercase;
+                  "
+                >
+                  DayTradingPost
+                </p>
+                {{ if eq .Data.language "es" }}
+                <h1
+                  style="
+                    color: #fff;
+                    font-size: 28px;
+                    line-height: 1.25;
+                    margin: 0 0 16px;
+                  "
+                >
+                  Confirma tu correo electrónico
+                </h1>
+                <p
+                  style="
+                    color: #c4cfdd;
+                    font-size: 16px;
+                    line-height: 1.65;
+                    margin: 0 0 24px;
+                  "
+                >
+                  Gracias por crear tu cuenta. Confirma este correo electrónico
+                  para activar tu acceso seguro a DayTradingPost.
+                </p>
+                <p style="margin: 0 0 26px">
+                  <a
+                    href="{{ .SiteURL }}/es/auth/verify?token_hash={{ .TokenHash }}&amp;type=email"
+                    style="
+                      background: #d6aa43;
+                      border-radius: 8px;
+                      color: #08111f;
+                      display: inline-block;
+                      font-size: 16px;
+                      font-weight: 700;
+                      padding: 14px 22px;
+                      text-decoration: none;
+                    "
+                    >Confirmar correo electrónico</a
+                  >
+                </p>
+                <p
+                  style="
+                    color: #91a0b5;
+                    font-size: 13px;
+                    line-height: 1.6;
+                    margin: 0 0 8px;
+                  "
+                >
+                  Por seguridad, el enlace abre una página donde deberás pulsar
+                  un botón para completar la confirmación.
+                </p>
+                <p
+                  style="
+                    color: #91a0b5;
+                    font-size: 13px;
+                    line-height: 1.6;
+                    margin: 0;
+                  "
+                >
+                  Si no creaste esta cuenta, puedes ignorar este mensaje.
+                </p>
+                {{ else }}
+                <h1
+                  style="
+                    color: #fff;
+                    font-size: 28px;
+                    line-height: 1.25;
+                    margin: 0 0 16px;
+                  "
+                >
+                  Confirm your email address
+                </h1>
+                <p
+                  style="
+                    color: #c4cfdd;
+                    font-size: 16px;
+                    line-height: 1.65;
+                    margin: 0 0 24px;
+                  "
+                >
+                  Thanks for creating your account. Confirm this email address
+                  to activate secure access to DayTradingPost.
+                </p>
+                <p style="margin: 0 0 26px">
+                  <a
+                    href="{{ .SiteURL }}/auth/verify?token_hash={{ .TokenHash }}&amp;type=email"
+                    style="
+                      background: #d6aa43;
+                      border-radius: 8px;
+                      color: #08111f;
+                      display: inline-block;
+                      font-size: 16px;
+                      font-weight: 700;
+                      padding: 14px 22px;
+                      text-decoration: none;
+                    "
+                    >Confirm email address</a
+                  >
+                </p>
+                <p
+                  style="
+                    color: #91a0b5;
+                    font-size: 13px;
+                    line-height: 1.6;
+                    margin: 0 0 8px;
+                  "
+                >
+                  For security, the link opens a page where you must press a
+                  button to complete confirmation.
+                </p>
+                <p
+                  style="
+                    color: #91a0b5;
+                    font-size: 13px;
+                    line-height: 1.6;
+                    margin: 0;
+                  "
+                >
+                  If you did not create this account, you can ignore this
+                  message.
+                </p>
+                {{ end }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

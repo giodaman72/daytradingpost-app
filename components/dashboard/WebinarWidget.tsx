@@ -1,28 +1,38 @@
 import Link from "next/link";
 import { Video } from "lucide-react";
 import { DashboardPanel } from "./DashboardPanel";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 
-export function WebinarWidget() {
+export function WebinarWidget({ locale = "en" }: { locale?: Locale }) {
+  const spanish = locale === "es";
   return (
     <DashboardPanel
       id="webinar"
-      eyebrow="Live education"
-      title="Webinar Widget"
+      eyebrow={spanish ? "Formación en directo" : "Live education"}
+      title={spanish ? "Webinars" : "Webinar Widget"}
     >
       <div className="dashboard-webinar-card">
         <span className="dashboard-webinar-icon">
           <Video size={23} aria-hidden="true" />
         </span>
         <div>
-          <span>Next session</span>
-          <h3>Weekly Market Planning Room</h3>
+          <span>{spanish ? "Próxima sesión" : "Next session"}</span>
+          <h3>
+            {spanish
+              ? "Sala semanal de planificación de mercados"
+              : "Weekly Market Planning Room"}
+          </h3>
           <p>
-            The webinar calendar is being prepared. New sessions will appear
-            here when scheduled.
+            {spanish
+              ? "El calendario de webinars se está preparando. Las nuevas sesiones aparecerán aquí cuando se programen."
+              : "The webinar calendar is being prepared. New sessions will appear here when scheduled."}
           </p>
         </div>
-        <Link href="/webinars" className="button button-secondary">
-          View webinars
+        <Link
+          href={localizeHref("/webinars", locale)}
+          className="button button-secondary"
+        >
+          {spanish ? "Ver webinars" : "View webinars"}
         </Link>
       </div>
     </DashboardPanel>
