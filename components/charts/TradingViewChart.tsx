@@ -47,8 +47,13 @@ export function TradingViewChart({
       );
     return () => {
       active = false;
-      widget?.remove?.();
-      document.getElementById(id)?.replaceChildren();
+      const container = document.getElementById(id);
+      if (!container?.isConnected) return;
+      try {
+        widget?.remove?.();
+      } catch {
+        container.replaceChildren();
+      }
     };
   }, [id, locale, symbol, timeframe]);
   if (error)
