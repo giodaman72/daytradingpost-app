@@ -109,8 +109,8 @@ export const INSTRUMENTS = [
     "USD",
     4,
     "metals",
-    "COMEX:HG1!",
-    "COMEX",
+    "CAPITALCOM:COPPER",
+    "CAPITALCOM",
   ],
   [
     "bitcoin",
