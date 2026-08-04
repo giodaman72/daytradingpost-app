@@ -10,7 +10,7 @@ export function LanguageSwitcher({
   pathname: string;
 }) {
   const targetLocale = locale === "es" ? "en" : "es";
-  const label = targetLocale === "es" ? "Español" : "English";
+  const label = targetLocale === "es" ? "Español" : "Inglés";
 
   return (
     <Link
@@ -21,7 +21,7 @@ export function LanguageSwitcher({
       aria-label={
         targetLocale === "es"
           ? "Ver esta página en español"
-          : "View this page in English"
+          : "Ver esta página en inglés"
       }
     >
       {label}
