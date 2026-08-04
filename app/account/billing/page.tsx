@@ -6,7 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate, formatDisplayLabel } from "@/lib/utils";
+import { formatDate, formatLocalizedDisplayLabel } from "@/lib/utils";
 import type { MembershipRequest } from "@/types/membership";
 import type { BillingProfile } from "@/types/profile";
 import { localizeHref } from "@/lib/i18n/config";
@@ -92,7 +92,10 @@ export default async function AccountBillingPage() {
               <span
                 className={`membership-status-badge status-${profile?.membership_status || "free"}`}
               >
-                {formatDisplayLabel(profile?.membership_status || "free")}
+                {formatLocalizedDisplayLabel(
+                  profile?.membership_status || "free",
+                  { locale },
+                )}
               </span>
             </div>
 
@@ -100,11 +103,16 @@ export default async function AccountBillingPage() {
               <article>
                 <span>{spanish ? "Plan actual" : "Current plan"}</span>
                 <strong>
-                  {formatDisplayLabel(profile?.membership_plan || "free")}
+                  {formatLocalizedDisplayLabel(
+                    profile?.membership_plan || "free",
+                    { locale },
+                  )}
                 </strong>
                 <p>
                   {spanish ? "Proveedor de pago" : "Payment provider"}:{" "}
-                  {formatDisplayLabel(profile?.payment_provider)}
+                  {formatLocalizedDisplayLabel(profile?.payment_provider, {
+                    locale,
+                  })}
                 </p>
               </article>
               <article>
@@ -186,7 +194,9 @@ export default async function AccountBillingPage() {
                     <li key={item.id}>
                       <div>
                         <strong>
-                          {formatDisplayLabel(item.membership_plan)}
+                          {formatLocalizedDisplayLabel(item.membership_plan, {
+                            locale,
+                          })}
                         </strong>
                         <span>
                           {formatDate(item.created_at, {
@@ -198,7 +208,7 @@ export default async function AccountBillingPage() {
                       <span
                         className={`membership-status-badge status-${item.status}`}
                       >
-                        {formatDisplayLabel(item.status)}
+                        {formatLocalizedDisplayLabel(item.status, { locale })}
                       </span>
                     </li>
                   ))}

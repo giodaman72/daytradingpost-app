@@ -6,7 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate, formatDisplayLabel } from "@/lib/utils";
+import { formatDate, formatLocalizedDisplayLabel } from "@/lib/utils";
 import { localizeHref } from "@/lib/i18n/config";
 import { getRequestLocale } from "@/lib/i18n/server";
 import type { Profile } from "@/types/profile";
@@ -98,10 +98,10 @@ export default async function AccountPage() {
                   {spanish ? "Estado de membresía" : "Membership status"}
                 </span>
                 <strong>
-                  {formatDisplayLabel(
-                    data?.membership_status,
-                    spanish ? "Gratis" : "Free",
-                  )}
+                  {formatLocalizedDisplayLabel(data?.membership_status, {
+                    fallback: spanish ? "Gratis" : "Free",
+                    locale,
+                  })}
                 </strong>
                 <p>
                   {spanish
@@ -112,10 +112,10 @@ export default async function AccountPage() {
               <article>
                 <span>{spanish ? "Plan de membresía" : "Membership plan"}</span>
                 <strong>
-                  {formatDisplayLabel(
-                    data?.membership_plan,
-                    spanish ? "Gratis" : "Free",
-                  )}
+                  {formatLocalizedDisplayLabel(data?.membership_plan, {
+                    fallback: spanish ? "Gratis" : "Free",
+                    locale,
+                  })}
                 </strong>
                 <p>
                   {spanish

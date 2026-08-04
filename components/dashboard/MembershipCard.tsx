@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Check, Crown } from "lucide-react";
-import { formatDisplayLabel } from "@/lib/utils";
+import { formatLocalizedDisplayLabel } from "@/lib/utils";
 import type { BillingProfile } from "@/types/profile";
 import { DashboardPanel } from "./DashboardPanel";
 import { localizeHref, type Locale } from "@/lib/i18n/config";
@@ -50,14 +50,20 @@ export function MembershipCard({
           <div>
             <strong>{membershipTitle}</strong>
             <p>
-              {formatDisplayLabel(
-                profile?.membership_plan,
-                spanish ? "Gratis" : "Free",
-              )}{" "}
-              {spanish ? "plan" : "plan"}
+              {spanish ? "Plan" : null}{" "}
+              {formatLocalizedDisplayLabel(profile?.membership_plan, {
+                fallback: spanish ? "Gratis" : "Free",
+                locale,
+              })}{" "}
+              {spanish ? null : "plan"}
             </p>
           </div>
-          <b>{formatDisplayLabel(accessStatus, "Free")}</b>
+          <b>
+            {formatLocalizedDisplayLabel(accessStatus, {
+              fallback: spanish ? "Gratis" : "Free",
+              locale,
+            })}
+          </b>
         </div>
         <ul>
           <li>
