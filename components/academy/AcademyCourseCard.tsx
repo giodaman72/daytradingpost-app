@@ -3,18 +3,30 @@ import Link from "next/link";
 import { Clock3, Crown, Gauge, GraduationCap } from "lucide-react";
 import type { AcademyCourse } from "@/types/academy";
 import { formatAcademyDuration } from "@/lib/academy/academyPresentation";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 
 type AcademyCourseCardProps = {
   course: AcademyCourse;
+  locale?: Locale;
 };
 
-export function AcademyCourseCard({ course }: AcademyCourseCardProps) {
+export function AcademyCourseCard({
+  course,
+  locale = "en",
+}: AcademyCourseCardProps) {
+  const spanish = locale === "es";
+  const courseHref = localizeHref(`/academy/courses/${course.slug}`, locale);
+  const difficultyLabels: Record<string, string> = {
+    beginner: "principiante",
+    intermediate: "intermedio",
+    advanced: "avanzado",
+  };
   return (
     <article className="academy-course-card">
       <Link
-        href={`/academy/courses/${course.slug}`}
+        href={courseHref}
         className="academy-course-card-media"
-        aria-label={`View ${course.title}`}
+        aria-label={spanish ? `Ver ${course.title}` : `View ${course.title}`}
       >
         {course.coverImage?.url ? (
           <Image
@@ -32,14 +44,18 @@ export function AcademyCourseCard({ course }: AcademyCourseCardProps) {
           {course.accessLevel === "premium" ? (
             <Crown size={12} aria-hidden="true" />
           ) : null}
-          {course.accessLevel}
+          {course.accessLevel === "free" && spanish
+            ? "gratis"
+            : course.accessLevel}
         </span>
       </Link>
       <div className="academy-course-card-content">
         <div className="academy-course-meta">
           <span>
             <Gauge size={13} aria-hidden="true" />
-            {course.difficulty}
+            {spanish
+              ? (difficultyLabels[course.difficulty] ?? course.difficulty)
+              : course.difficulty}
           </span>
           <span>
             <Clock3 size={13} aria-hidden="true" />
@@ -47,16 +63,22 @@ export function AcademyCourseCard({ course }: AcademyCourseCardProps) {
           </span>
         </div>
         <h2>
-          <Link href={`/academy/courses/${course.slug}`}>{course.title}</Link>
+          <Link href={courseHref}>{course.title}</Link>
         </h2>
         <p>{course.excerpt}</p>
         <div className="academy-course-card-footer">
           <span>{course.instructor?.name ?? "DayTradingPost Academy"}</span>
-          <Link href={`/academy/courses/${course.slug}`} className="text-link">
-            View course <span aria-hidden="true">→</span>
+          <Link href={courseHref} className="text-link">
+            {spanish ? "Ver curso" : "View course"}{" "}
+            <span aria-hidden="true">→</span>
           </Link>
         </div>
       </div>
+      {spanish ? (
+        <span className="sr-only" lang="es">
+          El contenido editorial de este curso se conserva en su idioma fuente.
+        </span>
+      ) : null}
     </article>
   );
 }

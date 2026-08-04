@@ -7,20 +7,40 @@ import { resolveChartSymbol } from "@/lib/charts/chartSymbols";
 import { getChartConfig } from "@/lib/charts/chartConfig";
 import { getMembershipAccess } from "@/lib/membership/access";
 import { listChartLayouts } from "@/lib/charts/chartRepository";
+import { languageAlternates, localizeHref } from "@/lib/i18n/config";
+import { getRequestLocale } from "@/lib/i18n/server";
 
 type Props = { params: Promise<{ instrument: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const instrument = resolveChartSymbol((await params).instrument);
+  const [{ instrument: instrumentSlug }, locale] = await Promise.all([
+    params,
+    getRequestLocale(),
+  ]);
+  const instrument = resolveChartSymbol(instrumentSlug);
   if (!instrument) return {};
+  const basePath = `/charts/${instrument.slug}`;
+  const spanish = locale === "es";
   return {
-    title: `${instrument.name} Advanced Chart`,
-    description: `Interactive ${instrument.name} chart with provider attribution, indicators and DayTradingPost context.`,
-    alternates: { canonical: `/charts/${instrument.slug}` },
+    title: spanish
+      ? `Gráfico avanzado de ${instrument.name}`
+      : `${instrument.name} Advanced Chart`,
+    description: spanish
+      ? `Gráfico interactivo de ${instrument.name} con atribución del proveedor, indicadores y contexto de DayTradingPost.`
+      : `Interactive ${instrument.name} chart with provider attribution, indicators and DayTradingPost context.`,
+    alternates: {
+      canonical: localizeHref(basePath, locale),
+      languages: languageAlternates(basePath),
+    },
   };
 }
 export default async function InstrumentChartPage({ params }: Props) {
-  const instrument = resolveChartSymbol((await params).instrument);
+  const [{ instrument: instrumentSlug }, locale] = await Promise.all([
+    params,
+    getRequestLocale(),
+  ]);
+  const instrument = resolveChartSymbol(instrumentSlug);
   if (!instrument) notFound();
+  const spanish = locale === "es";
   const [access, config] = await Promise.all([
     getMembershipAccess(),
     Promise.resolve(getChartConfig()),
@@ -33,11 +53,14 @@ export default async function InstrumentChartPage({ params }: Props) {
       <Header />
       <section className="chart-hero">
         <div className="container">
-          <span className="section-kicker">Advanced charting</span>
+          <span className="section-kicker">
+            {spanish ? "Gráficos avanzados" : "Advanced charting"}
+          </span>
           <h1>{instrument.name}</h1>
           <p>
-            Third-party charts, DayTradingPost data status, editorial context
-            and user layouts remain clearly separated.
+            {spanish
+              ? "Los gráficos de terceros, el estado de los datos, el contexto editorial y los diseños de usuario permanecen claramente separados."
+              : "Third-party charts, DayTradingPost data status, editorial context and user layouts remain clearly separated."}
           </p>
         </div>
       </section>
@@ -51,6 +74,7 @@ export default async function InstrumentChartPage({ params }: Props) {
           )}
           premium={access.hasPremiumAccess}
           authenticated={Boolean(access.user)}
+          locale={locale}
         />
       </div>
       <Footer />

@@ -18,6 +18,9 @@ import { getEventsForMarket } from "@/lib/economic/economicImpact";
 import { MarketQuickActions } from "@/components/alerts/MarketQuickActions";
 import { AssistantContextActions } from "@/components/assistant/AssistantContextActions";
 import { getSupportEmail } from "@/lib/config";
+import { sitePagesEs } from "@/lib/site-pages-es";
+import { languageAlternates, localizeHref } from "@/lib/i18n/config";
+import { getRequestLocale } from "@/lib/i18n/server";
 
 type PageProps = {
   params: Promise<{ slug: string[] }>;
@@ -34,28 +37,35 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const path = slug.join("/");
+  const locale = await getRequestLocale();
 
   if (!isSitePagePath(path)) {
     return {};
   }
 
-  const page: SitePage = sitePages[path];
+  const page: SitePage = locale === "es" ? sitePagesEs[path] : sitePages[path];
 
   return {
     title: page.kicker,
     description: page.description,
+    alternates: {
+      canonical: localizeHref(`/${path}`, locale),
+      languages: languageAlternates(`/${path}`),
+    },
   };
 }
 
 export default async function SitePage({ params }: PageProps) {
   const { slug } = await params;
   const path = slug.join("/");
+  const locale = await getRequestLocale();
+  const spanish = locale === "es";
 
   if (!isSitePagePath(path)) {
     notFound();
   }
 
-  const page: SitePage = sitePages[path];
+  const page: SitePage = spanish ? sitePagesEs[path] : sitePages[path];
   const supportEmail = getSupportEmail();
   const marketKey = path.startsWith("markets/") ? path.split("/")[1] : null;
   const [upcoming, recent] = marketKey
@@ -83,7 +93,7 @@ export default async function SitePage({ params }: PageProps) {
 
         <div className="container inner-layout">
           <div className="inner-copy">
-            <Link href="/" className="breadcrumb">
+            <Link href={localizeHref("/", locale)} className="breadcrumb">
               <span aria-hidden="true">←</span>
               DayTradingPost
             </Link>
@@ -93,23 +103,32 @@ export default async function SitePage({ params }: PageProps) {
             <p>{page.description}</p>
 
             <div className="inner-actions">
-              <Link href={page.actionHref} className="button">
+              <Link
+                href={localizeHref(page.actionHref, locale)}
+                className="button"
+              >
                 {page.actionLabel}
                 <span aria-hidden="true">→</span>
               </Link>
-              <Link href="/" className="button button-secondary">
-                Back to homepage
+              <Link
+                href={localizeHref("/", locale)}
+                className="button button-secondary"
+              >
+                {spanish ? "Volver al inicio" : "Back to homepage"}
               </Link>
             </div>
           </div>
 
-          <aside className="inner-panel" aria-label={`${page.kicker} status`}>
+          <aside
+            className="inner-panel"
+            aria-label={`${page.kicker} ${spanish ? "estado" : "status"}`}
+          >
             <div className="inner-status">
               <span className="eyebrow-dot" aria-hidden="true" />
               {page.status}
             </div>
 
-            <h2>What to expect</h2>
+            <h2>{spanish ? "Qué puedes esperar" : "What to expect"}</h2>
             <ul>
               {page.highlights.map((highlight) => (
                 <li key={highlight}>
@@ -120,15 +139,18 @@ export default async function SitePage({ params }: PageProps) {
             </ul>
 
             <p>
-              Information is updated as verified coverage, sessions, and
-              operational details become available.
+              {spanish
+                ? "La información se actualiza a medida que hay cobertura, sesiones y detalles operativos verificados."
+                : "Information is updated as verified coverage, sessions, and operational details become available."}
             </p>
             {path === "contact" ? (
               supportEmail ? (
                 <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
               ) : (
                 <p role="alert">
-                  A production support email must be configured before launch.
+                  {spanish
+                    ? "Debe configurarse un correo de soporte antes del lanzamiento."
+                    : "A production support email must be configured before launch."}
                 </p>
               )
             ) : null}
@@ -155,8 +177,13 @@ export default async function SitePage({ params }: PageProps) {
               </section>
             ))}
             <p>
-              Questions about these terms or privacy practices can be sent
-              through the <Link href="/contact">contact page</Link>.
+              {spanish
+                ? "Las preguntas sobre estos términos o las prácticas de privacidad pueden enviarse desde la "
+                : "Questions about these terms or privacy practices can be sent through the "}
+              <Link href={localizeHref("/contact", locale)}>
+                {spanish ? "página de contacto" : "contact page"}
+              </Link>
+              .
             </p>
           </div>
         </section>
@@ -167,48 +194,75 @@ export default async function SitePage({ params }: PageProps) {
           <div className="container">
             <div className="section-heading">
               <div>
-                <span className="section-kicker">Market integration</span>
-                <h2>Upcoming events for {page.kicker}</h2>
+                <span className="section-kicker">
+                  {spanish ? "Integración de mercados" : "Market integration"}
+                </span>
+                <h2>
+                  {spanish ? "Próximos eventos para" : "Upcoming events for"}{" "}
+                  {page.kicker}
+                </h2>
               </div>
-              <Link href="/economic-calendar" className="text-link">
-                Full calendar →
+              <Link
+                href={localizeHref("/economic-calendar", locale)}
+                className="text-link"
+              >
+                {spanish ? "Calendario completo" : "Full calendar"} →
               </Link>
             </div>
             {marketEvents.length ? (
               <div className="economic-card-grid">
                 {marketEvents.map((event) => (
-                  <EconomicCard event={event} key={event.id} />
+                  <EconomicCard event={event} locale={locale} key={event.id} />
                 ))}
               </div>
             ) : (
               <div className="economic-empty" role="status">
-                <h3>No relevant verified upcoming events</h3>
+                <h3>
+                  {spanish
+                    ? "No hay próximos eventos verificados relevantes"
+                    : "No relevant verified upcoming events"}
+                </h3>
                 <p>
-                  Relevant currency and high-impact releases appear after a
-                  production calendar source is connected.
+                  {spanish
+                    ? "Las publicaciones relevantes de divisas y alto impacto aparecerán cuando se conecte una fuente de calendario de producción."
+                    : "Relevant currency and high-impact releases appear after a production calendar source is connected."}
                 </p>
               </div>
             )}
             <div className="section-heading economic-recent-heading">
               <div>
-                <span className="section-kicker">Recent releases</span>
-                <h2>Latest related outcomes</h2>
+                <span className="section-kicker">
+                  {spanish ? "Publicaciones recientes" : "Recent releases"}
+                </span>
+                <h2>
+                  {spanish
+                    ? "Últimos resultados relacionados"
+                    : "Latest related outcomes"}
+                </h2>
               </div>
             </div>
             {recentEvents.length ? (
               <div className="economic-card-grid">
                 {recentEvents.map((event) => (
-                  <EconomicCard event={event} key={event.id} />
+                  <EconomicCard event={event} locale={locale} key={event.id} />
                 ))}
               </div>
             ) : (
               <p className="economic-market-note">
-                No recent verified releases are available.
+                {spanish
+                  ? "No hay publicaciones verificadas recientes."
+                  : "No recent verified releases are available."}
               </p>
             )}
             <p className="economic-market-note">
-              Relevant currency mapping is informational.{" "}
-              <Link href="/analysis">Browse related editorial analysis →</Link>
+              {spanish
+                ? "La relación con divisas es únicamente informativa. "
+                : "Relevant currency mapping is informational. "}
+              <Link href={localizeHref("/analysis", locale)}>
+                {spanish
+                  ? "Explorar análisis editoriales relacionados →"
+                  : "Browse related editorial analysis →"}
+              </Link>
             </p>
             <MarketQuickActions instrument={marketKey} />
           </div>

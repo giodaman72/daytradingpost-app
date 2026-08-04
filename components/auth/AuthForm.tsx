@@ -10,6 +10,7 @@ import {
   resetPasswordAction,
 } from "@/app/(auth)/actions";
 import { initialAuthState, type AuthActionState } from "@/lib/validation/auth";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 
 type AuthMode = "login" | "register" | "forgot" | "reset";
 
@@ -43,6 +44,35 @@ const modeContent = {
   },
 } as const;
 
+const spanishModeContent = {
+  login: {
+    kicker: "Acceso de miembros",
+    title: "Te damos la bienvenida.",
+    description: "Inicia sesión para gestionar tu cuenta y tu acceso Premium.",
+    submit: "Iniciar sesión",
+  },
+  register: {
+    kicker: "Crea tu cuenta",
+    title: "Únete a DayTradingPost.",
+    description:
+      "Crea una cuenta segura para informes de mercado, recursos educativos y acceso Premium.",
+    submit: "Crear cuenta",
+  },
+  forgot: {
+    kicker: "Recuperación de cuenta",
+    title: "Restablece tu contraseña.",
+    description:
+      "Introduce el correo de tu cuenta y te enviaremos un enlace seguro.",
+    submit: "Enviar enlace",
+  },
+  reset: {
+    kicker: "Protege tu cuenta",
+    title: "Elige una nueva contraseña.",
+    description: "Utiliza una contraseña segura que no uses en otro sitio web.",
+    submit: "Actualizar contraseña",
+  },
+} as const;
+
 const actions = {
   login: loginAction,
   register: registerAction,
@@ -50,12 +80,18 @@ const actions = {
   reset: resetPasswordAction,
 };
 
-function SubmitButton({ label }: { label: string }) {
+function SubmitButton({
+  label,
+  pendingLabel,
+}: {
+  label: string;
+  pendingLabel: string;
+}) {
   const { pending } = useFormStatus();
 
   return (
     <button className="button button-full" type="submit" disabled={pending}>
-      {pending ? "Please wait…" : label}
+      {pending ? pendingLabel : label}
     </button>
   );
 }
@@ -64,12 +100,15 @@ export function AuthForm({
   mode,
   nextPath,
   initialMessage,
+  locale = "en",
 }: {
   mode: AuthMode;
   nextPath?: string;
   initialMessage?: string;
+  locale?: Locale;
 }) {
-  const content = modeContent[mode];
+  const spanish = locale === "es";
+  const content = (spanish ? spanishModeContent : modeContent)[mode];
   const action: (
     previousState: AuthActionState,
     formData: FormData,
@@ -95,7 +134,9 @@ export function AuthForm({
 
         {mode === "register" ? (
           <div className="auth-field">
-            <label htmlFor="fullName">Full name</label>
+            <label htmlFor="fullName">
+              {spanish ? "Nombre completo" : "Full name"}
+            </label>
             <input
               id="fullName"
               name="fullName"
@@ -118,7 +159,9 @@ export function AuthForm({
 
         {showEmail ? (
           <div className="auth-field">
-            <label htmlFor={`${mode}-email`}>Email address</label>
+            <label htmlFor={`${mode}-email`}>
+              {spanish ? "Correo electrónico" : "Email address"}
+            </label>
             <input
               id={`${mode}-email`}
               name="email"
@@ -144,10 +187,18 @@ export function AuthForm({
           <div className="auth-field">
             <div className="auth-label-row">
               <label htmlFor={`${mode}-password`}>
-                {mode === "reset" ? "New password" : "Password"}
+                {mode === "reset"
+                  ? spanish
+                    ? "Nueva contraseña"
+                    : "New password"
+                  : spanish
+                    ? "Contraseña"
+                    : "Password"}
               </label>
               {mode === "login" ? (
-                <Link href="/forgot-password">Forgot password?</Link>
+                <Link href={localizeHref("/forgot-password", locale)}>
+                  {spanish ? "¿Olvidaste la contraseña?" : "Forgot password?"}
+                </Link>
               ) : null}
             </div>
             <input
@@ -177,7 +228,9 @@ export function AuthForm({
 
         {mode === "register" || mode === "reset" ? (
           <div className="auth-field">
-            <label htmlFor={`${mode}-confirmPassword`}>Confirm password</label>
+            <label htmlFor={`${mode}-confirmPassword`}>
+              {spanish ? "Confirmar contraseña" : "Confirm password"}
+            </label>
             <input
               id={`${mode}-confirmPassword`}
               name="confirmPassword"
@@ -209,29 +262,41 @@ export function AuthForm({
           >
             {state.message}
             {mode === "reset" && state.status === "success" ? (
-              <Link href="/account">Continue to account →</Link>
+              <Link href="/account">
+                {spanish ? "Continuar a la cuenta →" : "Continue to account →"}
+              </Link>
             ) : null}
           </div>
         ) : null}
 
-        <SubmitButton label={content.submit} />
+        <SubmitButton
+          label={content.submit}
+          pendingLabel={spanish ? "Espera un momento…" : "Please wait…"}
+        />
       </form>
 
       <div className="auth-card-footer">
         {mode === "login" ? (
           <p>
-            New to DayTradingPost?{" "}
-            <Link href="/register">Create an account</Link>
+            {spanish ? "¿Nuevo en DayTradingPost? " : "New to DayTradingPost? "}
+            <Link href={localizeHref("/register", locale)}>
+              {spanish ? "Crear una cuenta" : "Create an account"}
+            </Link>
           </p>
         ) : null}
         {mode === "register" ? (
           <p>
-            Already have an account? <Link href="/login">Sign in</Link>
+            {spanish ? "¿Ya tienes una cuenta? " : "Already have an account? "}
+            <Link href={localizeHref("/login", locale)}>
+              {spanish ? "Iniciar sesión" : "Sign in"}
+            </Link>
           </p>
         ) : null}
         {mode === "forgot" || mode === "reset" ? (
           <p>
-            <Link href="/login">← Return to sign in</Link>
+            <Link href={localizeHref("/login", locale)}>
+              {spanish ? "← Volver al inicio de sesión" : "← Return to sign in"}
+            </Link>
           </p>
         ) : null}
       </div>

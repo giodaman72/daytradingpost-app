@@ -15,16 +15,20 @@ import {
   isLessonLocked,
   lessonTypeLabel,
 } from "@/lib/academy/academyPresentation";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 
 type CourseCurriculumProps = {
   course: AcademyCourseDetail;
   learningState?: AcademyLearningState | null;
+  locale?: Locale;
 };
 
 export function CourseCurriculum({
   course,
   learningState = null,
+  locale = "en",
 }: CourseCurriculumProps) {
+  const spanish = locale === "es";
   const lessonState = new Map(
     learningState?.lessonProgress.map((item) => [item.lessonId, item]),
   );
@@ -39,7 +43,9 @@ export function CourseCurriculum({
             <details open>
               <summary>
                 <div>
-                  <span>Module {moduleIndex + 1}</span>
+                  <span>
+                    {spanish ? "Módulo" : "Module"} {moduleIndex + 1}
+                  </span>
                   <h2>{module.title}</h2>
                   {module.description ? <p>{module.description}</p> : null}
                 </div>
@@ -48,8 +54,12 @@ export function CourseCurriculum({
                     {learningState
                       ? `${Math.round(moduleState?.progressPercent ?? 0)}%`
                       : module.requiredForCompletion
-                        ? "Required"
-                        : "Optional"}
+                        ? spanish
+                          ? "Obligatorio"
+                          : "Required"
+                        : spanish
+                          ? "Opcional"
+                          : "Optional"}
                   </strong>
                   <span>{formatAcademyDuration(module.durationMinutes)}</span>
                 </div>
@@ -78,8 +88,12 @@ export function CourseCurriculum({
                           {lessonTypeLabel(lesson.lessonType)} ·{" "}
                           {formatAcademyDuration(lesson.durationMinutes)} ·{" "}
                           {lesson.requiredForCompletion
-                            ? "Required"
-                            : "Optional"}
+                            ? spanish
+                              ? "Obligatoria"
+                              : "Required"
+                            : spanish
+                              ? "Opcional"
+                              : "Optional"}
                         </small>
                       </span>
                       {lesson.accessLevel === "premium" ? (
@@ -98,14 +112,19 @@ export function CourseCurriculum({
                     <li key={lesson.id}>
                       {learningState && !locked ? (
                         <Link
-                          href={`/academy/courses/${course.slug}/learn/${lesson.slug}`}
+                          href={localizeHref(
+                            `/academy/courses/${course.slug}/learn/${lesson.slug}`,
+                            locale,
+                          )}
                         >
                           {content}
                         </Link>
                       ) : (
                         <div
                           aria-label={
-                            locked ? `${lesson.title}, locked` : undefined
+                            locked
+                              ? `${lesson.title}, ${spanish ? "bloqueada" : "locked"}`
+                              : undefined
                           }
                         >
                           {content}

@@ -2,13 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { getSanityImageUrl } from "@/lib/sanity/image";
 import type { ArticleSummary } from "@/types/article";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 
 type ArticleCardProps = {
   article: ArticleSummary;
+  locale?: Locale;
 };
 
-function formatPublishedDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
+function formatPublishedDate(value: string, locale: Locale) {
+  return new Intl.DateTimeFormat(locale === "es" ? "es-ES" : "en-US", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -16,9 +18,24 @@ function formatPublishedDate(value: string) {
   }).format(new Date(value));
 }
 
-export function ArticleCard({ article }: ArticleCardProps) {
+export function ArticleCard({ article, locale = "en" }: ArticleCardProps) {
+  const spanish = locale === "es";
   const imageUrl = getSanityImageUrl(article.featuredImage, 960, 600);
-  const category = article.category?.title || "Market analysis";
+  const rawCategory = article.category?.title || "Market analysis";
+  const categoryLabels: Record<string, string> = {
+    "Market analysis": "Análisis de mercados",
+    "Nasdaq Analysis": "Análisis del Nasdaq",
+    SilverAnalysis: "Análisis de la plata",
+    "Crude Oil Analysis": "Análisis del petróleo crudo",
+  };
+  const category = spanish
+    ? (categoryLabels[rawCategory] ?? rawCategory)
+    : rawCategory;
+  const biasLabels: Record<string, string> = {
+    Bullish: "Alcista",
+    Neutral: "Neutral",
+    Bearish: "Bajista",
+  };
 
   return (
     <article className="analysis-card analysis-cms-card">
@@ -44,14 +61,18 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
         <span>{category}</span>
         <span className="analysis-access-badge">
-          {article.accessLevel === "premium" ? "Premium" : "Free"}
+          {article.accessLevel === "premium"
+            ? "Premium"
+            : spanish
+              ? "Gratis"
+              : "Free"}
         </span>
       </div>
 
       <div className="analysis-content">
         <div className="article-meta">
           <span>{article.instrumentSymbol}</span>
-          <span>{formatPublishedDate(article.publishedAt)}</span>
+          <span>{formatPublishedDate(article.publishedAt, locale)}</span>
         </div>
 
         <h3>{article.title}</h3>
@@ -61,12 +82,21 @@ export function ArticleCard({ article }: ArticleCardProps) {
           <span
             className={`analysis-bias bias-${article.marketBias.toLowerCase()}`}
           >
-            {article.marketBias}
+            {spanish
+              ? (biasLabels[article.marketBias] ?? article.marketBias)
+              : article.marketBias}
           </span>
-          <Link href={`/analysis/${article.slug}`} className="card-link">
+          <Link
+            href={localizeHref(`/analysis/${article.slug}`, locale)}
+            className="card-link"
+          >
             {article.accessLevel === "premium"
-              ? "Preview analysis"
-              : "Read analysis"}
+              ? spanish
+                ? "Vista previa"
+                : "Preview analysis"
+              : spanish
+                ? "Leer análisis"
+                : "Read analysis"}
             <span aria-hidden="true">→</span>
           </Link>
         </div>

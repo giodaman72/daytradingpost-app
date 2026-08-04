@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArticleCard } from "@/components/analysis/ArticleCard";
 import { ArticleEmptyState } from "@/components/analysis/ArticleEmptyState";
 import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 import { EmptyMarketState } from "@/components/market-intelligence/EmptyMarketState";
 import { MarketOutlookCard } from "@/components/market-intelligence/MarketOutlookCard";
 import { MarketOutlookGrid } from "@/components/market-intelligence/MarketOutlookGrid";
@@ -12,35 +13,171 @@ import { getLatestArticles } from "@/lib/cms";
 import { getHomepageQuotes } from "@/lib/market-data/marketDataService";
 import { getEconomicToday } from "@/lib/economic/economicService";
 import { getFeaturedMarketIntelligence } from "@/lib/market/marketIntelligenceService";
+import { localizeHref } from "@/lib/i18n/config";
+import { getRequestLocale } from "@/lib/i18n/server";
 
-const academyTopics = [
-  {
-    number: "01",
-    title: "Market Foundations",
-    description:
-      "Learn chart types, market structure, order execution and essential trading terminology.",
+const HOME_COPY = {
+  en: {
+    eyebrow: "Independent market intelligence",
+    heroLead: "Trade the markets with",
+    heroAccent: " greater clarity.",
+    heroDescription:
+      "Daily technical analysis, professional trading education and actionable market insights designed for active traders.",
+    analysisCta: "Read today's analysis",
+    academyCta: "Explore the academy",
+    trust: [
+      ["Daily", "Market coverage"],
+      ["Multi-asset", "Trading insights"],
+      ["Practical", "Trader education"],
+    ],
+    outlook: "Today's outlook",
+    intelligence: "Market Intelligence",
+    editorial: "EDITORIAL",
+    marketData: "Market data",
+    quoteSnapshot: "Provider quote snapshot",
+    quoteNote: "Prices are informational and may be delayed or simulated.",
+    editorialIntelligence: "Editorial intelligence",
+    structuredOutlooks: "Structured market outlooks",
+    economicIntelligence: "Economic intelligence",
+    highImpact: "Today's high-impact events",
+    openCalendar: "Open full calendar",
+    noEvents: "No verified high-impact events today",
+    noEventsDescription:
+      "Check the complete calendar for medium-impact releases and upcoming events.",
+    marketAnalysis: "Market analysis",
+    sessionInsights: "Insights for today's trading session",
+    viewAnalysis: "View all analysis",
+    academy: "Trading academy",
+    academyTitle: "Develop the skills behind better trading decisions.",
+    academyDescription:
+      "Learn through structured, practical lessons created for traders who want to understand the market—not merely follow signals.",
+    startLearning: "Start learning",
+    premiumTitle: "Your complete daily trading intelligence package.",
+    premiumDescription:
+      "Access premium market briefings, detailed trade scenarios, educational webinars and member-only resources.",
+    benefits: [
+      "Daily technical outlooks",
+      "Key support and resistance levels",
+      "Live educational webinars",
+      "Premium academy content",
+    ],
+    founding: "Founding membership",
+    plans: "2 plans",
+    cadence: "monthly or annual",
+    checkout:
+      "Final pricing, currency, and payment terms are shown securely during checkout.",
+    joinPremium: "Join Premium",
+    revolut: "Revolut-secured checkout",
+    brief: "The Daily Market Brief",
+    newsletterTitle: "Start every trading day better informed.",
+    newsletterDescription:
+      "Get important market developments, technical levels and upcoming economic events delivered to your inbox.",
+    topics: [
+      [
+        "01",
+        "Market Foundations",
+        "Learn chart types, market structure, order execution and essential trading terminology.",
+      ],
+      [
+        "02",
+        "Technical Analysis",
+        "Understand trends, support, resistance, momentum, volatility and price patterns.",
+      ],
+      [
+        "03",
+        "Risk Management",
+        "Build a repeatable framework for position sizing, trade management and capital protection.",
+      ],
+    ],
   },
-  {
-    number: "02",
-    title: "Technical Analysis",
-    description:
-      "Understand trends, support, resistance, momentum, volatility and price patterns.",
+  es: {
+    eyebrow: "Inteligencia independiente de mercados",
+    heroLead: "Opera en los mercados con",
+    heroAccent: " mayor claridad.",
+    heroDescription:
+      "Análisis técnico diario, formación profesional en trading e información práctica de mercados para traders activos.",
+    analysisCta: "Lee el análisis de hoy",
+    academyCta: "Explora la academia",
+    trust: [
+      ["Diaria", "Cobertura de mercados"],
+      ["Multiactivo", "Perspectivas de trading"],
+      ["Práctica", "Formación para traders"],
+    ],
+    outlook: "Perspectiva de hoy",
+    intelligence: "Inteligencia de mercados",
+    editorial: "EDITORIAL",
+    marketData: "Datos de mercado",
+    quoteSnapshot: "Resumen de cotizaciones del proveedor",
+    quoteNote:
+      "Los precios son informativos y pueden estar retrasados o simulados.",
+    editorialIntelligence: "Inteligencia editorial",
+    structuredOutlooks: "Perspectivas estructuradas de mercado",
+    economicIntelligence: "Inteligencia económica",
+    highImpact: "Eventos de alto impacto de hoy",
+    openCalendar: "Abrir el calendario completo",
+    noEvents: "No hay eventos verificados de alto impacto para hoy",
+    noEventsDescription:
+      "Consulta el calendario completo para ver publicaciones de impacto medio y próximos eventos.",
+    marketAnalysis: "Análisis de mercados",
+    sessionInsights: "Ideas para la sesión de trading de hoy",
+    viewAnalysis: "Ver todos los análisis",
+    academy: "Academia de trading",
+    academyTitle:
+      "Desarrolla las habilidades para tomar mejores decisiones de trading.",
+    academyDescription:
+      "Aprende con lecciones prácticas y estructuradas para traders que quieren comprender el mercado, no limitarse a seguir señales.",
+    startLearning: "Empezar a aprender",
+    premiumTitle: "Tu paquete completo de inteligencia diaria de trading.",
+    premiumDescription:
+      "Accede a informes premium, escenarios detallados, webinars educativos y recursos exclusivos para miembros.",
+    benefits: [
+      "Perspectivas técnicas diarias",
+      "Niveles clave de soporte y resistencia",
+      "Webinars educativos en directo",
+      "Contenido premium de la academia",
+    ],
+    founding: "Membresía fundadora",
+    plans: "2 planes",
+    cadence: "mensual o anual",
+    checkout:
+      "El precio final, la divisa y las condiciones de pago se muestran de forma segura durante el proceso de compra.",
+    joinPremium: "Hazte Premium",
+    revolut: "Pago seguro con Revolut",
+    brief: "El informe diario de mercados",
+    newsletterTitle: "Empieza cada jornada de trading mejor informado.",
+    newsletterDescription:
+      "Recibe en tu correo los principales movimientos del mercado, niveles técnicos y próximos eventos económicos.",
+    topics: [
+      [
+        "01",
+        "Fundamentos de mercado",
+        "Aprende tipos de gráficos, estructura de mercado, ejecución de órdenes y terminología esencial.",
+      ],
+      [
+        "02",
+        "Análisis técnico",
+        "Comprende tendencias, soporte, resistencia, impulso, volatilidad y patrones de precio.",
+      ],
+      [
+        "03",
+        "Gestión del riesgo",
+        "Crea un marco repetible para dimensionar posiciones, gestionar operaciones y proteger el capital.",
+      ],
+    ],
   },
-  {
-    number: "03",
-    title: "Risk Management",
-    description:
-      "Build a repeatable framework for position sizing, trade management and capital protection.",
-  },
-];
+} as const;
 
 export default async function Home() {
-  const [analyses, outlooks, quotes, economicToday] = await Promise.all([
-    getLatestArticles(3),
-    getFeaturedMarketIntelligence(),
-    getHomepageQuotes(),
-    getEconomicToday(),
-  ]);
+  const [locale, analyses, outlooks, quotes, economicToday] = await Promise.all(
+    [
+      getRequestLocale(),
+      getLatestArticles(3),
+      getFeaturedMarketIntelligence(),
+      getHomepageQuotes(),
+      getEconomicToday(),
+    ],
+  );
+  const copy = HOME_COPY[locale];
 
   return (
     <main>
@@ -56,61 +193,50 @@ export default async function Home() {
           <div className="hero-copy">
             <div className="eyebrow">
               <span className="eyebrow-dot" />
-              Independent market intelligence
+              {copy.eyebrow}
             </div>
 
             <h1>
-              Trade the markets with
-              <span> greater clarity.</span>
+              {copy.heroLead}
+              <span>{copy.heroAccent}</span>
             </h1>
 
-            <p className="hero-description">
-              Daily technical analysis, professional trading education and
-              actionable market insights designed for active traders.
-            </p>
+            <p className="hero-description">{copy.heroDescription}</p>
 
             <div className="hero-actions">
               <Link href="#analysis" className="button">
-                Read today&apos;s analysis
+                {copy.analysisCta}
                 <span aria-hidden="true">→</span>
               </Link>
 
               <Link href="#academy" className="button button-secondary">
-                Explore the academy
+                {copy.academyCta}
               </Link>
             </div>
 
             <div className="trust-row">
-              <div>
-                <strong>Daily</strong>
-                <span>Market coverage</span>
-              </div>
-
-              <div>
-                <strong>Multi-asset</strong>
-                <span>Trading insights</span>
-              </div>
-
-              <div>
-                <strong>Practical</strong>
-                <span>Trader education</span>
-              </div>
+              {copy.trust.map(([title, description]) => (
+                <div key={title}>
+                  <strong>{title}</strong>
+                  <span>{description}</span>
+                </div>
+              ))}
             </div>
           </div>
 
           <div className="hero-panel">
             <div className="panel-header">
               <div>
-                <span className="panel-label">Today&apos;s outlook</span>
-                <h2>Market Intelligence</h2>
+                <span className="panel-label">{copy.outlook}</span>
+                <h2>{copy.intelligence}</h2>
               </div>
 
-              <span className="editorial-indicator">EDITORIAL</span>
+              <span className="editorial-indicator">{copy.editorial}</span>
             </div>
             {outlooks[0] ? (
               <MarketOutlookCard outlook={outlooks[0]} />
             ) : (
-              <EmptyMarketState />
+              <EmptyMarketState locale={locale} />
             )}
           </div>
         </div>
@@ -120,12 +246,12 @@ export default async function Home() {
         <div className="container">
           <div className="market-data-heading">
             <div>
-              <span className="section-kicker">Market data</span>
-              <h2>Provider quote snapshot</h2>
+              <span className="section-kicker">{copy.marketData}</span>
+              <h2>{copy.quoteSnapshot}</h2>
             </div>
-            <p>Prices are informational and may be delayed or simulated.</p>
+            <p>{copy.quoteNote}</p>
           </div>
-          <MarketDataGrid quotes={quotes} compact />
+          <MarketDataGrid quotes={quotes} compact locale={locale} />
         </div>
       </section>
 
@@ -133,11 +259,13 @@ export default async function Home() {
         <div className="container">
           <div className="section-heading">
             <div>
-              <span className="section-kicker">Editorial intelligence</span>
-              <h2>Structured market outlooks</h2>
+              <span className="section-kicker">
+                {copy.editorialIntelligence}
+              </span>
+              <h2>{copy.structuredOutlooks}</h2>
             </div>
           </div>
-          <MarketOutlookGrid outlooks={outlooks} />
+          <MarketOutlookGrid outlooks={outlooks} locale={locale} />
         </div>
       </section>
 
@@ -148,11 +276,16 @@ export default async function Home() {
         <div className="container">
           <div className="section-heading">
             <div>
-              <span className="section-kicker">Economic intelligence</span>
-              <h2>Today&apos;s high-impact events</h2>
+              <span className="section-kicker">
+                {copy.economicIntelligence}
+              </span>
+              <h2>{copy.highImpact}</h2>
             </div>
-            <Link href="/economic-calendar" className="text-link">
-              Open full calendar <span aria-hidden="true">→</span>
+            <Link
+              href={localizeHref("/economic-calendar", locale)}
+              className="text-link"
+            >
+              {copy.openCalendar} <span aria-hidden="true">→</span>
             </Link>
           </div>
           {economicToday.events.filter((event) => event.impact === "high")
@@ -162,16 +295,18 @@ export default async function Home() {
                 .filter((event) => event.impact === "high")
                 .slice(0, 3)
                 .map((event) => (
-                  <EconomicCard event={event} showCountdown key={event.id} />
+                  <EconomicCard
+                    event={event}
+                    showCountdown
+                    locale={locale}
+                    key={event.id}
+                  />
                 ))}
             </div>
           ) : (
             <div className="economic-empty" role="status">
-              <h3>No verified high-impact events today</h3>
-              <p>
-                Check the complete calendar for medium-impact releases and
-                upcoming events.
-              </p>
+              <h3>{copy.noEvents}</h3>
+              <p>{copy.noEventsDescription}</p>
             </div>
           )}
         </div>
@@ -181,12 +316,15 @@ export default async function Home() {
         <div className="container">
           <div className="section-heading">
             <div>
-              <span className="section-kicker">Market analysis</span>
-              <h2>Insights for today&apos;s trading session</h2>
+              <span className="section-kicker">{copy.marketAnalysis}</span>
+              <h2>{copy.sessionInsights}</h2>
             </div>
 
-            <Link href="/analysis" className="text-link">
-              View all analysis
+            <Link
+              href={localizeHref("/analysis", locale)}
+              className="text-link"
+            >
+              {copy.viewAnalysis}
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -194,11 +332,15 @@ export default async function Home() {
           {analyses.length ? (
             <div className="analysis-grid">
               {analyses.map((article) => (
-                <ArticleCard key={article._id} article={article} />
+                <ArticleCard
+                  key={article._id}
+                  article={article}
+                  locale={locale}
+                />
               ))}
             </div>
           ) : (
-            <ArticleEmptyState compact />
+            <ArticleEmptyState compact locale={locale} />
           )}
         </div>
       </section>
@@ -206,29 +348,26 @@ export default async function Home() {
       <section className="section section-muted" id="academy">
         <div className="container academy-layout">
           <div className="academy-intro">
-            <span className="section-kicker">Trading academy</span>
+            <span className="section-kicker">{copy.academy}</span>
 
-            <h2>Develop the skills behind better trading decisions.</h2>
+            <h2>{copy.academyTitle}</h2>
 
-            <p>
-              Learn through structured, practical lessons created for traders
-              who want to understand the market—not merely follow signals.
-            </p>
+            <p>{copy.academyDescription}</p>
 
-            <Link href="/academy" className="button">
-              Start learning
+            <Link href={localizeHref("/academy", locale)} className="button">
+              {copy.startLearning}
               <span aria-hidden="true">→</span>
             </Link>
           </div>
 
           <div className="academy-topics">
-            {academyTopics.map((topic) => (
-              <article className="academy-topic" key={topic.number}>
-                <span>{topic.number}</span>
+            {copy.topics.map(([number, title, description]) => (
+              <article className="academy-topic" key={number}>
+                <span>{number}</span>
 
                 <div>
-                  <h3>{topic.title}</h3>
-                  <p>{topic.description}</p>
+                  <h3>{title}</h3>
+                  <p>{description}</p>
                 </div>
 
                 <span className="topic-arrow" aria-hidden="true">
@@ -246,52 +385,39 @@ export default async function Home() {
             <div className="premium-copy">
               <span className="section-kicker">DayTradingPost Premium</span>
 
-              <h2>Your complete daily trading intelligence package.</h2>
+              <h2>{copy.premiumTitle}</h2>
 
-              <p>
-                Access premium market briefings, detailed trade scenarios,
-                educational webinars and member-only resources.
-              </p>
+              <p>{copy.premiumDescription}</p>
 
               <ul className="premium-list">
-                <li>
-                  <span>✓</span>
-                  Daily technical outlooks
-                </li>
-                <li>
-                  <span>✓</span>
-                  Key support and resistance levels
-                </li>
-                <li>
-                  <span>✓</span>
-                  Live educational webinars
-                </li>
-                <li>
-                  <span>✓</span>
-                  Premium academy content
-                </li>
+                {copy.benefits.map((benefit) => (
+                  <li key={benefit}>
+                    <span>✓</span>
+                    {benefit}
+                  </li>
+                ))}
               </ul>
             </div>
 
             <div className="pricing-card">
-              <span className="pricing-label">Founding membership</span>
+              <span className="pricing-label">{copy.founding}</span>
 
               <div className="price">
-                <strong>2 plans</strong>
-                <span>monthly or annual</span>
+                <strong>{copy.plans}</strong>
+                <span>{copy.cadence}</span>
               </div>
 
-              <p>
-                Final pricing, currency, and payment terms are shown securely
-                during checkout.
-              </p>
+              <p>{copy.checkout}</p>
 
-              <Link href="/premium" className="button button-full">
-                Join Premium
+              <Link
+                href={localizeHref("/premium", locale)}
+                className="button button-full"
+              >
+                {copy.joinPremium}
                 <span aria-hidden="true">→</span>
               </Link>
 
-              <span className="pricing-note">Revolut-secured checkout</span>
+              <span className="pricing-note">{copy.revolut}</span>
             </div>
           </div>
         </div>
@@ -300,81 +426,18 @@ export default async function Home() {
       <section className="newsletter-section" id="newsletter">
         <div className="container newsletter-layout">
           <div>
-            <span className="section-kicker">The Daily Market Brief</span>
+            <span className="section-kicker">{copy.brief}</span>
 
-            <h2>Start every trading day better informed.</h2>
+            <h2>{copy.newsletterTitle}</h2>
 
-            <p>
-              Get important market developments, technical levels and upcoming
-              economic events delivered to your inbox.
-            </p>
+            <p>{copy.newsletterDescription}</p>
           </div>
 
-          <NewsletterForm />
+          <NewsletterForm locale={locale} />
         </div>
       </section>
 
-      <footer className="site-footer">
-        <div className="container">
-          <div className="footer-top">
-            <div className="footer-brand-column">
-              <Link href="/" className="brand">
-                <span className="brand-mark">DTP</span>
-
-                <span className="brand-name">
-                  DayTrading<span>Post</span>
-                </span>
-              </Link>
-
-              <p>
-                Independent market intelligence and trading education for active
-                traders.
-              </p>
-            </div>
-
-            <div className="footer-links">
-              <div>
-                <h3>Markets</h3>
-                <Link href="/markets/gold">Gold</Link>
-                <Link href="/markets/indices">Indices</Link>
-                <Link href="/markets/forex">Forex</Link>
-                <Link href="/markets/crypto">Crypto</Link>
-              </div>
-
-              <div>
-                <h3>Learn</h3>
-                <Link href="/academy">Trading Academy</Link>
-                <Link href="/analysis">Market Analysis</Link>
-                <Link href="/webinars">Webinars</Link>
-                <Link href="/premium">Premium</Link>
-              </div>
-
-              <div>
-                <h3>Company</h3>
-                <Link href="/about">About</Link>
-                <Link href="/contact">Contact</Link>
-                <Link href="/privacy">Privacy</Link>
-                <Link href="/terms">Terms</Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="risk-warning">
-            <strong>Risk warning:</strong> Trading leveraged financial products
-            involves significant risk and may not be suitable for every
-            investor. DayTradingPost provides educational and informational
-            content only and does not provide personalized investment advice.
-          </div>
-
-          <div className="footer-bottom">
-            <span>
-              © {new Date().getFullYear()} DayTradingPost. All rights reserved.
-            </span>
-
-            <span>Professional market intelligence for active traders.</span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

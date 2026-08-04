@@ -7,50 +7,69 @@ export function ChartAccessibilitySummary({
   bars,
   indicators,
   delayed,
+  locale = "en",
 }: {
   name: string;
   timeframe: ChartTimeframe;
   bars: ChartCandle[];
   indicators: ChartIndicatorConfig[];
   delayed: boolean;
+  locale?: "en" | "es";
 }) {
+  const spanish = locale === "es";
   const latest = bars.at(-1);
   return (
     <section
       className="chart-accessibility-summary"
       aria-labelledby="chart-summary-title"
     >
-      <h2 id="chart-summary-title">Accessible chart summary</h2>
+      <h2 id="chart-summary-title">
+        {spanish ? "Resumen accesible del gráfico" : "Accessible chart summary"}
+      </h2>
       <dl>
         <div>
-          <dt>Instrument</dt>
+          <dt>{spanish ? "Instrumento" : "Instrument"}</dt>
           <dd>{name}</dd>
         </div>
         <div>
-          <dt>Timeframe</dt>
+          <dt>{spanish ? "Temporalidad" : "Timeframe"}</dt>
           <dd>{timeframe}</dd>
         </div>
         <div>
-          <dt>Latest available close</dt>
-          <dd>{latest?.close ?? "Unavailable"}</dd>
-        </div>
-        <div>
-          <dt>Data timestamp</dt>
+          <dt>
+            {spanish ? "Último cierre disponible" : "Latest available close"}
+          </dt>
           <dd>
-            {latest
-              ? new Date(latest.timestamp * 1_000).toISOString()
-              : "Unavailable"}
+            {latest?.close ?? (spanish ? "No disponible" : "Unavailable")}
           </dd>
         </div>
         <div>
-          <dt>Data status</dt>
-          <dd>{delayed ? "Delayed" : "Provider status unavailable"}</dd>
+          <dt>{spanish ? "Hora de los datos" : "Data timestamp"}</dt>
+          <dd>
+            {latest
+              ? new Date(latest.timestamp * 1_000).toISOString()
+              : spanish
+                ? "No disponible"
+                : "Unavailable"}
+          </dd>
         </div>
         <div>
-          <dt>Indicators</dt>
+          <dt>{spanish ? "Estado de los datos" : "Data status"}</dt>
+          <dd>
+            {delayed
+              ? spanish
+                ? "Retrasados"
+                : "Delayed"
+              : spanish
+                ? "Estado del proveedor no disponible"
+                : "Provider status unavailable"}
+          </dd>
+        </div>
+        <div>
+          <dt>{spanish ? "Indicadores" : "Indicators"}</dt>
           <dd>
             {indicators.map((item) => item.id.toUpperCase()).join(", ") ||
-              "None"}
+              (spanish ? "Ninguno" : "None")}
           </dd>
         </div>
       </dl>

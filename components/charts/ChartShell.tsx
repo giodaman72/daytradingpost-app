@@ -18,6 +18,7 @@ import { ChartAccessibilitySummary } from "./ChartAccessibilitySummary";
 import { ChartCanvas } from "./ChartCanvas";
 import { ChartToolbar } from "./ChartToolbar";
 import { TradingViewChart } from "./TradingViewChart";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 
 export function ChartShell({
   initialInstrument,
@@ -26,6 +27,7 @@ export function ChartShell({
   layouts,
   premium,
   authenticated,
+  locale = "en",
 }: {
   initialInstrument: InstrumentDefinition;
   initialTimeframe: ChartTimeframe;
@@ -33,18 +35,29 @@ export function ChartShell({
   layouts: ChartLayout[];
   premium: boolean;
   authenticated: boolean;
+  locale?: Locale;
 }) {
+  const spanish = locale === "es";
   const router = useRouter();
   const [timeframe, setTimeframe] = useState(initialTimeframe);
   const [indicators, setIndicators] = useState<ChartIndicatorConfig[]>([]);
   const [bars, setBars] = useState<ChartCandle[]>([]);
   const [meta, setMeta] = useState<ChartBarsResponse["meta"] | null>(null);
   const [status, setStatus] = useState(
-    provider === "tradingview" ? "" : "Loading normalized candles…",
+    provider === "tradingview"
+      ? ""
+      : spanish
+        ? "Cargando velas normalizadas…"
+        : "Loading normalized candles…",
   );
   const usesTradingView = provider === "tradingview";
   function changeTimeframe(value: ChartTimeframe) {
-    if (!usesTradingView) setStatus("Loading normalized candles…");
+    if (!usesTradingView)
+      setStatus(
+        spanish
+          ? "Cargando velas normalizadas…"
+          : "Loading normalized candles…",
+      );
     setTimeframe(value);
     window.localStorage.setItem(
       `dtp-chart-timeframe:${initialInstrument.slug}`,
@@ -82,14 +95,23 @@ export function ChartShell({
       })
       .catch(
         () =>
-          !controller.signal.aborted && setStatus("Chart data is unavailable."),
+          !controller.signal.aborted &&
+          setStatus(
+            spanish
+              ? "Los datos del gráfico no están disponibles."
+              : "Chart data is unavailable.",
+          ),
       );
     return () => controller.abort();
-  }, [initialInstrument.slug, timeframe, usesTradingView]);
+  }, [initialInstrument.slug, spanish, timeframe, usesTradingView]);
   function toggleIndicator(id: ChartIndicatorId) {
     const definition = CHART_INDICATORS[id];
     if (definition.premium && !premium) {
-      setStatus("This indicator requires premium access.");
+      setStatus(
+        spanish
+          ? "Este indicador requiere acceso Premium."
+          : "This indicator requires premium access.",
+      );
       return;
     }
     setIndicators((current) =>
@@ -121,14 +143,20 @@ export function ChartShell({
     } | null;
     setStatus(
       response.ok
-        ? "Layout saved."
-        : (body?.message ?? "Could not save layout."),
+        ? spanish
+          ? "Diseño guardado."
+          : "Layout saved."
+        : spanish
+          ? "No se pudo guardar el diseño."
+          : (body?.message ?? "Could not save layout."),
     );
   }
   function loadLayout(layout: ChartLayout) {
     setTimeframe(layout.timeframe);
     setIndicators(layout.indicators);
-    setStatus(`Loaded ${layout.name}.`);
+    setStatus(
+      spanish ? `Diseño ${layout.name} cargado.` : `Loaded ${layout.name}.`,
+    );
   }
   async function shareLayout(layout: ChartLayout) {
     const response = await fetch(`/api/chart-layouts/${layout.id}/share`, {
@@ -142,35 +170,53 @@ export function ChartShell({
       await navigator.clipboard?.writeText(
         `${window.location.origin}/charts/share/${body.data.shareId}`,
       );
-      setStatus("Share link copied.");
-    } else setStatus(body?.message ?? "Could not share layout.");
+      setStatus(spanish ? "Enlace copiado." : "Share link copied.");
+    } else
+      setStatus(
+        spanish
+          ? "No se pudo compartir el diseño."
+          : (body?.message ?? "Could not share layout."),
+      );
   }
   return (
     <section
       className="advanced-chart"
-      aria-label={`${initialInstrument.name} advanced chart`}
+      aria-label={`${initialInstrument.name} ${spanish ? "gráfico avanzado" : "advanced chart"}`}
     >
       <ChartToolbar
         instrument={initialInstrument.slug}
         timeframe={timeframe}
         supportedTimeframes={initialInstrument.supportedTimeframes}
         indicators={indicators.map((item) => item.id)}
-        onInstrument={(slug) => router.push(`/charts/${slug}`)}
+        onInstrument={(slug) =>
+          router.push(localizeHref(`/charts/${slug}`, locale))
+        }
         onTimeframe={changeTimeframe}
         onIndicator={toggleIndicator}
+        locale={locale}
       />
       <div className="chart-status-row" role="status">
         <strong>
           {usesTradingView
-            ? "TradingView public widget"
-            : "DayTradingPost first-party chart"}
+            ? spanish
+              ? "Widget público de TradingView"
+              : "TradingView public widget"
+            : spanish
+              ? "Gráfico propio de DayTradingPost"
+              : "DayTradingPost first-party chart"}
         </strong>
         <span>
           {meta?.fixture
-            ? "Development fixture"
+            ? spanish
+              ? "Ejemplo de desarrollo"
+              : "Development fixture"
             : meta?.delayed || initialInstrument.delayedByDefault
-              ? "Delayed/provider-dependent data"
-              : "Provider status unavailable"}
+              ? spanish
+                ? "Datos retrasados o dependientes del proveedor"
+                : "Delayed/provider-dependent data"
+              : spanish
+                ? "Estado del proveedor no disponible"
+                : "Provider status unavailable"}
         </span>
       </div>
       {status ? <p className="chart-inline-status">{status}</p> : null}
@@ -179,42 +225,50 @@ export function ChartShell({
           symbol={initialInstrument.tradingViewSymbol}
           timeframe={timeframe}
           name={initialInstrument.name}
+          locale={locale}
         />
       ) : (
-        <ChartCanvas bars={bars} name={initialInstrument.name} />
+        <ChartCanvas
+          bars={bars}
+          name={initialInstrument.name}
+          locale={locale}
+        />
       )}
       <div className="chart-actions">
         {authenticated ? (
           <button type="button" onClick={() => void saveLayout()}>
-            Save layout
+            {spanish ? "Guardar diseño" : "Save layout"}
           </button>
         ) : null}
         {layouts[0] ? (
           <button type="button" onClick={() => loadLayout(layouts[0])}>
-            Load {layouts[0].name}
+            {spanish ? "Cargar" : "Load"} {layouts[0].name}
           </button>
         ) : null}
         {premium && layouts[0] ? (
           <button type="button" onClick={() => void shareLayout(layouts[0])}>
-            Share saved layout
+            {spanish ? "Compartir diseño guardado" : "Share saved layout"}
           </button>
         ) : null}
         <button type="button" onClick={() => setIndicators([])}>
-          Reset layout
+          {spanish ? "Restablecer diseño" : "Reset layout"}
         </button>
         <a href={`/alerts/new?instrument=${initialInstrument.slug}`}>
-          Create alert
+          {spanish ? "Crear alerta" : "Create alert"}
         </a>
         <a
           href={`/assistant?mode=market_analysis&instrument=${initialInstrument.slug}&prompt=${encodeURIComponent(`Explain the ${timeframe} chart context and selected indicators: ${indicators.map((item) => item.id).join(", ") || "none"}.`)}`}
         >
-          Ask AI about normalized chart context
+          {spanish
+            ? "Preguntar a la IA por el contexto normalizado"
+            : "Ask AI about normalized chart context"}
         </a>
       </div>
       {layouts.length ? (
         <p>
-          {layouts.length} saved layout{layouts.length === 1 ? "" : "s"}{" "}
-          available.
+          {spanish
+            ? `${layouts.length} diseño${layouts.length === 1 ? "" : "s"} guardado${layouts.length === 1 ? "" : "s"} disponible${layouts.length === 1 ? "" : "s"}.`
+            : `${layouts.length} saved layout${layouts.length === 1 ? "" : "s"} available.`}
         </p>
       ) : null}
       <ChartAccessibilitySummary
@@ -223,10 +277,12 @@ export function ChartShell({
         bars={bars}
         indicators={indicators}
         delayed={meta?.delayed ?? initialInstrument.delayedByDefault}
+        locale={locale}
       />
       <p className="chart-risk-disclaimer">
-        Educational information only—not investment advice or trade execution.
-        Verify provider timestamps and data status independently.
+        {spanish
+          ? "Información únicamente educativa; no es asesoramiento de inversión ni ejecución de operaciones. Verifica de forma independiente las horas y el estado de los datos del proveedor."
+          : "Educational information only—not investment advice or trade execution. Verify provider timestamps and data status independently."}
       </p>
     </section>
   );

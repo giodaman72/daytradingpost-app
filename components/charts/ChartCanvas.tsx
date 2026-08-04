@@ -3,15 +3,18 @@ import type { ChartCandle } from "@/types/chart";
 export function ChartCanvas({
   bars,
   name,
+  locale = "en",
 }: {
   bars: ChartCandle[];
   name: string;
+  locale?: "en" | "es";
 }) {
   if (!bars.length)
     return (
       <div className="chart-unavailable" role="status">
-        Historical OHLC is not configured for the first-party chart. No candles
-        have been fabricated.
+        {locale === "es"
+          ? "El historial OHLC no está configurado para el gráfico propio. No se han inventado velas."
+          : "Historical OHLC is not configured for the first-party chart. No candles have been fabricated."}
       </div>
     );
   const width = 1_000;
@@ -28,9 +31,14 @@ export function ChartCanvas({
       className="chart-canvas"
       viewBox={`0 0 ${width} ${height}`}
       role="img"
-      aria-label={`${name} candlestick chart`}
+      aria-label={`${name} ${locale === "es" ? "gráfico de velas" : "candlestick chart"}`}
     >
-      <title>{name} normalized candlestick chart</title>
+      <title>
+        {name}{" "}
+        {locale === "es"
+          ? "gráfico normalizado de velas"
+          : "normalized candlestick chart"}
+      </title>
       {bars.map((bar, index) => {
         const x = 15 + (index * (width - 30)) / Math.max(1, bars.length - 1);
         const rising = bar.close >= bar.open;

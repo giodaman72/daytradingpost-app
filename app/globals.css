@@ -350,6 +350,19 @@ button {
   gap: clamp(12px, 1.2vw, 20px);
 }
 
+.language-switcher {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  padding: 0.45rem 0.15rem;
+  text-transform: uppercase;
+}
+
+.language-switcher:hover {
+  color: var(--gold);
+}
+
 .button {
   display: inline-flex;
   min-height: 48px;

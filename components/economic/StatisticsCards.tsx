@@ -11,14 +11,24 @@ const labels: [keyof EconomicStatistics, string][] = [
 
 export function StatisticsCards({
   statistics,
+  locale = "en",
 }: {
   statistics: EconomicStatistics;
+  locale?: "en" | "es";
 }) {
+  const spanishLabels: Record<keyof EconomicStatistics, string> = {
+    todayHighImpact: "Alto impacto hoy",
+    todayMediumImpact: "Impacto medio hoy",
+    tomorrow: "Mañana",
+    thisWeek: "Esta semana",
+    countriesCovered: "Países",
+    currenciesCovered: "Divisas",
+  };
   return (
     <dl className="economic-statistics">
       {labels.map(([key, label]) => (
         <div key={key}>
-          <dt>{label}</dt>
+          <dt>{locale === "es" ? spanishLabels[key] : label}</dt>
           <dd>{statistics[key]}</dd>
         </div>
       ))}

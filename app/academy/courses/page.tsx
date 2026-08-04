@@ -12,13 +12,23 @@ import {
 } from "@/lib/academy/academyCatalog";
 import { listAcademyCourses } from "@/lib/academy/academyService";
 import { getCurrentUser } from "@/lib/supabase/auth";
+import { languageAlternates, localizeHref } from "@/lib/i18n/config";
+import { getRequestLocale } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Academy Course Catalog",
-  description:
-    "Search and filter DayTradingPost trading courses by topic, difficulty and membership access.",
-  alternates: { canonical: "/academy/courses" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  const spanish = locale === "es";
+  return {
+    title: spanish ? "Catálogo de cursos" : "Academy Course Catalog",
+    description: spanish
+      ? "Busca y filtra cursos de trading por tema, dificultad y nivel de acceso."
+      : "Search and filter DayTradingPost trading courses by topic, difficulty and membership access.",
+    alternates: {
+      canonical: localizeHref("/academy/courses", locale),
+      languages: languageAlternates("/academy/courses"),
+    },
+  };
+}
 
 type AcademyCoursesPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -27,7 +37,8 @@ type AcademyCoursesPageProps = {
 export default async function AcademyCoursesPage({
   searchParams,
 }: AcademyCoursesPageProps) {
-  const raw = await searchParams;
+  const [raw, locale] = await Promise.all([searchParams, getRequestLocale()]);
+  const spanish = locale === "es";
   const filters = parseAcademyCatalogFilters(raw);
   const allCourses = await listAcademyCourses(100, 0).catch(() => []);
   const filteredCourses = filterAndSortAcademyCourses(allCourses, filters);
@@ -61,12 +72,24 @@ export default async function AcademyCoursesPage({
   ).toSorted((left, right) => left.name.localeCompare(right.name));
   const filtered = hasAcademyCatalogFilters(filters);
   const activeFilterText = [
-    filters.query ? `Search: ${filters.query}` : null,
-    filters.difficulty !== "all" ? `Level: ${filters.difficulty}` : null,
-    filters.access !== "all" ? `Access: ${filters.access}` : null,
-    filters.category !== "all" ? `Category: ${filters.category}` : null,
-    filters.instructor !== "all" ? `Instructor: ${filters.instructor}` : null,
-    filters.duration !== "all" ? `Duration: ${filters.duration}` : null,
+    filters.query
+      ? `${spanish ? "Búsqueda" : "Search"}: ${filters.query}`
+      : null,
+    filters.difficulty !== "all"
+      ? `${spanish ? "Nivel" : "Level"}: ${filters.difficulty}`
+      : null,
+    filters.access !== "all"
+      ? `${spanish ? "Acceso" : "Access"}: ${filters.access}`
+      : null,
+    filters.category !== "all"
+      ? `${spanish ? "Categoría" : "Category"}: ${filters.category}`
+      : null,
+    filters.instructor !== "all"
+      ? `${spanish ? "Instructor" : "Instructor"}: ${filters.instructor}`
+      : null,
+    filters.duration !== "all"
+      ? `${spanish ? "Duración" : "Duration"}: ${filters.duration}`
+      : null,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -79,15 +102,25 @@ export default async function AcademyCoursesPage({
       ) : null}
       <section className="academy-catalog-hero">
         <div className="container">
-          <nav aria-label="Breadcrumb">
-            <Link href="/academy">Academy</Link>
+          <nav aria-label={spanish ? "Ruta de navegación" : "Breadcrumb"}>
+            <Link href={localizeHref("/academy", locale)}>
+              {spanish ? "Academia" : "Academy"}
+            </Link>
             <span aria-hidden="true">/</span>
-            <span aria-current="page">Courses</span>
+            <span aria-current="page">{spanish ? "Cursos" : "Courses"}</span>
           </nav>
-          <span className="section-kicker">Course catalog</span>
-          <h1>Find the next skill in your trading process.</h1>
+          <span className="section-kicker">
+            {spanish ? "Catálogo de cursos" : "Course catalog"}
+          </span>
+          <h1>
+            {spanish
+              ? "Encuentra la próxima habilidad para tu proceso de trading."
+              : "Find the next skill in your trading process."}
+          </h1>
           <p>
-            Search published courses by subject, experience level and access.
+            {spanish
+              ? "Busca cursos publicados por tema, nivel de experiencia y acceso."
+              : "Search published courses by subject, experience level and access."}
           </p>
         </div>
       </section>
@@ -97,21 +130,37 @@ export default async function AcademyCoursesPage({
             categories={categories}
             filters={filters}
             instructors={instructors}
+            locale={locale}
           />
           {activeFilterText ? (
             <p className="academy-active-filters">
-              <strong>Active filters:</strong> {activeFilterText}
+              <strong>
+                {spanish ? "Filtros activos:" : "Active filters:"}
+              </strong>{" "}
+              {activeFilterText}
             </p>
           ) : null}
           <div className="academy-catalog-count" role="status">
-            {page.totalResults} {page.totalResults === 1 ? "course" : "courses"}
+            {page.totalResults}{" "}
+            {spanish
+              ? page.totalResults === 1
+                ? "curso"
+                : "cursos"
+              : page.totalResults === 1
+                ? "course"
+                : "courses"}
           </div>
-          <AcademyCatalogGrid courses={page.courses} filtered={filtered} />
+          <AcademyCatalogGrid
+            courses={page.courses}
+            filtered={filtered}
+            locale={locale}
+          />
           <AcademyPagination
             basePath="/academy/courses"
             currentPage={page.currentPage}
             filters={filters}
             totalPages={page.totalPages}
+            locale={locale}
           />
         </div>
       </section>

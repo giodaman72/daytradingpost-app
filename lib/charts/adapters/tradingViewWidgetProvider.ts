@@ -47,6 +47,7 @@ export function tradingViewWidgetConfig(
   containerId: string,
   symbol: string,
   timeframe: ChartTimeframe,
+  locale: "en" | "es" = "en",
 ) {
   return {
     autosize: true,
@@ -56,7 +57,7 @@ export function tradingViewWidgetConfig(
     timezone: "Etc/UTC",
     theme: "dark",
     style: "1",
-    locale: "en",
+    locale,
     enable_publishing: false,
     allow_symbol_change: false,
     calendar: false,

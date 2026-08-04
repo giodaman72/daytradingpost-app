@@ -20,12 +20,33 @@ const guestOnlyRoutes: readonly string[] = [
   ROUTES.auth.register,
 ];
 
-export async function updateSession(request: NextRequest) {
+type SessionProxyOptions = {
+  pathname?: string;
+  requestHeaders?: Headers;
+  rewriteUrl?: URL;
+  localePrefix?: string;
+};
+
+export async function updateSession(
+  request: NextRequest,
+  options: SessionProxyOptions = {},
+) {
+  const createResponse = () =>
+    options.rewriteUrl
+      ? NextResponse.rewrite(options.rewriteUrl, {
+          request: { headers: options.requestHeaders },
+        })
+      : NextResponse.next({
+          request: {
+            headers: options.requestHeaders ?? request.headers,
+          },
+        });
+
   if (!isSupabaseAuthConfigured()) {
-    return NextResponse.next({ request });
+    return createResponse();
   }
 
-  let response = NextResponse.next({ request });
+  let response = createResponse();
   const { url, publishableKey } = getSupabaseAuthConfig();
   const supabase = createServerClient(url, publishableKey, {
     cookies: {
@@ -36,7 +57,7 @@ export async function updateSession(request: NextRequest) {
         cookiesToSet.forEach(({ name, value }) =>
           request.cookies.set(name, value),
         );
-        response = NextResponse.next({ request });
+        response = createResponse();
         cookiesToSet.forEach(({ name, value, options }) =>
           response.cookies.set(name, value, options),
         );
@@ -46,7 +67,7 @@ export async function updateSession(request: NextRequest) {
 
   const { data } = await supabase.auth.getClaims();
   const isAuthenticated = Boolean(data?.claims?.sub);
-  const { pathname } = request.nextUrl;
+  const pathname = options.pathname ?? request.nextUrl.pathname;
   const isProtected =
     protectedPrefixes.some(
       (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
@@ -54,8 +75,9 @@ export async function updateSession(request: NextRequest) {
 
   if (isProtected && !isAuthenticated) {
     const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname =
-      pathname === "/reset-password" ? "/forgot-password" : "/login";
+    redirectUrl.pathname = `${options.localePrefix ?? ""}${
+      pathname === "/reset-password" ? "/forgot-password" : "/login"
+    }`;
     redirectUrl.search = "";
     if (pathname !== "/reset-password") {
       redirectUrl.searchParams.set(

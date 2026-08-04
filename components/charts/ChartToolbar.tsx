@@ -4,6 +4,7 @@ import { CHART_INDICATORS } from "@/lib/charts/chartIndicators";
 import { CHART_TIMEFRAME_LABELS } from "@/lib/charts/chartTimeframes";
 import type { ChartIndicatorId } from "@/types/chart-indicator";
 import type { ChartTimeframe } from "@/types/chart-timeframe";
+import type { Locale } from "@/lib/i18n/config";
 
 export function ChartToolbar({
   instrument,
@@ -13,6 +14,7 @@ export function ChartToolbar({
   onInstrument,
   onTimeframe,
   onIndicator,
+  locale = "en",
 }: {
   instrument: string;
   timeframe: ChartTimeframe;
@@ -21,11 +23,16 @@ export function ChartToolbar({
   onInstrument: (value: string) => void;
   onTimeframe: (value: ChartTimeframe) => void;
   onIndicator: (value: ChartIndicatorId) => void;
+  locale?: Locale;
 }) {
+  const spanish = locale === "es";
   return (
-    <div className="chart-toolbar" aria-label="Chart controls">
+    <div
+      className="chart-toolbar"
+      aria-label={spanish ? "Controles del gráfico" : "Chart controls"}
+    >
       <label>
-        Instrument
+        {spanish ? "Instrumento" : "Instrument"}
         <select
           value={instrument}
           onChange={(event) => onInstrument(event.target.value)}
@@ -38,7 +45,7 @@ export function ChartToolbar({
         </select>
       </label>
       <label>
-        Timeframe
+        {spanish ? "Temporalidad" : "Timeframe"}
         <select
           value={timeframe}
           onChange={(event) =>
@@ -53,7 +60,7 @@ export function ChartToolbar({
         </select>
       </label>
       <div className="chart-indicator-controls">
-        <span>Indicators</span>
+        <span>{spanish ? "Indicadores" : "Indicators"}</span>
         {Object.entries(CHART_INDICATORS).map(([id, definition]) => (
           <button
             type="button"
