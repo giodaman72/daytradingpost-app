@@ -34,6 +34,7 @@ export const ROUTES = {
   },
   newsletter: "/#newsletter",
   premium: "/premium",
+  backtesting: "/research/backtesting",
   watchlists: "/watchlists",
   webinars: "/webinars",
 } as const;
