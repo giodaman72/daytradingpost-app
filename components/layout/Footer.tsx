@@ -20,6 +20,7 @@ export async function Footer() {
     "Trading Academy": "Academia de trading",
     "Market Analysis": "Análisis de mercados",
     "Economic Calendar": "Calendario económico",
+    "Quant Research": "Investigación cuantitativa",
     Webinars: "Webinars",
     Premium: "Premium",
     About: "Quiénes somos",

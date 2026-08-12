@@ -18,6 +18,7 @@ export async function Header() {
     Markets: "Mercados",
     Analysis: "Análisis",
     Charts: "Gráficos",
+    Research: "Investigación",
     Calendar: "Calendario",
     Dashboard: "Panel",
     "AI Assistant": "Asistente con IA",
