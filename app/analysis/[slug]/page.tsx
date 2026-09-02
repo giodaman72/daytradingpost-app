@@ -12,6 +12,7 @@ import { getMarketIntelligenceByInstrument } from "@/lib/market/marketIntelligen
 import { getQuoteByInstrument } from "@/lib/market-data/marketDataService";
 import { languageAlternates, localizeHref } from "@/lib/i18n/config";
 import { getRequestLocale } from "@/lib/i18n/server";
+import { translateSpanishText } from "@/lib/i18n/spanish";
 
 type AnalysisArticlePageProps = {
   params: Promise<{ slug: string }>;
@@ -39,8 +40,11 @@ export async function generateMetadata({
     };
   }
 
-  const title = article.seoTitle || article.title;
-  const description = article.seoDescription || article.excerpt;
+  const rawTitle = article.seoTitle || article.title;
+  const rawDescription = article.seoDescription || article.excerpt;
+  const title = locale === "es" ? translateSpanishText(rawTitle) : rawTitle;
+  const description =
+    locale === "es" ? translateSpanishText(rawDescription) : rawDescription;
   const baseUrl = `/analysis/${article.slug}`;
   const url = localizeHref(baseUrl, locale);
   const imageUrl = getSanityImageUrl(article.featuredImage, 1200, 630);
