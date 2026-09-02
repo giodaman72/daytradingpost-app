@@ -183,6 +183,50 @@ export default async function Home() {
     <main>
       <Header />
 
+      <section className="section" id="premium">
+        <div className="container">
+          <div className="premium-card">
+            <div className="premium-copy">
+              <span className="section-kicker">DayTradingPost Premium</span>
+
+              <h2>{copy.premiumTitle}</h2>
+
+              <p>{copy.premiumDescription}</p>
+
+              <ul className="premium-list">
+                {copy.benefits.map((benefit) => (
+                  <li key={benefit}>
+                    <span>✓</span>
+                    {benefit}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="pricing-card">
+              <span className="pricing-label">{copy.founding}</span>
+
+              <div className="price">
+                <strong>{copy.plans}</strong>
+                <span>{copy.cadence}</span>
+              </div>
+
+              <p>{copy.checkout}</p>
+
+              <Link
+                href={localizeHref("/premium", locale)}
+                className="button button-full"
+              >
+                {copy.joinPremium}
+                <span aria-hidden="true">→</span>
+              </Link>
+
+              <span className="pricing-note">{copy.revolut}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="hero">
         <div className="hero-grid" aria-hidden="true" />
 
@@ -238,50 +282,6 @@ export default async function Home() {
             ) : (
               <EmptyMarketState locale={locale} />
             )}
-          </div>
-        </div>
-      </section>
-
-      <section className="section" id="premium">
-        <div className="container">
-          <div className="premium-card">
-            <div className="premium-copy">
-              <span className="section-kicker">DayTradingPost Premium</span>
-
-              <h2>{copy.premiumTitle}</h2>
-
-              <p>{copy.premiumDescription}</p>
-
-              <ul className="premium-list">
-                {copy.benefits.map((benefit) => (
-                  <li key={benefit}>
-                    <span>✓</span>
-                    {benefit}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="pricing-card">
-              <span className="pricing-label">{copy.founding}</span>
-
-              <div className="price">
-                <strong>{copy.plans}</strong>
-                <span>{copy.cadence}</span>
-              </div>
-
-              <p>{copy.checkout}</p>
-
-              <Link
-                href={localizeHref("/premium", locale)}
-                className="button button-full"
-              >
-                {copy.joinPremium}
-                <span aria-hidden="true">→</span>
-              </Link>
-
-              <span className="pricing-note">{copy.revolut}</span>
-            </div>
           </div>
         </div>
       </section>
