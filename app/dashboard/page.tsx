@@ -80,7 +80,7 @@ export default async function DashboardPage() {
     assistantUsage,
     academyEnrollments,
   ] = await Promise.all([
-    getLatestArticles(5),
+    getLatestArticles(5, locale),
     getUserWatchlists().catch(() => []),
     getUserAlerts(20).catch(() => []),
     getUserNotifications(5).catch(() => []),

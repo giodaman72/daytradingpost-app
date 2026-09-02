@@ -1,5 +1,6 @@
 import type { PortableTextBlock } from "@portabletext/react";
 import type { MarketBias } from "./market";
+import type { Locale } from "@/lib/i18n/config";
 
 export type ArticleAccessLevel = "free" | "premium";
 
@@ -47,6 +48,7 @@ export type ArticleSummary = {
   category: ArticleCategory | null;
   excerpt: string;
   featuredImage: SanityImage | null;
+  featuredImageUrl?: string;
   instrumentSymbol: string;
   marketBias: MarketBias;
   publishedAt: string;
@@ -54,6 +56,7 @@ export type ArticleSummary = {
   seoTitle?: string;
   slug: string;
   title: string;
+  language?: Locale;
 };
 
 export type Article = ArticleSummary & {

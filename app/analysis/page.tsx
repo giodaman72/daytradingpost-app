@@ -34,10 +34,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AnalysisPage() {
-  const [locale, articles] = await Promise.all([
-    getRequestLocale(),
-    getArticles(),
-  ]);
+  const locale = await getRequestLocale();
+  const articles = await getArticles(locale);
   const spanish = locale === "es";
 
   return (

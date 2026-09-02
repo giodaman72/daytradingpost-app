@@ -16,6 +16,7 @@ import {
   latestArticlesQuery,
 } from "./queries";
 import type { Article, ArticleSummary } from "@/types/article";
+import type { Locale } from "@/lib/i18n/config";
 
 let sanityClient: ReturnType<typeof createClient> | null = null;
 
@@ -65,20 +66,27 @@ async function safeFetch<T>(
   }
 }
 
-export function getArticles() {
-  return safeFetch<ArticleSummary[]>(articlesQuery, []);
+export function getArticles(locale: Locale = "en") {
+  return safeFetch<ArticleSummary[]>(articlesQuery, [], { locale });
 }
 
-export function getLatestArticles(limit = 3) {
-  return safeFetch<ArticleSummary[]>(latestArticlesQuery, [], { limit });
+export function getLatestArticles(limit = 3, locale: Locale = "en") {
+  return safeFetch<ArticleSummary[]>(latestArticlesQuery, [], {
+    limit,
+    locale,
+  });
 }
 
-export const getArticleBySlug = cache((slug: string) =>
-  safeFetch<Article | null>(articleBySlugQuery, null, { slug }),
+export const getArticleBySlug = cache((slug: string, locale: Locale = "en") =>
+  safeFetch<Article | null>(articleBySlugQuery, null, { slug, locale }),
 );
 
-export const getArticleSummaryBySlug = cache((slug: string) =>
-  safeFetch<ArticleSummary | null>(articleSummaryBySlugQuery, null, { slug }),
+export const getArticleSummaryBySlug = cache(
+  (slug: string, locale: Locale = "en") =>
+    safeFetch<ArticleSummary | null>(articleSummaryBySlugQuery, null, {
+      slug,
+      locale,
+    }),
 );
 
 export async function getArticleSlugs() {

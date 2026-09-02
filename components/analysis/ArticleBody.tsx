@@ -7,7 +7,6 @@ import {
 import { getSanityImageUrl } from "@/lib/sanity/image";
 import type { Article, SanityImage } from "@/types/article";
 import type { Locale } from "@/lib/i18n/config";
-import { translateSpanishPortableText } from "@/lib/i18n/spanish";
 
 function PortableImage({ value }: PortableTextTypeComponentProps<SanityImage>) {
   const imageUrl = getSanityImageUrl(value, 1400, 840);
@@ -54,14 +53,10 @@ const portableTextComponents: PortableTextComponents = {
 
 export function ArticleBody({
   body,
-  locale = "en",
 }: Pick<Article, "body"> & { locale?: Locale }) {
   return (
     <div className="analysis-portable-text">
-      <PortableText
-        value={locale === "es" ? translateSpanishPortableText(body) : body}
-        components={portableTextComponents}
-      />
+      <PortableText value={body} components={portableTextComponents} />
     </div>
   );
 }

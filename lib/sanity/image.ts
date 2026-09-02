@@ -1,6 +1,6 @@
 import { createImageUrlBuilder } from "@sanity/image-url";
 import { sanityDataset, sanityProjectId } from "@/sanity/env";
-import type { SanityImage } from "@/types/article";
+import type { ArticleSummary, SanityImage } from "@/types/article";
 
 export function getSanityImageUrl(
   image: SanityImage | null | undefined,
@@ -23,4 +23,15 @@ export function getSanityImageUrl(
     .width(width)
     .height(height)
     .url();
+}
+
+export function getArticleImageUrl(
+  article: Pick<ArticleSummary, "featuredImage" | "featuredImageUrl">,
+  width: number,
+  height: number,
+) {
+  return (
+    article.featuredImageUrl ||
+    getSanityImageUrl(article.featuredImage, width, height)
+  );
 }
