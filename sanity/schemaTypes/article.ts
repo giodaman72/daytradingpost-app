@@ -13,6 +13,21 @@ export const articleType = defineType({
   ],
   fields: [
     defineField({
+      name: "language",
+      title: "Language",
+      type: "string",
+      group: "content",
+      initialValue: "en",
+      options: {
+        list: [
+          { title: "English", value: "en" },
+          { title: "Español", value: "es" },
+        ],
+        layout: "radio",
+      },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: "title",
       title: "Title",
       type: "string",

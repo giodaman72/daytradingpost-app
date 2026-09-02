@@ -2,6 +2,7 @@ import { defineQuery } from "next-sanity";
 
 const articleCardProjection = `
   _id,
+  "language": coalesce(language, "en"),
   title,
   "slug": slug.current,
   "excerpt": coalesce(excerpt, "Market analysis from DayTradingPost."),
@@ -34,6 +35,7 @@ export const articlesQuery = defineQuery(`
     defined(slug.current) &&
     defined(publishedAt) &&
     publishedAt <= now()
+    && coalesce(language, "en") == $locale
   ] | order(publishedAt desc) {
     ${articleCardProjection}
   }
@@ -45,6 +47,7 @@ export const latestArticlesQuery = defineQuery(`
     defined(slug.current) &&
     defined(publishedAt) &&
     publishedAt <= now()
+    && coalesce(language, "en") == $locale
   ] | order(publishedAt desc) [0...$limit] {
     ${articleCardProjection}
   }
@@ -54,6 +57,7 @@ export const articleBySlugQuery = defineQuery(`
   *[
     _type == "article" &&
     slug.current == $slug &&
+    coalesce(language, "en") == $locale &&
     defined(publishedAt) &&
     publishedAt <= now()
   ][0] {
@@ -83,6 +87,7 @@ export const articleSummaryBySlugQuery = defineQuery(`
   *[
     _type == "article" &&
     slug.current == $slug &&
+    coalesce(language, "en") == $locale &&
     defined(publishedAt) &&
     publishedAt <= now()
   ][0] {

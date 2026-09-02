@@ -168,15 +168,13 @@ const HOME_COPY = {
 } as const;
 
 export default async function Home() {
-  const [locale, analyses, outlooks, quotes, economicToday] = await Promise.all(
-    [
-      getRequestLocale(),
-      getLatestArticles(3),
-      getFeaturedMarketIntelligence(),
-      getHomepageQuotes(),
-      getEconomicToday(),
-    ],
-  );
+  const locale = await getRequestLocale();
+  const [analyses, outlooks, quotes, economicToday] = await Promise.all([
+    getLatestArticles(3, locale),
+    getFeaturedMarketIntelligence(),
+    getHomepageQuotes(),
+    getEconomicToday(),
+  ]);
   const copy = HOME_COPY[locale];
 
   return (

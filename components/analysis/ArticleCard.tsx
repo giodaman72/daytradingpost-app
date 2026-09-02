@@ -1,9 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getSanityImageUrl } from "@/lib/sanity/image";
+import { getArticleImageUrl } from "@/lib/sanity/image";
 import type { ArticleSummary } from "@/types/article";
 import { localizeHref, type Locale } from "@/lib/i18n/config";
-import { translateSpanishText } from "@/lib/i18n/spanish";
 
 type ArticleCardProps = {
   article: ArticleSummary;
@@ -21,7 +20,7 @@ function formatPublishedDate(value: string, locale: Locale) {
 
 export function ArticleCard({ article, locale = "en" }: ArticleCardProps) {
   const spanish = locale === "es";
-  const imageUrl = getSanityImageUrl(article.featuredImage, 960, 600);
+  const imageUrl = getArticleImageUrl(article, 960, 600);
   const rawCategory = article.category?.title || "Market analysis";
   const categoryLabels: Record<string, string> = {
     "Market analysis": "Análisis de mercados",
@@ -46,7 +45,7 @@ export function ArticleCard({ article, locale = "en" }: ArticleCardProps) {
         {imageUrl ? (
           <Image
             src={imageUrl}
-            alt={article.featuredImage?.alt || ""}
+            alt={article.featuredImage?.alt || article.title}
             fill
             sizes="(max-width: 800px) 100vw, (max-width: 1200px) 50vw, 380px"
             className="analysis-card-image"
@@ -76,10 +75,8 @@ export function ArticleCard({ article, locale = "en" }: ArticleCardProps) {
           <span>{formatPublishedDate(article.publishedAt, locale)}</span>
         </div>
 
-        <h3>{spanish ? translateSpanishText(article.title) : article.title}</h3>
-        <p>
-          {spanish ? translateSpanishText(article.excerpt) : article.excerpt}
-        </p>
+        <h3>{article.title}</h3>
+        <p>{article.excerpt}</p>
 
         <div className="analysis-card-footer">
           <span

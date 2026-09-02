@@ -5,14 +5,13 @@ import {
   getArticleBySlug,
   getArticleSummaryBySlug,
   getArticleSlugs,
-  getSanityImageUrl,
 } from "@/lib/cms";
 import { getMembershipAccess } from "@/lib/payments";
 import { getMarketIntelligenceByInstrument } from "@/lib/market/marketIntelligenceService";
 import { getQuoteByInstrument } from "@/lib/market-data/marketDataService";
 import { languageAlternates, localizeHref } from "@/lib/i18n/config";
 import { getRequestLocale } from "@/lib/i18n/server";
-import { translateSpanishText } from "@/lib/i18n/spanish";
+import { getArticleImageUrl } from "@/lib/sanity/image";
 
 type AnalysisArticlePageProps = {
   params: Promise<{ slug: string }>;
@@ -28,10 +27,8 @@ export async function generateMetadata({
   params,
 }: AnalysisArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const [locale, article] = await Promise.all([
-    getRequestLocale(),
-    getArticleSummaryBySlug(slug),
-  ]);
+  const locale = await getRequestLocale();
+  const article = await getArticleSummaryBySlug(slug, locale);
 
   if (!article) {
     return {
@@ -40,14 +37,11 @@ export async function generateMetadata({
     };
   }
 
-  const rawTitle = article.seoTitle || article.title;
-  const rawDescription = article.seoDescription || article.excerpt;
-  const title = locale === "es" ? translateSpanishText(rawTitle) : rawTitle;
-  const description =
-    locale === "es" ? translateSpanishText(rawDescription) : rawDescription;
+  const title = article.seoTitle || article.title;
+  const description = article.seoDescription || article.excerpt;
   const baseUrl = `/analysis/${article.slug}`;
   const url = localizeHref(baseUrl, locale);
-  const imageUrl = getSanityImageUrl(article.featuredImage, 1200, 630);
+  const imageUrl = getArticleImageUrl(article, 1200, 630);
 
   return {
     title,
@@ -87,10 +81,8 @@ export default async function AnalysisArticlePage({
   params,
 }: AnalysisArticlePageProps) {
   const { slug } = await params;
-  const [locale, summary] = await Promise.all([
-    getRequestLocale(),
-    getArticleSummaryBySlug(slug),
-  ]);
+  const locale = await getRequestLocale();
+  const summary = await getArticleSummaryBySlug(slug, locale);
 
   if (!summary) {
     notFound();
@@ -119,7 +111,7 @@ export default async function AnalysisArticlePage({
     }
   }
 
-  const article = await getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug, locale);
   if (!article) notFound();
 
   return (

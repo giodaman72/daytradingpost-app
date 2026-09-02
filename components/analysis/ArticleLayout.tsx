@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import { getSanityImageUrl } from "@/lib/sanity/image";
+import { getArticleImageUrl } from "@/lib/sanity/image";
 import type { Article, ArticleSummary } from "@/types/article";
 import { ArticleBody } from "./ArticleBody";
 import { LevelList } from "./LevelList";
@@ -15,7 +15,6 @@ import { MarketDataCard } from "@/components/market-data/MarketDataCard";
 import { MarketQuickActions } from "@/components/alerts/MarketQuickActions";
 import { AssistantContextActions } from "@/components/assistant/AssistantContextActions";
 import { localizeHref, type Locale } from "@/lib/i18n/config";
-import { translateSpanishText } from "@/lib/i18n/spanish";
 
 type ArticleLayoutProps = (
   | { article: Article; locked?: false }
@@ -40,7 +39,7 @@ export function ArticleLayout(props: ArticleLayoutProps) {
   const spanish = locale === "es";
   const article = props.article;
   const fullArticle = props.locked ? null : props.article;
-  const imageUrl = getSanityImageUrl(article.featuredImage, 1600, 900);
+  const imageUrl = getArticleImageUrl(article, 1600, 900);
   const rawCategory = article.category?.title || "Market analysis";
   const categoryLabels: Record<string, string> = {
     "Market analysis": "Análisis de mercados",
@@ -51,12 +50,8 @@ export function ArticleLayout(props: ArticleLayoutProps) {
   const category = spanish
     ? (categoryLabels[rawCategory] ?? rawCategory)
     : rawCategory;
-  const articleTitle = spanish
-    ? translateSpanishText(article.title)
-    : article.title;
-  const articleExcerpt = spanish
-    ? translateSpanishText(article.excerpt)
-    : article.excerpt;
+  const articleTitle = article.title;
+  const articleExcerpt = article.excerpt;
   const biasLabels: Record<string, string> = {
     Bullish: "Alcista",
     Neutral: "Neutral",
@@ -128,7 +123,7 @@ export function ArticleLayout(props: ArticleLayoutProps) {
               {imageUrl ? (
                 <Image
                   src={imageUrl}
-                  alt={article.featuredImage?.alt || ""}
+                  alt={article.featuredImage?.alt || article.title}
                   fill
                   priority
                   sizes="(max-width: 900px) 100vw, 520px"
@@ -284,7 +279,7 @@ export function ArticleLayout(props: ArticleLayoutProps) {
                       {fullArticle.riskFactors.map((factor) => (
                         <li key={factor}>
                           <span aria-hidden="true">!</span>
-                          {spanish ? translateSpanishText(factor) : factor}
+                          {factor}
                         </li>
                       ))}
                     </ul>
