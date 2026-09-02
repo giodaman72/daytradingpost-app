@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getSanityImageUrl } from "@/lib/sanity/image";
 import type { ArticleSummary } from "@/types/article";
 import { localizeHref, type Locale } from "@/lib/i18n/config";
+import { translateSpanishText } from "@/lib/i18n/spanish";
 
 type ArticleCardProps = {
   article: ArticleSummary;
@@ -75,8 +76,10 @@ export function ArticleCard({ article, locale = "en" }: ArticleCardProps) {
           <span>{formatPublishedDate(article.publishedAt, locale)}</span>
         </div>
 
-        <h3>{article.title}</h3>
-        <p>{article.excerpt}</p>
+        <h3>{spanish ? translateSpanishText(article.title) : article.title}</h3>
+        <p>
+          {spanish ? translateSpanishText(article.excerpt) : article.excerpt}
+        </p>
 
         <div className="analysis-card-footer">
           <span

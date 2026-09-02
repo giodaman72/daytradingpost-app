@@ -9,6 +9,7 @@ import { getMembershipAccess } from "@/lib/membership/access";
 import { listChartLayouts } from "@/lib/charts/chartRepository";
 import { languageAlternates, localizeHref } from "@/lib/i18n/config";
 import { getRequestLocale } from "@/lib/i18n/server";
+import { translateInstrumentName } from "@/lib/i18n/spanish";
 
 type Props = { params: Promise<{ instrument: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -20,12 +21,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!instrument) return {};
   const basePath = `/charts/${instrument.slug}`;
   const spanish = locale === "es";
+  const instrumentName = spanish
+    ? translateInstrumentName(instrument.name)
+    : instrument.name;
   return {
     title: spanish
-      ? `Gráfico avanzado de ${instrument.name}`
+      ? `Gráfico avanzado de ${instrumentName}`
       : `${instrument.name} Advanced Chart`,
     description: spanish
-      ? `Gráfico interactivo de ${instrument.name} con atribución del proveedor, indicadores y contexto de DayTradingPost.`
+      ? `Gráfico interactivo de ${instrumentName} con atribución del proveedor, indicadores y contexto de DayTradingPost.`
       : `Interactive ${instrument.name} chart with provider attribution, indicators and DayTradingPost context.`,
     alternates: {
       canonical: localizeHref(basePath, locale),
@@ -41,6 +45,9 @@ export default async function InstrumentChartPage({ params }: Props) {
   const instrument = resolveChartSymbol(instrumentSlug);
   if (!instrument) notFound();
   const spanish = locale === "es";
+  const instrumentName = spanish
+    ? translateInstrumentName(instrument.name)
+    : instrument.name;
   const [access, config] = await Promise.all([
     getMembershipAccess(),
     Promise.resolve(getChartConfig()),
@@ -56,7 +63,7 @@ export default async function InstrumentChartPage({ params }: Props) {
           <span className="section-kicker">
             {spanish ? "Gráficos avanzados" : "Advanced charting"}
           </span>
-          <h1>{instrument.name}</h1>
+          <h1>{instrumentName}</h1>
           <p>
             {spanish
               ? "Los gráficos de terceros, el estado de los datos, el contexto editorial y los diseños de usuario permanecen claramente separados."

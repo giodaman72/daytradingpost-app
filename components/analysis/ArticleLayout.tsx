@@ -15,6 +15,7 @@ import { MarketDataCard } from "@/components/market-data/MarketDataCard";
 import { MarketQuickActions } from "@/components/alerts/MarketQuickActions";
 import { AssistantContextActions } from "@/components/assistant/AssistantContextActions";
 import { localizeHref, type Locale } from "@/lib/i18n/config";
+import { translateSpanishText } from "@/lib/i18n/spanish";
 
 type ArticleLayoutProps = (
   | { article: Article; locked?: false }
@@ -40,9 +41,22 @@ export function ArticleLayout(props: ArticleLayoutProps) {
   const article = props.article;
   const fullArticle = props.locked ? null : props.article;
   const imageUrl = getSanityImageUrl(article.featuredImage, 1600, 900);
-  const category =
-    article.category?.title ||
-    (spanish ? "Análisis de mercados" : "Market analysis");
+  const rawCategory = article.category?.title || "Market analysis";
+  const categoryLabels: Record<string, string> = {
+    "Market analysis": "Análisis de mercados",
+    "Nasdaq Analysis": "Análisis del Nasdaq",
+    SilverAnalysis: "Análisis de la plata",
+    "Crude Oil Analysis": "Análisis del petróleo crudo",
+  };
+  const category = spanish
+    ? (categoryLabels[rawCategory] ?? rawCategory)
+    : rawCategory;
+  const articleTitle = spanish
+    ? translateSpanishText(article.title)
+    : article.title;
+  const articleExcerpt = spanish
+    ? translateSpanishText(article.excerpt)
+    : article.excerpt;
   const biasLabels: Record<string, string> = {
     Bullish: "Alcista",
     Neutral: "Neutral",
@@ -70,7 +84,7 @@ export function ArticleLayout(props: ArticleLayoutProps) {
               {spanish ? "Análisis" : "Analysis"}
             </Link>
             <span aria-hidden="true">/</span>
-            <span aria-current="page">{article.title}</span>
+            <span aria-current="page">{articleTitle}</span>
           </nav>
 
           <div className="analysis-article-heading-grid">
@@ -85,14 +99,17 @@ export function ArticleLayout(props: ArticleLayoutProps) {
                       : "Free"}
                 </span>
               </div>
-              <h1>{article.title}</h1>
-              <p className="analysis-article-excerpt">{article.excerpt}</p>
+              <h1>{articleTitle}</h1>
+              <p className="analysis-article-excerpt">{articleExcerpt}</p>
 
               <div className="analysis-byline">
                 <span>
                   {spanish ? "Por" : "By"}{" "}
                   <strong>
-                    {article.author?.name || "DayTradingPost Research"}
+                    {article.author?.name ||
+                      (spanish
+                        ? "Investigación de DayTradingPost"
+                        : "DayTradingPost Research")}
                   </strong>
                 </span>
                 <span>{formatPublishedDate(article.publishedAt, locale)}</span>
@@ -137,16 +154,6 @@ export function ArticleLayout(props: ArticleLayoutProps) {
                 : "Market levels and bias reflect the author's published analysis at the stated time. They are not live prices or personalized trade recommendations."}
             </span>
           </div>
-          {spanish ? (
-            <div className="sample-content-notice" role="note">
-              <strong>Artículo fuente en inglés</strong>
-              <span>
-                La navegación y el marco editorial están disponibles en español.
-                El texto original del análisis se conserva en inglés para no
-                alterar su significado sin una traducción editorial aprobada.
-              </span>
-            </div>
-          ) : null}
         </div>
       </section>
 
@@ -187,12 +194,23 @@ export function ArticleLayout(props: ArticleLayoutProps) {
               mode="article_explanation"
               instrument={article.instrumentSymbol}
               article={article.slug}
-              prompts={[
-                "Explain this analysis in simpler terms.",
-                "Explain the bullish and bearish scenarios.",
-                "Explain the support and resistance levels.",
-                "What are the key risk factors in this analysis?",
-              ]}
+              title={spanish ? "Pregunta al asistente con IA" : undefined}
+              prompts={
+                spanish
+                  ? [
+                      "Explica este análisis en términos más sencillos.",
+                      "Explica los escenarios alcista y bajista.",
+                      "Explica los niveles de soporte y resistencia.",
+                      "¿Cuáles son los principales factores de riesgo de este análisis?",
+                    ]
+                  : [
+                      "Explain this analysis in simpler terms.",
+                      "Explain the bullish and bearish scenarios.",
+                      "Explain the support and resistance levels.",
+                      "What are the key risk factors in this analysis?",
+                    ]
+              }
+              locale={locale}
             />
             {props.intelligence ? (
               fullArticle ? (
@@ -247,7 +265,7 @@ export function ArticleLayout(props: ArticleLayoutProps) {
               </section>
             ) : (
               <>
-                <ArticleBody body={fullArticle.body} />
+                <ArticleBody body={fullArticle.body} locale={locale} />
 
                 <section className="analysis-content-section analysis-risk-section">
                   <span className="analysis-section-number">!</span>
@@ -266,7 +284,7 @@ export function ArticleLayout(props: ArticleLayoutProps) {
                       {fullArticle.riskFactors.map((factor) => (
                         <li key={factor}>
                           <span aria-hidden="true">!</span>
-                          {factor}
+                          {spanish ? translateSpanishText(factor) : factor}
                         </li>
                       ))}
                     </ul>
@@ -346,11 +364,13 @@ export function ArticleLayout(props: ArticleLayoutProps) {
                 label={spanish ? "Resistencia" : "Resistance"}
                 levels={fullArticle.resistanceLevels}
                 tone="resistance"
+                levelLabel={spanish ? "Nivel" : "Level"}
               />
               <LevelList
                 label={spanish ? "Soporte" : "Support"}
                 levels={fullArticle.supportLevels}
                 tone="support"
+                levelLabel={spanish ? "Nivel" : "Level"}
               />
               <p>
                 {spanish

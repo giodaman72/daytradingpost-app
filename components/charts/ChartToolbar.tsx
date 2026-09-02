@@ -1,10 +1,14 @@
 "use client";
 import { INSTRUMENTS } from "@/constants/instruments";
 import { CHART_INDICATORS } from "@/lib/charts/chartIndicators";
-import { CHART_TIMEFRAME_LABELS } from "@/lib/charts/chartTimeframes";
+import {
+  CHART_TIMEFRAME_LABELS,
+  CHART_TIMEFRAME_LABELS_ES,
+} from "@/lib/charts/chartTimeframes";
 import type { ChartIndicatorId } from "@/types/chart-indicator";
 import type { ChartTimeframe } from "@/types/chart-timeframe";
 import type { Locale } from "@/lib/i18n/config";
+import { translateInstrumentName } from "@/lib/i18n/spanish";
 
 export function ChartToolbar({
   instrument,
@@ -26,6 +30,14 @@ export function ChartToolbar({
   locale?: Locale;
 }) {
   const spanish = locale === "es";
+  const indicatorNames: Record<string, string> = {
+    "Simple Moving Average": "Media móvil simple",
+    "Exponential Moving Average": "Media móvil exponencial",
+    "Bollinger Bands": "Bandas de Bollinger",
+    "Relative Strength Index": "Índice de fuerza relativa",
+    "Average True Range": "Rango verdadero medio",
+    Volume: "Volumen",
+  };
   return (
     <div
       className="chart-toolbar"
@@ -39,7 +51,7 @@ export function ChartToolbar({
         >
           {INSTRUMENTS.map((item) => (
             <option value={item.slug} key={item.slug}>
-              {item.name}
+              {spanish ? translateInstrumentName(item.name) : item.name}
             </option>
           ))}
         </select>
@@ -54,7 +66,11 @@ export function ChartToolbar({
         >
           {supportedTimeframes.map((item) => (
             <option value={item} key={item}>
-              {CHART_TIMEFRAME_LABELS[item]}
+              {
+                (spanish ? CHART_TIMEFRAME_LABELS_ES : CHART_TIMEFRAME_LABELS)[
+                  item
+                ]
+              }
             </option>
           ))}
         </select>
@@ -68,7 +84,9 @@ export function ChartToolbar({
             onClick={() => onIndicator(id as ChartIndicatorId)}
             key={id}
           >
-            {definition.name}
+            {spanish
+              ? (indicatorNames[definition.name] ?? definition.name)
+              : definition.name}
             {definition.premium ? " · Premium" : ""}
           </button>
         ))}

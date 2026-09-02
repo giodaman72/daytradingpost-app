@@ -19,6 +19,7 @@ import { ChartCanvas } from "./ChartCanvas";
 import { ChartToolbar } from "./ChartToolbar";
 import { TradingViewChart } from "./TradingViewChart";
 import { localizeHref, type Locale } from "@/lib/i18n/config";
+import { translateInstrumentName } from "@/lib/i18n/spanish";
 
 export function ChartShell({
   initialInstrument,
@@ -38,6 +39,9 @@ export function ChartShell({
   locale?: Locale;
 }) {
   const spanish = locale === "es";
+  const instrumentName = spanish
+    ? translateInstrumentName(initialInstrument.name)
+    : initialInstrument.name;
   const router = useRouter();
   const [timeframe, setTimeframe] = useState(initialTimeframe);
   const [indicators, setIndicators] = useState<ChartIndicatorConfig[]>([]);
@@ -181,7 +185,7 @@ export function ChartShell({
   return (
     <section
       className="advanced-chart"
-      aria-label={`${initialInstrument.name} ${spanish ? "gráfico avanzado" : "advanced chart"}`}
+      aria-label={`${instrumentName} ${spanish ? "gráfico avanzado" : "advanced chart"}`}
     >
       <ChartToolbar
         instrument={initialInstrument.slug}
@@ -224,15 +228,11 @@ export function ChartShell({
         <TradingViewChart
           symbol={initialInstrument.tradingViewSymbol}
           timeframe={timeframe}
-          name={initialInstrument.name}
+          name={instrumentName}
           locale={locale}
         />
       ) : (
-        <ChartCanvas
-          bars={bars}
-          name={initialInstrument.name}
-          locale={locale}
-        />
+        <ChartCanvas bars={bars} name={instrumentName} locale={locale} />
       )}
       <div className="chart-actions">
         {authenticated ? (
@@ -253,11 +253,23 @@ export function ChartShell({
         <button type="button" onClick={() => setIndicators([])}>
           {spanish ? "Restablecer diseño" : "Reset layout"}
         </button>
-        <a href={`/alerts/new?instrument=${initialInstrument.slug}`}>
+        <a
+          href={localizeHref(
+            `/alerts/new?instrument=${initialInstrument.slug}`,
+            locale,
+          )}
+        >
           {spanish ? "Crear alerta" : "Create alert"}
         </a>
         <a
-          href={`/assistant?mode=market_analysis&instrument=${initialInstrument.slug}&prompt=${encodeURIComponent(`Explain the ${timeframe} chart context and selected indicators: ${indicators.map((item) => item.id).join(", ") || "none"}.`)}`}
+          href={localizeHref(
+            `/assistant?mode=market_analysis&instrument=${initialInstrument.slug}&prompt=${encodeURIComponent(
+              spanish
+                ? `Explica el contexto del gráfico de ${timeframe} y los indicadores seleccionados: ${indicators.map((item) => item.id).join(", ") || "ninguno"}.`
+                : `Explain the ${timeframe} chart context and selected indicators: ${indicators.map((item) => item.id).join(", ") || "none"}.`,
+            )}`,
+            locale,
+          )}
         >
           {spanish
             ? "Preguntar a la IA por el contexto normalizado"
@@ -272,7 +284,7 @@ export function ChartShell({
         </p>
       ) : null}
       <ChartAccessibilitySummary
-        name={initialInstrument.name}
+        name={instrumentName}
         timeframe={timeframe}
         bars={bars}
         indicators={indicators}

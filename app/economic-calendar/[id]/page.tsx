@@ -92,12 +92,23 @@ export default async function EconomicEventPage({ params }: Props) {
           <AssistantContextActions
             mode="economic_event"
             event={event.id}
-            prompts={[
-              "Explain this economic event.",
-              "Why can this event affect the currency?",
-              "Compare actual versus forecast without inventing missing results.",
-              "Explain possible volatility scenarios.",
-            ]}
+            title={spanish ? "Pregunta al asistente con IA" : undefined}
+            prompts={
+              spanish
+                ? [
+                    "Explica este evento económico.",
+                    "¿Por qué puede afectar este evento a la divisa?",
+                    "Compara el dato real con el pronóstico sin inventar resultados ausentes.",
+                    "Explica posibles escenarios de volatilidad.",
+                  ]
+                : [
+                    "Explain this economic event.",
+                    "Why can this event affect the currency?",
+                    "Compare actual versus forecast without inventing missing results.",
+                    "Explain possible volatility scenarios.",
+                  ]
+            }
+            locale={locale}
           />
           <aside
             className="economic-reminders"

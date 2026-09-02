@@ -69,7 +69,7 @@ export async function Header() {
           ) : null}
           {user ? (
             <>
-              <NotificationBell />
+              <NotificationBell locale={locale} />
               <Link
                 href={localizeHref(ROUTES.account, locale)}
                 className="account-link"

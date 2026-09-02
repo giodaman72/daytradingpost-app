@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { AssistantContextMode } from "@/types/ai-context";
+import type { Locale } from "@/lib/i18n/config";
+import { localizeHref } from "@/lib/i18n/config";
 
 export function AssistantContextActions({
   title = "Ask the AI Assistant",
@@ -8,6 +10,7 @@ export function AssistantContextActions({
   article,
   event,
   prompts,
+  locale = "en",
 }: {
   title?: string;
   mode: AssistantContextMode;
@@ -15,7 +18,9 @@ export function AssistantContextActions({
   article?: string;
   event?: string;
   prompts: readonly string[];
+  locale?: Locale;
 }) {
+  const spanish = locale === "es";
   const base = new URLSearchParams({ mode });
   if (instrument) base.set("instrument", instrument);
   if (article) base.set("article", article);
@@ -26,16 +31,27 @@ export function AssistantContextActions({
       aria-labelledby="assistant-actions-title"
     >
       <div>
-        <span className="section-kicker">Grounded AI explanation</span>
+        <span className="section-kicker">
+          {spanish
+            ? "Explicación de IA con fuentes"
+            : "Grounded AI explanation"}
+        </span>
         <h2 id="assistant-actions-title">{title}</h2>
-        <p>No response is generated until you choose a question.</p>
+        <p>
+          {spanish
+            ? "No se genera ninguna respuesta hasta que elijas una pregunta."
+            : "No response is generated until you choose a question."}
+        </p>
       </div>
       <div>
         {prompts.map((prompt) => {
           const query = new URLSearchParams(base);
           query.set("prompt", prompt);
           return (
-            <Link href={`/assistant?${query}`} key={prompt}>
+            <Link
+              href={localizeHref(`/assistant?${query}`, locale)}
+              key={prompt}
+            >
               {prompt}
             </Link>
           );

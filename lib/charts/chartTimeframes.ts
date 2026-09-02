@@ -11,6 +11,17 @@ export const CHART_TIMEFRAME_LABELS: Record<ChartTimeframe, string> = {
   "1w": "1 week",
   "1M": "1 month",
 };
+export const CHART_TIMEFRAME_LABELS_ES: Record<ChartTimeframe, string> = {
+  "1m": "1 minuto",
+  "5m": "5 minutos",
+  "15m": "15 minutos",
+  "30m": "30 minutos",
+  "1h": "1 hora",
+  "4h": "4 horas",
+  "1d": "1 día",
+  "1w": "1 semana",
+  "1M": "1 mes",
+};
 export const CHART_TIMEFRAME_SECONDS: Record<ChartTimeframe, number> = {
   "1m": 60,
   "5m": 300,

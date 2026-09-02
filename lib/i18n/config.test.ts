@@ -26,6 +26,9 @@ describe("public locale routing", () => {
     expect(localizeHref("/assistant", "es")).toBe("/es/assistant");
     expect(localizeHref("/watchlists", "es")).toBe("/es/watchlists");
     expect(localizeHref("/alerts/new", "es")).toBe("/es/alerts/new");
+    expect(localizeHref("/research/backtesting", "es")).toBe(
+      "/es/research/backtesting",
+    );
     expect(localizeHref("/api/charts/bars", "es")).toBe("/api/charts/bars");
   });
 
