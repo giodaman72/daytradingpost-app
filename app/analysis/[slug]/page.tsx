@@ -37,7 +37,9 @@ export async function generateMetadata({
     };
   }
 
-  const title = article.seoTitle || article.title;
+  const title = article.featuredImageUrl
+    ? article.title
+    : article.seoTitle || article.title;
   const description = article.seoDescription || article.excerpt;
   const baseUrl = `/analysis/${article.slug}`;
   const url = localizeHref(baseUrl, locale);
