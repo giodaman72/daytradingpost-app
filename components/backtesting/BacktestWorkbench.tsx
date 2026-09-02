@@ -84,8 +84,23 @@ type AlpacaBarsResponse = {
   message?: string;
 };
 
+type DatabentoBarsResponse = {
+  bars?: PriceBar[];
+  meta?: {
+    symbol: string;
+    continuousSymbol: string;
+    provider: string;
+    dataset: string;
+    timeframe: string;
+    start: string;
+    end: string;
+    estimatedCostUsd: number;
+  };
+  message?: string;
+};
+
 type DataSource = {
-  kind: "synthetic" | "alpaca" | "csv";
+  kind: "synthetic" | "alpaca" | "databento" | "csv";
   label: string;
   detail: string;
 };
@@ -105,7 +120,9 @@ export function BacktestWorkbench({
   );
   const [error, setError] = useState<string | null>(null);
   const [loadingAlpaca, setLoadingAlpaca] = useState(false);
+  const [loadingDatabento, setLoadingDatabento] = useState(false);
   const [symbol, setSymbol] = useState("SPY");
+  const [futuresSymbol, setFuturesSymbol] = useState("ES");
   const [startDate, setStartDate] = useState("2021-01-01");
   const [endDate, setEndDate] = useState(initialEndDate);
   const [dataSource, setDataSource] = useState<DataSource>({
@@ -221,6 +238,55 @@ export function BacktestWorkbench({
       );
     } finally {
       setLoadingAlpaca(false);
+    }
+  };
+
+  const loadDatabento = async () => {
+    setLoadingDatabento(true);
+    setError(null);
+    try {
+      const query = new URLSearchParams({
+        symbol: futuresSymbol,
+        start: startDate,
+        end: endDate,
+      });
+      const response = await fetch(`/api/research/databento-bars?${query}`);
+      const payload = (await response.json()) as DatabentoBarsResponse;
+      if (!response.ok)
+        throw new Error(
+          payload.message ||
+            (spanish
+              ? "No se pudieron cargar los datos de Databento."
+              : "Databento data could not be loaded."),
+        );
+      if (!payload.bars?.length || !payload.meta)
+        throw new Error(
+          spanish
+            ? "Databento no devolvió barras históricas utilizables."
+            : "Databento returned no usable historical bars.",
+        );
+
+      const historicalCsv = priceBarsToCsv(payload.bars);
+      const validatedBars = parsePriceBarsCsv(historicalCsv);
+      setCsv(historicalCsv);
+      setResult(runTrendBacktest(validatedBars, config));
+      setDataSource({
+        kind: "databento",
+        label: `${payload.meta.continuousSymbol} · ${payload.meta.provider}`,
+        detail: spanish
+          ? `${payload.meta.timeframe} · ${payload.meta.dataset} · coste estimado $${payload.meta.estimatedCostUsd.toFixed(4)} · ${payload.meta.start} a ${payload.meta.end}`
+          : `${payload.meta.timeframe} · ${payload.meta.dataset} · estimated cost $${payload.meta.estimatedCostUsd.toFixed(4)} · ${payload.meta.start} to ${payload.meta.end}`,
+      });
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : spanish
+            ? "No se pudieron cargar los datos de Databento."
+            : "Databento data could not be loaded.",
+      );
+    } finally {
+      setLoadingDatabento(false);
     }
   };
 
@@ -350,8 +416,8 @@ export function BacktestWorkbench({
         </div>
         <p>
           {spanish
-            ? "Carga barras diarias ajustadas de Alpaca para el universo limitado de investigación o utiliza un CSV local. Las credenciales permanecen en el servidor; los archivos CSV se quedan en este navegador y no se cargan."
-            : "Load adjusted daily Alpaca bars for the bounded research universe, or use a local CSV. Credentials remain server-side; CSV files stay in this browser and are not uploaded."}
+            ? "Carga barras diarias de Alpaca o futuros continuos de CME mediante Databento, o utiliza un CSV local. Las credenciales permanecen en el servidor; los archivos CSV se quedan en este navegador."
+            : "Load daily Alpaca bars or continuous CME futures through Databento, or use a local CSV. Credentials remain server-side; CSV files stay in this browser."}
         </p>
         <div className="backtest-source-status" data-source={dataSource.kind}>
           <strong>{dataSource.label}</strong>
@@ -412,6 +478,52 @@ export function BacktestWorkbench({
           {spanish
             ? "La investigación histórica utiliza la fuente diaria IEX de Alpaca, ajustada por acciones corporativas y almacenada en caché durante una hora. Es independiente de una futura visualización de cotizaciones con 15 minutos de retraso."
             : "Historical research uses Alpaca’s IEX daily feed, adjusted for corporate actions and cached for one hour. It is distinct from a future 15-minute-delayed quote display."}
+        </p>
+        <fieldset className="backtest-provider-controls">
+          <legend>
+            {spanish
+              ? "Futuros históricos de Databento"
+              : "Databento historical futures"}
+          </legend>
+          <label>
+            <span>{spanish ? "Futuro continuo" : "Continuous future"}</span>
+            <select
+              value={futuresSymbol}
+              onChange={(event) => setFuturesSymbol(event.target.value)}
+            >
+              <option value="ES">ES · E-mini S&amp;P 500</option>
+              <option value="NQ">NQ · E-mini Nasdaq-100</option>
+              <option value="YM">YM · E-mini Dow</option>
+              <option value="CL">
+                CL · {spanish ? "Petróleo crudo" : "Crude oil"}
+              </option>
+              <option value="NG">
+                NG · {spanish ? "Gas natural" : "Natural gas"}
+              </option>
+              <option value="GC">GC · {spanish ? "Oro" : "Gold"}</option>
+              <option value="SI">SI · {spanish ? "Plata" : "Silver"}</option>
+              <option value="HG">HG · {spanish ? "Cobre" : "Copper"}</option>
+            </select>
+          </label>
+          <button
+            className="button"
+            type="button"
+            disabled={loadingDatabento}
+            onClick={() => void loadDatabento()}
+          >
+            {loadingDatabento
+              ? spanish
+                ? "Cargando Databento…"
+                : "Loading Databento…"
+              : spanish
+                ? "Cargar datos de Databento"
+                : "Load Databento data"}
+          </button>
+        </fieldset>
+        <p className="backtest-provider-note">
+          {spanish
+            ? "Utiliza el contrato continuo del primer vencimiento por calendario y barras OHLCV diarias de CME Globex. El coste se estima antes de cada descarga y la respuesta se almacena en caché durante una hora."
+            : "Uses the calendar front-month continuous contract and daily CME Globex OHLCV bars. Cost is estimated before every download and the response is cached for one hour."}
         </p>
         <div className="backtest-data-actions">
           <button type="button" onClick={loadSyntheticDemo}>
