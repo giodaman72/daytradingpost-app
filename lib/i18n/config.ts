@@ -24,6 +24,7 @@ const SPANISH_PUBLIC_PATHS = [
   "/premium",
   "/privacy",
   "/register",
+  "/research",
   "/reset-password",
   "/terms",
   "/watchlists",

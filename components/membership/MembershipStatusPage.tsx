@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import type { Locale } from "@/lib/i18n/config";
+import { localizeHref } from "@/lib/i18n/config";
 
 export function MembershipStatusPage({
   kicker,
@@ -8,13 +10,16 @@ export function MembershipStatusPage({
   description,
   reference,
   tone = "pending",
+  locale = "en",
 }: {
   kicker: string;
   title: string;
   description: string;
   reference?: string | null;
   tone?: "success" | "pending" | "cancelled";
+  locale?: Locale;
 }) {
+  const spanish = locale === "es";
   return (
     <main className="membership-page">
       <Header />
@@ -26,16 +31,24 @@ export function MembershipStatusPage({
           <p>{description}</p>
           {reference ? (
             <div className="payment-reference">
-              <span>Payment reference</span>
+              <span>
+                {spanish ? "Referencia de pago" : "Payment reference"}
+              </span>
               <code>{reference}</code>
             </div>
           ) : null}
           <div className="membership-result-actions">
-            <Link href="/account/billing" className="button">
-              View billing status
+            <Link
+              href={localizeHref("/account/billing", locale)}
+              className="button"
+            >
+              {spanish ? "Ver estado de facturación" : "View billing status"}
             </Link>
-            <Link href="/analysis" className="text-link">
-              Browse analysis →
+            <Link
+              href={localizeHref("/analysis", locale)}
+              className="text-link"
+            >
+              {spanish ? "Explorar análisis →" : "Browse analysis →"}
             </Link>
           </div>
         </div>

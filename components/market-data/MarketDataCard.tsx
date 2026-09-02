@@ -7,6 +7,7 @@ import { MarketStatusBadge } from "./MarketStatusBadge";
 import { getInstrument } from "@/constants/instruments";
 import type { MarketQuote } from "@/types/market-data";
 import type { Locale } from "@/lib/i18n/config";
+import { translateInstrumentName } from "@/lib/i18n/spanish";
 
 export function MarketDataCard({
   quote,
@@ -19,27 +20,24 @@ export function MarketDataCard({
 }) {
   const instrument = getInstrument(quote.instrumentSlug);
   const spanish = locale === "es";
-  const instrumentNames: Record<string, string> = {
-    Gold: "Oro",
-    Silver: "Plata",
-    "WTI Crude Oil": "Petróleo crudo WTI",
-  };
   const instrumentName = instrument?.name ?? quote.instrumentSlug;
+  const displayInstrumentName = spanish
+    ? translateInstrumentName(instrumentName)
+    : instrumentName;
   return (
     <article className={`md-card${compact ? " md-card-compact" : ""}`}>
       <header>
         <div>
           <span>{quote.symbol}</span>
-          <h3>
-            {spanish
-              ? (instrumentNames[instrumentName] ?? instrumentName)
-              : instrumentName}
-          </h3>
+          <h3>{displayInstrumentName}</h3>
         </div>
         <MarketStatusBadge status={quote.marketStatus} locale={locale} />
       </header>
       {quote.price === null ? (
-        <MarketDataUnavailable instrument={instrumentName} locale={locale} />
+        <MarketDataUnavailable
+          instrument={displayInstrumentName}
+          locale={locale}
+        />
       ) : (
         <>
           <MarketPrice
@@ -77,7 +75,10 @@ export function MarketDataCard({
       )}
       <MarketDataDisclosure quote={quote} locale={locale} />
       <small className="md-provider">
-        {spanish ? "Fuente" : "Source"}: {quote.provider}
+        {spanish ? "Fuente" : "Source"}:{" "}
+        {spanish && quote.provider === "disabled"
+          ? "desactivada"
+          : quote.provider}
       </small>
     </article>
   );

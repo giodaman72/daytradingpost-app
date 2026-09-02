@@ -274,12 +274,23 @@ export default async function SitePage({ params }: PageProps) {
           <div className="container">
             <AssistantContextActions
               mode="academy_tutor"
-              title="Open Academy Tutor"
-              prompts={[
-                "Explain support and resistance in simpler terms.",
-                "Create a short AI-generated practice quiz.",
-                "Explain a general risk-management checklist.",
-              ]}
+              title={
+                spanish ? "Abrir tutor de la Academia" : "Open Academy Tutor"
+              }
+              prompts={
+                spanish
+                  ? [
+                      "Explica el soporte y la resistencia en términos más sencillos.",
+                      "Crea un breve cuestionario práctico generado por IA.",
+                      "Explica una lista general de gestión del riesgo.",
+                    ]
+                  : [
+                      "Explain support and resistance in simpler terms.",
+                      "Create a short AI-generated practice quiz.",
+                      "Explain a general risk-management checklist.",
+                    ]
+              }
+              locale={locale}
             />
           </div>
         </section>

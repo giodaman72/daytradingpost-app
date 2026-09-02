@@ -7,7 +7,9 @@ import {
 import { readAllNotificationsAction } from "@/app/notifications/actions";
 import { NotificationBadge } from "./NotificationBadge";
 import { NotificationList } from "./NotificationList";
-export async function NotificationBell() {
+import { localizeHref, type Locale } from "@/lib/i18n/config";
+export async function NotificationBell({ locale = "en" }: { locale?: Locale }) {
+  const spanish = locale === "es";
   let count = 0;
   let notifications: Awaited<ReturnType<typeof getUserNotifications>> = [];
   try {
@@ -20,21 +22,31 @@ export async function NotificationBell() {
   }
   return (
     <details className="notification-menu">
-      <summary aria-label={`Notifications, ${count} unread`}>
+      <summary
+        aria-label={
+          spanish
+            ? `Notificaciones, ${count} sin leer`
+            : `Notifications, ${count} unread`
+        }
+      >
         <Bell size={18} aria-hidden="true" />
         <NotificationBadge count={count} />
       </summary>
       <div className="notification-popover">
         <header>
-          <strong>Notifications</strong>
+          <strong>{spanish ? "Notificaciones" : "Notifications"}</strong>
           {count ? (
             <form action={readAllNotificationsAction}>
-              <button type="submit">Mark all read</button>
+              <button type="submit">
+                {spanish ? "Marcar todas como leídas" : "Mark all read"}
+              </button>
             </form>
           ) : null}
         </header>
-        <NotificationList notifications={notifications} />
-        <Link href="/alerts/history">View alert history</Link>
+        <NotificationList notifications={notifications} locale={locale} />
+        <Link href={localizeHref("/alerts/history", locale)}>
+          {spanish ? "Ver historial de alertas" : "View alert history"}
+        </Link>
       </div>
     </details>
   );
