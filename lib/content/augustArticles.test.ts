@@ -25,4 +25,23 @@ describe("August bilingual analysis library", () => {
       "Configuración de trading del petróleo crudo",
     );
   });
+
+  it("publishes two support and two resistance levels for every report", () => {
+    for (const locale of ["en", "es"] as const) {
+      for (const article of getAugustArticles(locale)) {
+        expect(article.supportLevels, article.slug).toHaveLength(2);
+        expect(article.resistanceLevels, article.slug).toHaveLength(2);
+      }
+    }
+  });
+
+  it("maps entry and stop according to the report direction", () => {
+    const bullish = getAugustArticle("wti-trade-setup-2026-08-31", "es");
+    const bearish = getAugustArticle("nas100-trade-setup-2026-08-19", "es");
+
+    expect(bullish?.supportLevels).toEqual(["$85.000", "$84.765"]);
+    expect(bullish?.resistanceLevels).toEqual(["$86.000", "$86.600"]);
+    expect(bearish?.supportLevels).toEqual(["29,399", "29,200"]);
+    expect(bearish?.resistanceLevels).toEqual(["29,600", "29,700"]);
+  });
 });
