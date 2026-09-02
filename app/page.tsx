@@ -107,7 +107,7 @@ const HOME_COPY = {
     intelligence: "Inteligencia de mercados",
     editorial: "EDITORIAL",
     marketData: "Datos de mercado",
-    quoteSnapshot: "Resumen de cotizaciones del proveedor",
+    quoteSnapshot: "Resumen de cotizaciones de activos variables.",
     quoteNote:
       "Los precios son informativos y pueden estar retrasados o simulados.",
     editorialIntelligence: "Inteligencia editorial",
