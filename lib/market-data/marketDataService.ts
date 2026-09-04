@@ -66,7 +66,7 @@ export async function getQuoteByInstrument(value: string) {
 }
 export async function getHomepageQuotes() {
   return getMarketQuotes(
-    INSTRUMENTS.filter((item) => item.enabled).slice(0, 6),
+    INSTRUMENTS.filter((item) => item.enabled).slice(0, 8),
   );
 }
 export async function getDashboardQuotes() {
