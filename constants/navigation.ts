@@ -9,8 +9,8 @@ export const MAIN_NAVIGATION = [
   { authenticatedOnly: true, href: ROUTES.dashboard, label: "Dashboard" },
   { authenticatedOnly: true, href: ROUTES.assistant, label: "AI Assistant" },
   { authenticatedOnly: true, href: ROUTES.watchlists, label: "Watchlists" },
-  { href: ROUTES.academy, label: "Academy" },
   { href: ROUTES.premium, label: "Premium" },
+  { href: ROUTES.academy, label: "Academy" },
   { href: ROUTES.newsletter, label: "Newsletter" },
 ] as const;
 
