@@ -36,7 +36,7 @@ export function MobileNavigation({ locale, signedIn }: MobileNavigationProps) {
       </summary>
       <nav
         aria-label={spanish ? "Navegación móvil" : "Mobile navigation"}
-        className="absolute right-0 top-[calc(100%+10px)] z-[1000] max-h-[calc(100vh-90px)] w-[min(86vw,320px)] overflow-y-auto rounded-2xl border border-white/15 bg-[#0b111c] p-2.5 shadow-2xl"
+        className="fixed left-4 right-4 top-24 z-[1000] mx-auto max-h-[calc(100vh-120px)] max-w-sm overflow-y-auto rounded-2xl border border-white/15 bg-[#0b111c] p-2.5 shadow-2xl"
       >
         {MAIN_NAVIGATION.map((item) =>
           "authenticatedOnly" in item &&
