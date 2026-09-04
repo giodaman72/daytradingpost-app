@@ -11,10 +11,11 @@ export function LanguageSwitcher({
 }) {
   const targetLocale = locale === "es" ? "en" : "es";
   const label = targetLocale === "es" ? "Español" : "Inglés";
+  const shortLabel = targetLocale === "es" ? "ES" : "EN";
 
   return (
     <Link
-      className="language-switcher"
+      className="language-switcher whitespace-nowrap"
       href={switchLocaleHref(pathname, locale)}
       hrefLang={targetLocale}
       lang={targetLocale}
@@ -24,7 +25,8 @@ export function LanguageSwitcher({
           : "Ver esta página en inglés"
       }
     >
-      {label}
+      <span className="max-[620px]:hidden">{label}</span>
+      <span className="hidden max-[620px]:inline">{shortLabel}</span>
     </Link>
   );
 }
