@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { HomeSectionOrder } from "@/components/home/HomeSectionOrder";
 import { APP_CONFIG } from "@/lib/config";
 import { getRequestLocale } from "@/lib/i18n/server";
 import "./globals.css";
@@ -88,7 +89,10 @@ export default async function RootLayout({
       data-scroll-behavior="smooth"
       lang={locale}
     >
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+        <HomeSectionOrder />
+      </body>
     </html>
   );
 }
