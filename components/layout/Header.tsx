@@ -4,6 +4,7 @@ import { ROUTES } from "@/constants/routes";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { MobileNavigation } from "@/components/layout/MobileNavigation";
 import { isSpanishPublicPath, localizeHref } from "@/lib/i18n/config";
 import { getRequestLocale, getVisiblePathname } from "@/lib/i18n/server";
 
@@ -62,6 +63,8 @@ export async function Header() {
             ),
           )}
         </nav>
+
+        <MobileNavigation locale={locale} signedIn={Boolean(user)} />
 
         <div className="header-actions">
           {isSpanishPublicPath(pathname) ? (
