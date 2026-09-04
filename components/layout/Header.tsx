@@ -31,7 +31,7 @@ export async function Header() {
 
   return (
     <header className="site-header">
-      <div className="container header-inner">
+      <div className="container header-inner max-[620px]:gap-2">
         <Link
           href={localizeHref(ROUTES.home, locale)}
           className="brand"
@@ -42,7 +42,7 @@ export async function Header() {
           }
         >
           <span className="brand-mark">DTP</span>
-          <span className="brand-name">
+          <span className="brand-name max-[620px]:hidden">
             DayTrading<span>Post</span>
           </span>
         </Link>
@@ -66,7 +66,7 @@ export async function Header() {
 
         <MobileNavigation locale={locale} signedIn={Boolean(user)} />
 
-        <div className="header-actions">
+        <div className="header-actions max-[620px]:gap-2">
           {isSpanishPublicPath(pathname) ? (
             <LanguageSwitcher locale={locale} pathname={pathname} />
           ) : null}
@@ -93,7 +93,7 @@ export async function Header() {
           )}
           <Link
             href={localizeHref(ROUTES.premium, locale)}
-            className="button button-small"
+            className="button button-small whitespace-nowrap max-[620px]:min-h-10 max-[620px]:px-3 max-[620px]:text-[11px]"
           >
             {spanish ? "Hazte Premium" : "Join Premium"}
           </Link>
