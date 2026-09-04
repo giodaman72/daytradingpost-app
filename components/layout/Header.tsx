@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { MAIN_NAVIGATION } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
@@ -15,26 +14,31 @@ export async function Header() {
     getVisiblePathname(),
   ]);
   const spanish = locale === "es";
-  const navigationLabels: Record<string, string> = {
-    Markets: "Mercados",
-    Analysis: "Análisis",
-    Charts: "Gráficos",
-    Research: "Investigación",
-    Calendar: "Calendario",
-    Dashboard: "Panel",
-    "AI Assistant": "Asistente con IA",
-    Watchlists: "Listas",
-    Academy: "Academia",
-    Premium: "Premium",
-    Newsletter: "Boletín",
-  };
+
+  const publicNavigation = spanish
+    ? [
+        ["Inicio", "/"],
+        ["Mercados", "/#markets"],
+        ["Análisis", "/analysis"],
+        ["Educación", "/academy"],
+        ["Premium", "/premium"],
+        ["Nosotros", "/about"],
+      ]
+    : [
+        ["Home", "/"],
+        ["Markets", "/#markets"],
+        ["Analysis", "/analysis"],
+        ["Education", "/academy"],
+        ["Premium", "/premium"],
+        ["About", "/about"],
+      ];
 
   return (
-    <header className="site-header">
-      <div className="container header-inner max-[620px]:gap-2">
+    <header className="site-header reference-header">
+      <div className="reference-shell reference-header-inner">
         <Link
           href={localizeHref(ROUTES.home, locale)}
-          className="brand"
+          className="brand reference-brand"
           aria-label={
             spanish
               ? "Página principal de DayTradingPost"
@@ -42,31 +46,28 @@ export async function Header() {
           }
         >
           <span className="brand-mark">DTP</span>
-          <span className="brand-name max-[620px]:hidden">
-            DayTrading<span>Post</span>
+          <span className="reference-brand-copy">
+            <span className="brand-name">
+              DayTrading<span>Post</span>
+            </span>
+            <small>{spanish ? "INDEPENDIENTE. OBJETIVO. ACCIONABLE." : "INDEPENDENT. OBJECTIVE. ACTIONABLE."}</small>
           </span>
         </Link>
 
         <nav
-          className="desktop-navigation"
+          className="reference-desktop-navigation"
           aria-label={spanish ? "Navegación principal" : "Main navigation"}
         >
-          {MAIN_NAVIGATION.map((item) =>
-            "authenticatedOnly" in item &&
-            item.authenticatedOnly &&
-            !user ? null : (
-              <Link href={localizeHref(item.href, locale)} key={item.href}>
-                {spanish
-                  ? (navigationLabels[item.label] ?? item.label)
-                  : item.label}
-              </Link>
-            ),
-          )}
+          {publicNavigation.map(([label, href]) => (
+            <Link href={localizeHref(href, locale)} key={href}>
+              {label}
+            </Link>
+          ))}
         </nav>
 
         <MobileNavigation locale={locale} signedIn={Boolean(user)} />
 
-        <div className="header-actions max-[620px]:gap-2">
+        <div className="header-actions reference-header-actions">
           {isSpanishPublicPath(pathname) ? (
             <LanguageSwitcher locale={locale} pathname={pathname} />
           ) : null}
@@ -79,22 +80,15 @@ export async function Header() {
                 aria-label={`Account for ${user.email ?? "signed-in member"}`}
               >
                 <span className="account-indicator" aria-hidden="true" />
-                <span className="account-email">{user.email}</span>
                 <span>{spanish ? "Cuenta" : "Account"}</span>
               </Link>
             </>
-          ) : (
-            <Link
-              href={localizeHref(ROUTES.auth.login, locale)}
-              className="login-link"
-            >
-              {spanish ? "Iniciar sesión" : "Sign in"}
-            </Link>
-          )}
+          ) : null}
           <Link
             href={localizeHref(ROUTES.premium, locale)}
-            className="button button-small whitespace-nowrap max-[620px]:min-h-10 max-[620px]:px-3 max-[620px]:text-[11px]"
+            className="button button-small reference-header-premium"
           >
+            <span aria-hidden="true">♛</span>
             {spanish ? "Hazte Premium" : "Join Premium"}
           </Link>
         </div>
