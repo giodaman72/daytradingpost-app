@@ -5,6 +5,7 @@ import { APP_CONFIG } from "@/lib/config";
 import { getRequestLocale } from "@/lib/i18n/server";
 import "./globals.css";
 import "./desktop-centering.css";
+import "./home-reference.css";
 
 // The header is personalized from the verified Supabase session on every request.
 export const dynamic = "force-dynamic";
