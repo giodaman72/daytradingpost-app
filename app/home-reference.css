@@ -1,0 +1,239 @@
+/* Homepage visual refresh based on the approved premium reference. */
+
+/* Give the public header enough room on desktop while keeping it centered. */
+.site-header .header-inner {
+  width: min(calc(100% - 48px), 1440px);
+  margin-inline: auto;
+}
+
+.site-header .desktop-navigation {
+  gap: clamp(14px, 1.35vw, 26px);
+}
+
+.site-header .desktop-navigation a,
+.site-header .login-link {
+  white-space: nowrap;
+}
+
+.site-header .header-actions {
+  min-width: max-content;
+}
+
+.site-header .header-actions > .button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* At narrower laptop/PC widths use the compact menu rather than clipping the CTA. */
+@media (min-width: 961px) and (max-width: 1320px) {
+  .site-header .desktop-navigation {
+    display: none;
+  }
+
+  .site-header details.relative.ml-auto {
+    display: block !important;
+    margin-left: auto;
+  }
+
+  .site-header .brand-name {
+    display: inline;
+  }
+}
+
+/* Premium hero: centered card matching the approved reference. */
+main > #premium.section {
+  padding-block: 38px 46px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(38, 74, 130, 0.14), transparent 42%),
+    var(--background);
+}
+
+main > #premium .container {
+  width: min(calc(100% - 48px), 1320px);
+}
+
+main > #premium .premium-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  overflow: hidden;
+  min-height: 610px;
+  align-content: center;
+  justify-items: center;
+  border: 1px solid rgba(245, 185, 66, 0.38);
+  border-radius: 28px;
+  padding: clamp(54px, 6vw, 86px) clamp(30px, 7vw, 110px) 46px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(245, 185, 66, 0.10), transparent 30%),
+    radial-gradient(circle at 82% 12%, rgba(33, 76, 143, 0.16), transparent 34%),
+    linear-gradient(145deg, #101725 0%, #08101d 56%, #07101d 100%);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.26);
+  text-align: center;
+}
+
+main > #premium .premium-card::after {
+  right: -245px;
+  bottom: -360px;
+  width: 680px;
+  height: 680px;
+  opacity: 0.5;
+}
+
+main > #premium .premium-copy {
+  width: 100%;
+  max-width: 980px;
+}
+
+main > #premium .premium-copy .section-kicker {
+  margin-bottom: 14px;
+  color: var(--gold);
+  font-size: clamp(12px, 1.25vw, 17px);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+main > #premium .premium-copy h2 {
+  max-width: 980px;
+  margin-inline: auto;
+  font-size: clamp(44px, 5vw, 76px);
+  font-weight: 760;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+main > #premium .premium-copy > p {
+  max-width: 790px;
+  margin: 30px auto 34px;
+  color: #aeb9ca;
+  font-size: clamp(16px, 1.45vw, 22px);
+  line-height: 1.65;
+}
+
+main > #premium .premium-list {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 58px;
+  text-align: left;
+}
+
+main > #premium .premium-list li {
+  gap: 14px;
+  color: #b8c3d2;
+  font-size: clamp(14px, 1.15vw, 18px);
+}
+
+main > #premium .premium-list li span {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  background: rgba(18, 183, 128, 0.13);
+  color: #2ee2a4;
+  font-size: 18px;
+}
+
+/* Turn the existing pricing column into the single premium CTA shown in the reference. */
+main > #premium .pricing-card {
+  width: min(100%, 490px);
+  margin-top: 36px;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+main > #premium .pricing-card .pricing-label,
+main > #premium .pricing-card .price,
+main > #premium .pricing-card > p,
+main > #premium .pricing-card .pricing-note {
+  display: none;
+}
+
+main > #premium .pricing-card .button {
+  min-height: 76px;
+  border-radius: 14px;
+  padding-inline: 36px;
+  background: linear-gradient(180deg, #ffc552, #f5b942);
+  color: #171107;
+  font-size: clamp(17px, 1.6vw, 23px);
+  font-weight: 820;
+  box-shadow: 0 16px 42px rgba(245, 185, 66, 0.16);
+}
+
+main > #premium .pricing-card .button::before {
+  content: "♛";
+  margin-right: 4px;
+  font-size: 1.15em;
+}
+
+main > #premium .pricing-card .button:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(180deg, #ffd16e, #ffc04a);
+}
+
+@media (max-width: 960px) {
+  main > #premium.section {
+    padding-block: 28px 38px;
+  }
+
+  main > #premium .container {
+    width: min(calc(100% - 28px), 1320px);
+  }
+
+  main > #premium .premium-card {
+    min-height: auto;
+    padding: 52px 28px 36px;
+  }
+
+  main > #premium .premium-copy h2 {
+    font-size: clamp(40px, 8vw, 62px);
+  }
+}
+
+@media (max-width: 620px) {
+  .site-header .header-inner {
+    width: min(calc(100% - 24px), 1440px);
+  }
+
+  main > #premium .premium-card {
+    border-radius: 22px;
+    padding: 42px 22px 30px;
+  }
+
+  main > #premium .premium-copy .section-kicker {
+    font-size: 11px;
+  }
+
+  main > #premium .premium-copy h2 {
+    font-size: clamp(36px, 11vw, 50px);
+    line-height: 1.03;
+  }
+
+  main > #premium .premium-copy > p {
+    margin-block: 24px 28px;
+    font-size: 16px;
+  }
+
+  main > #premium .premium-list {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  main > #premium .premium-list li span {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+    font-size: 15px;
+  }
+
+  main > #premium .pricing-card {
+    margin-top: 30px;
+  }
+
+  main > #premium .pricing-card .button {
+    min-height: 62px;
+    padding-inline: 20px;
+    font-size: 17px;
+  }
+}
