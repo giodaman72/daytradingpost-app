@@ -4,6 +4,7 @@ import { HomeSectionOrder } from "@/components/home/HomeSectionOrder";
 import { APP_CONFIG } from "@/lib/config";
 import { getRequestLocale } from "@/lib/i18n/server";
 import "./globals.css";
+import "./desktop-centering.css";
 
 // The header is personalized from the verified Supabase session on every request.
 export const dynamic = "force-dynamic";
