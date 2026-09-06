@@ -19,6 +19,25 @@ vi.mock("@/components/charts/TradingViewChart", () => ({
 }));
 
 describe("homepage market charts", () => {
+  it.each([
+    ["dollar-index", "Dollar Index", "TVC:DXY"],
+    ["eurusd", "EUR/USD", "OANDA:EURUSD"],
+    ["gbpusd", "GBP/USD", "OANDA:GBPUSD"],
+    ["usdjpy", "USD/JPY", "OANDA:USDJPY"],
+  ])("opens the requested %s chart", (slug, name, symbol) => {
+    render(<HomeMarketCharts locale="en" enabled />);
+    expect(screen.getByRole("option", { name })).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Market"), {
+      target: { value: slug },
+    });
+    expect(screen.getByTestId("provider-chart")).toHaveAttribute(
+      "data-symbol",
+      symbol,
+    );
+    expect(
+      screen.getByRole("link", { name: /Open advanced chart/ }),
+    ).toHaveAttribute("href", `/charts/${slug}`);
+  });
   it("switches the provider symbol, interval, and advanced chart destination", () => {
     render(<HomeMarketCharts locale="en" enabled />);
     expect(screen.getByTestId("provider-chart")).toHaveAttribute(

@@ -59,6 +59,7 @@ export const SPANISH_INSTRUMENT_NAMES: Record<string, string> = {
   Silver: "Plata",
   "WTI Crude Oil": "Petróleo crudo WTI",
   "Natural Gas": "Gas natural",
+  "Dollar Index": "Índice del dólar",
   Copper: "Cobre",
 };
 

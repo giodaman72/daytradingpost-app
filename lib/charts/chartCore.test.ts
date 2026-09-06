@@ -44,6 +44,10 @@ describe("advanced chart core", () => {
     ["dow-jones", "CAPITALCOM:US30"],
     ["natural-gas", "CAPITALCOM:NATURALGAS"],
     ["copper", "CAPITALCOM:COPPER"],
+    ["dollar-index", "TVC:DXY"],
+    ["eurusd", "OANDA:EURUSD"],
+    ["gbpusd", "OANDA:GBPUSD"],
+    ["usdjpy", "OANDA:USDJPY"],
   ])("uses a public-widget symbol for %s", (instrument, expectedSymbol) =>
     expect(getInstrument(instrument)?.tradingViewSymbol).toBe(expectedSymbol),
   );

@@ -135,6 +135,17 @@ export const INSTRUMENTS = [
     "COINBASE",
   ],
   [
+    "dollar-index",
+    "DXY",
+    "Dollar Index",
+    "indices",
+    "USD",
+    3,
+    "forex-24-5",
+    "TVC:DXY",
+    "TVC",
+  ],
+  [
     "eurusd",
     "EURUSD",
     "EUR/USD",
@@ -231,4 +242,26 @@ export function getInstrument(slugOrSymbol: string) {
       (item) => item.slug === value || item.symbol.toLowerCase() === value,
     ) ?? null
   );
+}
+
+export const HOMEPAGE_INSTRUMENT_SLUGS = [
+  "gold",
+  "silver",
+  "copper",
+  "nasdaq-100",
+  "sp-500",
+  "dow-jones",
+  "wti-crude-oil",
+  "natural-gas",
+  "dollar-index",
+  "eurusd",
+  "gbpusd",
+  "usdjpy",
+] as const;
+
+export function getHomepageInstruments() {
+  return HOMEPAGE_INSTRUMENT_SLUGS.flatMap((slug) => {
+    const instrument = getInstrument(slug);
+    return instrument?.enabled ? [instrument] : [];
+  });
 }

@@ -1,7 +1,7 @@
 import "server-only";
 
 import {
-  INSTRUMENTS,
+  getHomepageInstruments,
   getInstrument,
   type InstrumentDefinition,
 } from "@/constants/instruments";
@@ -65,9 +65,7 @@ export async function getQuoteByInstrument(value: string) {
   return instrument ? getMarketQuote(instrument) : null;
 }
 export async function getHomepageQuotes() {
-  return getMarketQuotes(
-    INSTRUMENTS.filter((item) => item.enabled).slice(0, 8),
-  );
+  return getMarketQuotes(getHomepageInstruments());
 }
 export async function getDashboardQuotes() {
   return getMarketQuotes(
