@@ -20,6 +20,7 @@ export async function Header() {
         ["Inicio", "/"],
         ["Mercados", "/#markets"],
         ["Análisis", "/analysis"],
+        ["Gráficos", "/charts"],
         ["Educación", "/academy"],
         ["Premium", "/premium"],
         ["Nosotros", "/about"],
@@ -28,6 +29,7 @@ export async function Header() {
         ["Home", "/"],
         ["Markets", "/#markets"],
         ["Analysis", "/analysis"],
+        ["Charts", "/charts"],
         ["Education", "/academy"],
         ["Premium", "/premium"],
         ["About", "/about"],
@@ -50,7 +52,11 @@ export async function Header() {
             <span className="brand-name">
               DayTrading<span>Post</span>
             </span>
-            <small>{spanish ? "INDEPENDIENTE. OBJETIVO. ACCIONABLE." : "INDEPENDENT. OBJECTIVE. ACTIONABLE."}</small>
+            <small>
+              {spanish
+                ? "INDEPENDIENTE. OBJETIVO. ACCIONABLE."
+                : "INDEPENDENT. OBJECTIVE. ACTIONABLE."}
+            </small>
           </span>
         </Link>
 

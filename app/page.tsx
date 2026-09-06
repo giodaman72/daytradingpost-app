@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { HomeMarketCharts } from "@/components/home/HomeMarketCharts";
+import { getChartConfig } from "@/lib/charts/chartConfig";
 import earthImage from "@/public/images/home-earth-3d.webp";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
@@ -21,14 +23,16 @@ const HOME_COPY = {
       {
         icon: "▦",
         title: "Daily Market Analysis",
-        description: "Daily technical analysis and key levels for major markets",
+        description:
+          "Daily technical analysis and key levels for major markets",
         cta: "View Latest Analysis",
         href: "/analysis",
       },
       {
         icon: "◇",
         title: "Premium Education",
-        description: "Webinars, courses, and exclusive content to elevate your trading",
+        description:
+          "Webinars, courses, and exclusive content to elevate your trading",
         cta: "Explore Education",
         href: "/academy",
       },
@@ -53,14 +57,16 @@ const HOME_COPY = {
       {
         icon: "▦",
         title: "Análisis diario de mercados",
-        description: "Análisis técnico diario y niveles clave de los principales mercados",
+        description:
+          "Análisis técnico diario y niveles clave de los principales mercados",
         cta: "Ver último análisis",
         href: "/analysis",
       },
       {
         icon: "◇",
         title: "Educación Premium",
-        description: "Webinars, cursos y contenido exclusivo para elevar tu trading",
+        description:
+          "Webinars, cursos y contenido exclusivo para elevar tu trading",
         cta: "Explorar educación",
         href: "/academy",
       },
@@ -96,11 +102,17 @@ export default async function Home() {
             <p>{copy.description}</p>
 
             <div className="reference-actions">
-              <Link className="reference-primary-cta" href={localizeHref("/premium", locale)}>
+              <Link
+                className="reference-primary-cta"
+                href={localizeHref("/premium", locale)}
+              >
                 <span aria-hidden="true">♛</span>
                 {copy.join}
               </Link>
-              <Link className="reference-secondary-cta" href={localizeHref("/analysis", locale)}>
+              <Link
+                className="reference-secondary-cta"
+                href={localizeHref("/analysis", locale)}
+              >
                 {copy.analysis}
               </Link>
             </div>
@@ -131,6 +143,11 @@ export default async function Home() {
           <MarketDataGrid quotes={quotes} compact locale={locale} />
         </div>
       </section>
+
+      <HomeMarketCharts
+        locale={locale}
+        enabled={getChartConfig().tradingViewEnabled}
+      />
 
       <section className="reference-feature-section">
         <div className="reference-shell reference-feature-grid">
