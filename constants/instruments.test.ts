@@ -52,7 +52,7 @@ describe("homepage markets", () => {
   it("resolves the dollar index by its canonical slug and DXY symbol", () => {
     expect(getInstrument("DXY")).toEqual(getInstrument("dollar-index"));
     expect(getInstrument("DXY")).toMatchObject({
-      tradingViewSymbol: "TVC:DXY",
+      tradingViewSymbol: "INDEX:DXY",
       chartAvailable: true,
     });
   });

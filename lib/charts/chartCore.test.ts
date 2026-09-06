@@ -44,7 +44,7 @@ describe("advanced chart core", () => {
     ["dow-jones", "CAPITALCOM:US30"],
     ["natural-gas", "CAPITALCOM:NATURALGAS"],
     ["copper", "CAPITALCOM:COPPER"],
-    ["dollar-index", "TVC:DXY"],
+    ["dollar-index", "INDEX:DXY"],
     ["eurusd", "OANDA:EURUSD"],
     ["gbpusd", "OANDA:GBPUSD"],
     ["usdjpy", "OANDA:USDJPY"],

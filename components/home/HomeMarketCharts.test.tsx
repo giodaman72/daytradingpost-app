@@ -20,7 +20,7 @@ vi.mock("@/components/charts/TradingViewChart", () => ({
 
 describe("homepage market charts", () => {
   it.each([
-    ["dollar-index", "Dollar Index", "TVC:DXY"],
+    ["dollar-index", "Dollar Index", "INDEX:DXY"],
     ["eurusd", "EUR/USD", "OANDA:EURUSD"],
     ["gbpusd", "GBP/USD", "OANDA:GBPUSD"],
     ["usdjpy", "USD/JPY", "OANDA:USDJPY"],
@@ -37,6 +37,27 @@ describe("homepage market charts", () => {
     expect(
       screen.getByRole("link", { name: /Open advanced chart/ }),
     ).toHaveAttribute("href", `/charts/${slug}`);
+  });
+  it("uses supported daily intervals for the Dollar Index", () => {
+    render(<HomeMarketCharts locale="en" enabled />);
+    fireEvent.change(screen.getByLabelText("Market"), {
+      target: { value: "dollar-index" },
+    });
+    expect(screen.getByTestId("provider-chart")).toHaveAttribute(
+      "data-timeframe",
+      "1d",
+    );
+    expect(screen.getByLabelText("Timeframe")).toHaveValue("1d");
+    expect(
+      screen.queryByRole("option", { name: "1 hour" }),
+    ).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Timeframe"), {
+      target: { value: "1w" },
+    });
+    expect(screen.getByTestId("provider-chart")).toHaveAttribute(
+      "data-timeframe",
+      "1w",
+    );
   });
   it("switches the provider symbol, interval, and advanced chart destination", () => {
     render(<HomeMarketCharts locale="en" enabled />);

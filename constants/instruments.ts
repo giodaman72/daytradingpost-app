@@ -142,8 +142,8 @@ export const INSTRUMENTS = [
     "USD",
     3,
     "forex-24-5",
-    "TVC:DXY",
-    "TVC",
+    "INDEX:DXY",
+    "INDEX",
   ],
   [
     "eurusd",
@@ -209,18 +209,12 @@ export const INSTRUMENTS = [
     tradingViewSymbol,
     exchange,
     timezone: marketHours === "us-equities" ? "America/New_York" : "Etc/UTC",
-    defaultTimeframe: assetClass === "crypto" ? "4h" : "1h",
-    supportedTimeframes: [
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "4h",
-      "1d",
-      "1w",
-      "1M",
-    ],
+    defaultTimeframe:
+      slug === "dollar-index" ? "1d" : assetClass === "crypto" ? "4h" : "1h",
+    supportedTimeframes:
+      slug === "dollar-index"
+        ? ["1d", "1w", "1M"]
+        : ["1m", "5m", "15m", "30m", "1h", "4h", "1d", "1w", "1M"],
     chartAvailable: true,
     marketDataAvailable: true,
     delayedByDefault: true,
