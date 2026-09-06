@@ -228,84 +228,15 @@
   justify-self: end;
   width: min(640px, 47vw);
   aspect-ratio: 1;
-  overflow: hidden;
-  border: 1px solid rgba(88,148,219,.24);
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 52%, rgba(8,21,36,.2) 0 58%, rgba(4,10,17,.7) 72%),
-    radial-gradient(circle at 35% 32%, rgba(49,114,191,.18), transparent 45%),
-    #07111d;
-  box-shadow:
-    0 0 90px rgba(26,83,152,.20),
-    inset 0 0 70px rgba(41,99,166,.12);
 }
 
-.reference-globe::before {
-  position: absolute;
-  inset: 5%;
-  border-radius: 50%;
-  background-image:
-    radial-gradient(circle, rgba(244,181,60,.78) 1.6px, transparent 1.9px),
-    radial-gradient(circle, rgba(72,132,201,.55) 1.1px, transparent 1.5px);
-  background-position: 0 0, 6px 6px;
-  background-size: 10px 10px, 10px 10px;
-  content: "";
-  mask-image: radial-gradient(circle, black 0 66%, transparent 68%);
-  opacity: .82;
+.reference-globe-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  mix-blend-mode: screen;
+  mask-image: radial-gradient(circle, black 60%, transparent 73%);
 }
-
-.reference-globe::after {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 27% 36%, rgba(255,192,54,.45), transparent 2%),
-    radial-gradient(circle at 48% 45%, rgba(255,192,54,.7), transparent 1%),
-    radial-gradient(circle at 64% 34%, rgba(255,192,54,.5), transparent 1%),
-    radial-gradient(circle at 60% 56%, rgba(255,192,54,.45), transparent 1%);
-  content: "";
-}
-
-.reference-globe-ring {
-  position: absolute;
-  z-index: 2;
-  inset: 8%;
-  border: 1px solid rgba(95,156,224,.14);
-  border-radius: 50%;
-}
-
-.reference-globe-ring-two {
-  inset: 25% 5%;
-  border-radius: 50%;
-}
-
-.reference-globe-ring-three {
-  inset: 5% 39%;
-  border-radius: 50%;
-}
-
-.reference-globe-grid {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  border-radius: 50%;
-  background:
-    linear-gradient(90deg, transparent 49.8%, rgba(80,141,207,.11) 50%, transparent 50.2%),
-    linear-gradient(transparent 49.8%, rgba(80,141,207,.10) 50%, transparent 50.2%);
-}
-
-.reference-continent {
-  position: absolute;
-  z-index: 3;
-  background: rgba(4,13,24,.78);
-  filter: drop-shadow(0 0 4px rgba(245,185,66,.15));
-}
-
-.reference-continent-na { left: 17%; top: 22%; width: 31%; height: 25%; clip-path: polygon(6% 10%, 45% 0, 88% 16%, 100% 44%, 82% 57%, 66% 52%, 54% 77%, 36% 100%, 25% 73%, 10% 61%, 0 34%); }
-.reference-continent-sa { left: 38%; top: 49%; width: 18%; height: 32%; clip-path: polygon(17% 0, 67% 8%, 100% 27%, 78% 50%, 60% 80%, 42% 100%, 24% 70%, 10% 43%, 0 18%); }
-.reference-continent-eu { left: 57%; top: 26%; width: 16%; height: 12%; clip-path: polygon(0 47%, 22% 11%, 55% 0, 85% 26%, 100% 59%, 66% 79%, 38% 100%, 13% 75%); }
-.reference-continent-af { left: 56%; top: 38%; width: 20%; height: 31%; clip-path: polygon(18% 0, 71% 4%, 100% 27%, 84% 60%, 53% 100%, 24% 77%, 9% 49%, 0 20%); }
-.reference-continent-as { left: 68%; top: 22%; width: 28%; height: 28%; clip-path: polygon(0 18%, 31% 0, 71% 7%, 100% 30%, 81% 58%, 55% 63%, 44% 100%, 15% 76%, 22% 49%); }
 
 .reference-market-strip {
   position: relative;

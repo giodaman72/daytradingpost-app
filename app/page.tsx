@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -110,15 +111,15 @@ export default async function Home() {
           </div>
 
           <div className="reference-globe" aria-hidden="true">
-            <div className="reference-globe-ring reference-globe-ring-one" />
-            <div className="reference-globe-ring reference-globe-ring-two" />
-            <div className="reference-globe-ring reference-globe-ring-three" />
-            <div className="reference-globe-grid" />
-            <div className="reference-continent reference-continent-na" />
-            <div className="reference-continent reference-continent-sa" />
-            <div className="reference-continent reference-continent-eu" />
-            <div className="reference-continent reference-continent-af" />
-            <div className="reference-continent reference-continent-as" />
+            <Image
+              className="reference-globe-image"
+              src="/images/home-earth-3d.webp"
+              alt=""
+              width={1254}
+              height={1254}
+              sizes="(max-width: 760px) 94vw, (min-width: 1362px) 640px, 47vw"
+              preload
+            />
           </div>
         </div>
       </section>
