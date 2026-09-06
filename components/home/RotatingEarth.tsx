@@ -128,7 +128,7 @@ export function RotatingEarth({ children }: { children: ReactNode }) {
     const animate = (time: number) => {
       if (disposed) return;
       if (lastTime)
-        longitude = (longitude + Math.min(time - lastTime, 100) / 90000) % 1;
+        longitude = (longitude - Math.min(time - lastTime, 100) / 90000) % 1;
       lastTime = time;
       draw();
       frame = requestAnimationFrame(animate);
