@@ -251,23 +251,22 @@
   height: auto;
   border-radius: 50%;
   object-fit: contain;
-  animation: reference-earth-rotation 90s linear infinite;
-  transform-origin: center;
 }
 
-@keyframes reference-earth-rotation {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.reference-globe-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .reference-globe-image {
-    animation: none;
-  }
+.reference-globe-canvas[data-ready="true"] {
+  opacity: 1;
+}
+
+.reference-globe-canvas[data-ready="true"] + .reference-globe-image {
+  opacity: 0;
 }
 
 .reference-market-strip {

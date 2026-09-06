@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { RotatingEarth } from "@/components/home/RotatingEarth";
 import { HomeMarketCharts } from "@/components/home/HomeMarketCharts";
 import { getChartConfig } from "@/lib/charts/chartConfig";
 import earthImage from "@/public/images/home-earth-3d.webp";
@@ -123,7 +124,7 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="reference-globe" aria-hidden="true">
+          <RotatingEarth>
             <Image
               className="reference-globe-image"
               src={earthImage}
@@ -134,7 +135,7 @@ export default async function Home() {
               loading="eager"
               fetchPriority="high"
             />
-          </div>
+          </RotatingEarth>
         </div>
       </section>
 
