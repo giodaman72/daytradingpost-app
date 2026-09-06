@@ -74,7 +74,11 @@ export default async function InstrumentChartPage({ params }: Props) {
       <div className="container">
         <ChartShell
           initialInstrument={instrument}
-          initialTimeframe={config.defaultTimeframe}
+          initialTimeframe={
+            instrument.supportedTimeframes.includes(config.defaultTimeframe)
+              ? config.defaultTimeframe
+              : instrument.defaultTimeframe
+          }
           provider={config.provider}
           layouts={layouts.filter(
             (item) => item.instrumentSlug === instrument.slug,
