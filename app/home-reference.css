@@ -226,7 +226,8 @@
 .reference-globe {
   position: relative;
   justify-self: end;
-  width: min(640px, 47vw);
+  width: min(640px, 100%);
+  min-width: 0;
   aspect-ratio: 1;
 }
 
@@ -234,8 +235,8 @@
   display: block;
   width: 100%;
   height: auto;
-  mix-blend-mode: screen;
-  mask-image: radial-gradient(circle, black 60%, transparent 73%);
+  border-radius: 50%;
+  object-fit: contain;
 }
 
 .reference-market-strip {

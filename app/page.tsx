@@ -1,4 +1,5 @@
 import Image from "next/image";
+import earthImage from "@/public/images/home-earth-3d.webp";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -113,12 +114,13 @@ export default async function Home() {
           <div className="reference-globe" aria-hidden="true">
             <Image
               className="reference-globe-image"
-              src="/images/home-earth-3d.webp"
+              src={earthImage}
               alt=""
               width={1254}
               height={1254}
-              sizes="(max-width: 760px) 94vw, (min-width: 1362px) 640px, 47vw"
-              preload
+              unoptimized
+              loading="eager"
+              fetchPriority="high"
             />
           </div>
         </div>
