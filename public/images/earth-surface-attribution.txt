@@ -1,5 +1,0 @@
-Earth surface: NASA Blue Marble (2002), NASA Goddard Space Flight Center.
-Reto Stoeckli (land surface), Robert Simmon (ocean color and compositing).
-Source: https://visibleearth.nasa.gov/view.php?id=57730
-Original: https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57730/land_ocean_ice_2048.jpg
-NASA public-domain imagery; no endorsement implied.

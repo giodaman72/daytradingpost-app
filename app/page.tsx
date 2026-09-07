@@ -1,8 +1,6 @@
-import Image from "next/image";
-import { RotatingEarth } from "@/components/home/RotatingEarth";
+import { TradingSessionsEarth } from "@/components/home/TradingSessionsEarth";
 import { HomeMarketCharts } from "@/components/home/HomeMarketCharts";
 import { getChartConfig } from "@/lib/charts/chartConfig";
-import earthImage from "@/public/images/home-earth-3d.webp";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -124,18 +122,7 @@ export default async function Home() {
             </div>
           </div>
 
-          <RotatingEarth>
-            <Image
-              className="reference-globe-image"
-              src={earthImage}
-              alt=""
-              width={1254}
-              height={1254}
-              unoptimized
-              loading="eager"
-              fetchPriority="high"
-            />
-          </RotatingEarth>
+          <TradingSessionsEarth locale={locale} />
         </div>
       </section>
 
