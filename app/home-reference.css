@@ -30,7 +30,7 @@
   display: flex;
   min-height: 94px;
   align-items: center;
-  gap: 28px;
+  gap: 22px;
 }
 
 .reference-brand {
@@ -64,16 +64,17 @@
 
 .reference-desktop-navigation {
   display: flex;
+  flex: 1 1 auto;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: clamp(14px, 1.5vw, 24px);
-  margin-left: auto;
+  margin-left: 0;
 }
 
 .reference-desktop-navigation a {
   position: relative;
   color: #eef2f6;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 620;
   white-space: nowrap;
 }
@@ -253,6 +254,18 @@
   object-fit: contain;
 }
 
+.session-earth .reference-globe-image {
+  animation: session-earth-spin 72s linear infinite;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+@keyframes session-earth-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
 .session-earth {
   margin: 0;
   aspect-ratio: auto;
@@ -290,16 +303,16 @@
 }
 .session-earth-card {
   position: relative;
-  margin: -16% auto 0;
-  width: 88%;
-  padding: 20px;
+  margin: 16px auto 0;
+  width: min(74%, 470px);
+  padding: 15px 16px;
   border: 1px solid rgba(251, 191, 59, 0.35);
-  border-radius: 16px;
+  border-radius: 14px;
   background: rgba(7, 17, 29, 0.97);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
 }
 .session-earth-kicker {
-  margin: 0 0 12px;
+  margin: 0 0 9px;
   color: var(--gold);
   font-size: 11px;
   font-weight: 800;
@@ -308,7 +321,7 @@
 .session-earth-hours {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
 }
 .session-earth-hours > div {
   display: grid;
@@ -320,7 +333,7 @@
 }
 .session-earth-hours span {
   color: #e4edf7;
-  font-size: 18px;
+  font-size: 16px;
   font-variant-numeric: tabular-nums;
 }
 .session-earth-hours small {
@@ -333,8 +346,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin: 16px 0 0;
-  padding-top: 12px;
+  margin: 12px 0 0;
+  padding-top: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   color: var(--gold);
   font-size: 10px;
@@ -351,7 +364,7 @@
   font-weight: 400;
 }
 .session-earth-note {
-  margin: 12px 0 0;
+  margin: 9px 0 0;
   color: #aeb9c8;
   font-size: 11px;
   line-height: 1.5;
@@ -487,7 +500,10 @@
     display: none;
   }
   .reference-desktop-navigation {
-    gap: 19px;
+    gap: 16px;
+  }
+  .reference-desktop-navigation a {
+    font-size: 15px;
   }
   .reference-header-actions {
     gap: 12px;
@@ -571,12 +587,22 @@
     justify-self: center;
     width: min(540px, 94vw);
   }
+  .session-earth-card {
+    width: min(86%, 440px);
+    padding: 14px;
+  }
   .reference-market-strip .md-grid-compact {
     grid-template-columns: repeat(2, 1fr);
   }
   .reference-feature-card {
     grid-template-columns: 52px 1fr;
     padding: 24px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .session-earth .reference-globe-image {
+    animation: none;
   }
 }
 
