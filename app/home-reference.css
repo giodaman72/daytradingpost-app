@@ -253,20 +253,113 @@
   object-fit: contain;
 }
 
-.reference-globe-canvas {
+.session-earth {
+  margin: 0;
+  aspect-ratio: auto;
+}
+.session-earth-visual {
+  position: relative;
+}
+.session-earth-route {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: 0;
 }
-
-.reference-globe-canvas[data-ready="true"] {
-  opacity: 1;
+.session-earth-marker {
+  position: absolute;
+  padding: 6px 10px;
+  border: 1px solid rgba(251, 191, 59, 0.5);
+  border-radius: 6px;
+  background: rgba(5, 15, 27, 0.92);
+  color: #fff;
+  font-size: clamp(10px, 1.05vw, 13px);
+  font-weight: 700;
+  white-space: nowrap;
 }
-
-.reference-globe-canvas[data-ready="true"] + .reference-globe-image {
-  opacity: 0;
+.session-earth-new-york {
+  left: 31%;
+  top: 34%;
+  transform: translateX(-50%);
+}
+.session-earth-london {
+  left: 69.5%;
+  top: 13%;
+  transform: translateX(-50%);
+  border-color: rgba(125, 211, 252, 0.6);
+}
+.session-earth-card {
+  position: relative;
+  margin: -16% auto 0;
+  width: 88%;
+  padding: 20px;
+  border: 1px solid rgba(251, 191, 59, 0.35);
+  border-radius: 16px;
+  background: rgba(7, 17, 29, 0.97);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+}
+.session-earth-kicker {
+  margin: 0 0 12px;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+.session-earth-hours {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.session-earth-hours > div {
+  display: grid;
+  gap: 5px;
+}
+.session-earth-hours strong {
+  color: #fff;
+  font-size: 14px;
+}
+.session-earth-hours span {
+  color: #e4edf7;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.session-earth-hours small {
+  color: #aeb9c8;
+  font-size: 11px;
+}
+.session-earth-overlap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+.session-earth-overlap strong {
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: normal;
+}
+.session-earth-overlap strong span {
+  color: #aeb9c8;
+  font-size: 11px;
+  font-weight: 400;
+}
+.session-earth-note {
+  margin: 12px 0 0;
+  color: #aeb9c8;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.session-earth-note a {
+  color: #b9dff5;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .reference-market-strip {
