@@ -256,14 +256,19 @@
 
 .session-earth-rotor {
   position: relative;
-  animation: session-earth-spin 72s linear infinite;
+  animation: session-earth-axis-turn 14s ease-in-out infinite;
   transform-origin: 50% 50%;
+  transform-style: preserve-3d;
   will-change: transform;
 }
 
-@keyframes session-earth-spin {
-  to {
-    transform: rotate(1turn);
+@keyframes session-earth-axis-turn {
+  0%,
+  100% {
+    transform: rotateY(-18deg);
+  }
+  50% {
+    transform: rotateY(18deg);
   }
 }
 
@@ -273,6 +278,8 @@
 }
 .session-earth-visual {
   position: relative;
+  perspective: 1100px;
+  perspective-origin: 50% 50%;
 }
 .session-earth-route {
   position: absolute;
@@ -300,7 +307,8 @@
 }
 .session-earth-marker {
   display: block;
-  animation: session-earth-counter-spin 72s linear infinite;
+  animation: session-earth-label-facing 14s ease-in-out infinite;
+  backface-visibility: hidden;
   padding: 6px 10px;
   border: 1px solid
     color-mix(in srgb, var(--session-color, #fbbf3b) 55%, transparent);
@@ -332,9 +340,13 @@
   --session-color: #34d399;
 }
 
-@keyframes session-earth-counter-spin {
-  to {
-    transform: rotate(-1turn);
+@keyframes session-earth-label-facing {
+  0%,
+  100% {
+    transform: rotateY(18deg);
+  }
+  50% {
+    transform: rotateY(-18deg);
   }
 }
 .session-earth-card {
