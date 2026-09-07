@@ -15,6 +15,9 @@ describe("TradingSessionsEarth", () => {
       container.querySelectorAll(".session-earth-hours > div"),
     ).toHaveLength(4);
     expect(
+      container.querySelector(".session-earth-canvas"),
+    ).toBeInTheDocument();
+    expect(
       screen.getByRole("img", {
         name: /Sydney, Tokyo, London, and New York trading sessions/,
       }),
