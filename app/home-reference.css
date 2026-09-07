@@ -256,10 +256,6 @@
 
 .session-earth-rotor {
   position: relative;
-  animation: session-earth-axis-turn 10s ease-in-out infinite;
-  transform-origin: 50% 50%;
-  transform-style: preserve-3d;
-  will-change: transform;
 }
 
 .session-earth-rotor::before {
@@ -279,10 +275,8 @@
   content: "";
   filter: blur(12px);
   mix-blend-mode: screen;
+  opacity: 0.42;
   pointer-events: none;
-  transform: translateX(-30%);
-  animation: session-earth-surface-sweep 10s ease-in-out infinite;
-  will-change: transform, opacity;
 }
 
 .session-earth-rotor .reference-globe-image {
@@ -290,26 +284,21 @@
   z-index: 0;
 }
 
-@keyframes session-earth-axis-turn {
-  0%,
-  100% {
-    transform: rotateY(-28deg) translateX(-1.5%);
-  }
-  50% {
-    transform: rotateY(28deg) translateX(1.5%);
-  }
+.session-earth-canvas {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
 }
 
-@keyframes session-earth-surface-sweep {
-  0%,
-  100% {
-    opacity: 0.55;
-    transform: translateX(-30%);
-  }
-  50% {
-    opacity: 0.95;
-    transform: translateX(30%);
-  }
+.session-earth-canvas[data-ready="true"] {
+  opacity: 1;
 }
 
 .session-earth {
@@ -340,6 +329,8 @@
   position: absolute;
   z-index: 3;
   transform: translate(-50%, -50%);
+  animation: session-earth-session-orbit 18s linear infinite;
+  will-change: left, opacity, transform;
 }
 .session-earth-marker-anchor::after {
   position: absolute;
@@ -358,8 +349,6 @@
 }
 .session-earth-marker {
   display: block;
-  animation: session-earth-label-facing 10s ease-in-out infinite;
-  backface-visibility: hidden;
   padding: 6px 10px;
   border: 1px solid
     color-mix(in srgb, var(--session-color, #fbbf3b) 55%, transparent);
@@ -374,30 +363,48 @@
   left: 31%;
   top: 30%;
   --session-color: #fbbf3b;
+  animation-delay: -7.16s;
 }
 .session-earth-london {
   left: 69.5%;
   top: 23%;
   --session-color: #7dd3fc;
+  animation-delay: -1.76s;
 }
 .session-earth-tokyo {
   left: 82%;
   top: 50%;
   --session-color: #f472b6;
+  animation-delay: 0s;
 }
 .session-earth-sydney {
   left: 66%;
   top: 78%;
   --session-color: #34d399;
+  animation-delay: -2.25s;
 }
 
-@keyframes session-earth-label-facing {
-  0%,
-  100% {
-    transform: rotateY(28deg);
+@keyframes session-earth-session-orbit {
+  0% {
+    left: 82%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.86);
+  }
+  5% {
+    opacity: 1;
   }
   50% {
-    transform: rotateY(-28deg);
+    left: 18%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  55% {
+    opacity: 0;
+  }
+  100% {
+    left: 82%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.86);
   }
 }
 
@@ -723,9 +730,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .session-earth-canvas {
+    display: none;
+  }
   .session-earth-rotor::before,
-  .session-earth-rotor,
-  .session-earth-marker,
+  .session-earth-marker-anchor,
   .session-earth-marker-anchor::after,
   .session-earth-route circle,
   .session-earth-route path {
