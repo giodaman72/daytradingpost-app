@@ -1,6 +1,5 @@
 import Image from "next/image";
 import earthImage from "@/public/images/home-earth-3d.webp";
-import { RotatingEarthSurface } from "./RotatingEarthSurface";
 
 export function TradingSessionsEarth({ locale }: { locale: "en" | "es" }) {
   const spanish = locale === "es";
@@ -46,7 +45,6 @@ export function TradingSessionsEarth({ locale }: { locale: "en" | "es" }) {
             loading="eager"
             fetchPriority="high"
           />
-          <RotatingEarthSurface src={earthImage.src} />
         </div>
       </div>
       <figcaption className="session-earth-card">
