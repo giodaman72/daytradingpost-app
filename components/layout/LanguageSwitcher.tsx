@@ -10,7 +10,7 @@ export function LanguageSwitcher({
   pathname: string;
 }) {
   const targetLocale = locale === "es" ? "en" : "es";
-  const label = targetLocale === "es" ? "Español" : "Inglés";
+  const label = targetLocale === "es" ? "Español" : "English";
   const shortLabel = targetLocale === "es" ? "ES" : "EN";
 
   return (
