@@ -3,14 +3,13 @@ import { describe, expect, it } from "vitest";
 import { TradingSessionsEarth } from "./TradingSessionsEarth";
 
 describe("TradingSessionsEarth", () => {
-  it("shows the four global trading sessions in English", () => {
+  it("shows a clean globe and the four global trading sessions in English", () => {
     const { container } = render(<TradingSessionsEarth locale="en" />);
     const card = container.querySelector("figcaption");
 
     expect(card).not.toBeNull();
-    expect(
-      container.querySelectorAll(".session-earth-marker-anchor"),
-    ).toHaveLength(4);
+    expect(container.querySelector(".session-earth-route")).toBeNull();
+    expect(container.querySelector(".session-earth-marker-anchor")).toBeNull();
     expect(
       container.querySelectorAll(".session-earth-hours > div"),
     ).toHaveLength(4);
@@ -19,7 +18,7 @@ describe("TradingSessionsEarth", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("img", {
-        name: /Sydney, Tokyo, London, and New York trading sessions/,
+        name: "Earth",
       }),
     ).toBeInTheDocument();
     expect(within(card!).getByText("Sydney · Australia")).toBeInTheDocument();
