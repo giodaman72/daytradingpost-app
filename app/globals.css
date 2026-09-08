@@ -756,7 +756,7 @@ button {
 .desktop-navigation a,
 .login-link {
   color: var(--text-soft);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 550;
   transition:
     color 160ms ease,

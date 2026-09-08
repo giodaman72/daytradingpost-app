@@ -36,14 +36,14 @@ export function MobileNavigation({ locale, signedIn }: MobileNavigationProps) {
       </summary>
       <nav
         aria-label={spanish ? "Navegación móvil" : "Mobile navigation"}
-        className="fixed left-4 right-4 top-24 z-[1000] mx-auto max-h-[calc(100vh-120px)] max-w-sm overflow-y-auto rounded-2xl border border-white/15 bg-[#0b111c] p-2.5 shadow-2xl"
+        className="fixed left-3 right-auto top-24 z-[1000] w-[min(22rem,calc(100vw-1.5rem))] max-h-[calc(100vh-120px)] overflow-y-auto rounded-2xl border border-white/15 bg-[#0b111c] p-2.5 text-left shadow-2xl"
       >
         {MAIN_NAVIGATION.map((item) =>
           "authenticatedOnly" in item &&
           item.authenticatedOnly &&
           !signedIn ? null : (
             <Link
-              className="block rounded-lg px-3 py-3 text-inherit no-underline hover:bg-white/10 focus-visible:bg-white/10"
+              className="block rounded-lg px-3 py-3.5 text-lg font-semibold leading-snug text-inherit no-underline hover:bg-white/10 focus-visible:bg-white/10"
               href={localizeHref(item.href, locale)}
               key={item.href}
             >
