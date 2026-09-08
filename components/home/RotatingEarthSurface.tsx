@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
-const ROTATION_DURATION_MS = 18_000;
-const MAX_RENDER_SIZE = 560;
-const STRIP_WIDTH = 2;
+const ROTATION_DURATION_MS = 24_000;
+const MAX_RENDER_SIZE = 440;
+const TARGET_FPS = 24;
 
 export function RotatingEarthSurface({ src }: { src: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,80 +17,141 @@ export function RotatingEarthSurface({ src }: { src: string }) {
     const context = canvas.getContext("2d", { alpha: true });
     if (!context) return;
 
-    const image = new window.Image();
-    image.decoding = "async";
+    const texture = new window.Image();
+    texture.decoding = "async";
 
     let animationFrame = 0;
     let lastFrame = 0;
     let renderSize = 0;
+    let texturePixels: Uint8ClampedArray | undefined;
+    let output: ImageData | undefined;
+    let longitudeMap: Float32Array | undefined;
+    let latitudeMap: Uint16Array | undefined;
+    let lightMap: Uint8Array | undefined;
 
-    const syncCanvasSize = () => {
+    const prepareTexture = () => {
+      const textureCanvas = document.createElement("canvas");
+      textureCanvas.width = texture.naturalWidth;
+      textureCanvas.height = texture.naturalHeight;
+      const textureContext = textureCanvas.getContext("2d", {
+        willReadFrequently: true,
+      });
+      if (!textureContext) return false;
+      textureContext.drawImage(texture, 0, 0);
+      texturePixels = textureContext.getImageData(
+        0,
+        0,
+        textureCanvas.width,
+        textureCanvas.height,
+      ).data;
+      return true;
+    };
+
+    const prepareSphere = () => {
       const nextSize = Math.min(
         MAX_RENDER_SIZE,
         Math.max(
           280,
           Math.round(
-            canvas.clientWidth *
-              Math.min(window.devicePixelRatio || 1, 1.25),
+            canvas.clientWidth * Math.min(window.devicePixelRatio || 1, 1.15),
           ),
         ),
       );
+      if (nextSize === renderSize && output) return;
 
-      if (nextSize !== renderSize) {
-        renderSize = nextSize;
-        canvas.width = nextSize;
-        canvas.height = nextSize;
+      renderSize = nextSize;
+      canvas.width = nextSize;
+      canvas.height = nextSize;
+      output = context.createImageData(nextSize, nextSize);
+      longitudeMap = new Float32Array(nextSize * nextSize);
+      latitudeMap = new Uint16Array(nextSize * nextSize);
+      lightMap = new Uint8Array(nextSize * nextSize);
+
+      const center = nextSize / 2;
+      const radius = nextSize * 0.465;
+      for (let y = 0; y < nextSize; y += 1) {
+        const normalizedY = (y + 0.5 - center) / radius;
+        for (let x = 0; x < nextSize; x += 1) {
+          const index = y * nextSize + x;
+          const normalizedX = (x + 0.5 - center) / radius;
+          const distanceSquared =
+            normalizedX * normalizedX + normalizedY * normalizedY;
+          if (distanceSquared > 1) continue;
+
+          const depth = Math.sqrt(1 - distanceSquared);
+          longitudeMap[index] = Math.atan2(normalizedX, depth);
+          const latitude = Math.asin(-normalizedY);
+          latitudeMap[index] = Math.min(
+            texture.naturalHeight - 1,
+            Math.max(
+              0,
+              Math.round(
+                (latitude / Math.PI + 0.5) * (texture.naturalHeight - 1),
+              ),
+            ),
+          );
+
+          const rim = Math.min(1, depth * 3.5);
+          const directional = Math.max(
+            0.22,
+            Math.min(1, 0.38 + depth * 0.6 - normalizedX * 0.12),
+          );
+          lightMap[index] = Math.round(255 * rim * directional);
+        }
       }
     };
 
     const draw = (timestamp: number) => {
-      syncCanvasSize();
-      const size = renderSize;
-      const center = size / 2;
-      const radius = size * 0.455;
-      const sourceCenterX = image.naturalWidth / 2;
-      const sourceCenterY = image.naturalHeight / 2;
-      const sourceRadius = image.naturalWidth * 0.455;
+      prepareSphere();
+      if (
+        !texturePixels ||
+        !output ||
+        !longitudeMap ||
+        !latitudeMap ||
+        !lightMap
+      )
+        return;
+
       const rotation =
         ((timestamp % ROTATION_DURATION_MS) / ROTATION_DURATION_MS) *
         Math.PI *
         2;
+      const pixels = output.data;
+      const textureWidth = texture.naturalWidth;
 
-      context.clearRect(0, 0, size, size);
-      context.drawImage(image, 0, 0, size, size);
-      context.save();
-      context.beginPath();
-      context.arc(center, center, radius, 0, Math.PI * 2);
-      context.clip();
+      for (let index = 0; index < lightMap.length; index += 1) {
+        const pixelIndex = index * 4;
+        const light = lightMap[index];
+        if (light === 0) {
+          pixels[pixelIndex + 3] = 0;
+          continue;
+        }
 
-      for (let offsetX = -radius; offsetX <= radius; offsetX += STRIP_WIDTH) {
-        const normalizedX = Math.max(-1, Math.min(1, offsetX / radius));
-        const destinationHalfHeight = Math.sqrt(1 - normalizedX ** 2) * radius;
-        const longitude = Math.asin(normalizedX) + rotation;
-        const sourceNormalizedX = Math.sin(longitude) * 0.75;
-        const sourceHalfHeight =
-          Math.sqrt(Math.max(0, 1 - sourceNormalizedX ** 2)) * sourceRadius;
-        const sourceX = sourceCenterX + sourceNormalizedX * sourceRadius;
-
-        context.drawImage(
-          image,
-          sourceX - 1,
-          sourceCenterY - sourceHalfHeight,
-          2,
-          sourceHalfHeight * 2,
-          center + offsetX,
-          center - destinationHalfHeight,
-          STRIP_WIDTH + 1,
-          destinationHalfHeight * 2,
+        const longitude = longitudeMap[index] + rotation;
+        const wrapped = (((longitude / (Math.PI * 2) + 0.5) % 1) + 1) % 1;
+        const textureX = Math.min(
+          textureWidth - 1,
+          Math.floor(wrapped * textureWidth),
         );
+        const textureIndex = (latitudeMap[index] * textureWidth + textureX) * 4;
+        pixels[pixelIndex] = (texturePixels[textureIndex] * light) / 255;
+        pixels[pixelIndex + 1] =
+          (texturePixels[textureIndex + 1] * light) / 255;
+        pixels[pixelIndex + 2] = Math.min(
+          255,
+          (texturePixels[textureIndex + 2] * light) / 255 + 7,
+        );
+        pixels[pixelIndex + 3] = 255;
       }
 
-      context.restore();
+      context.clearRect(0, 0, renderSize, renderSize);
+      context.putImageData(output, 0, 0);
       canvas.dataset.ready = "true";
+      canvas.parentElement?.classList.add("is-rendered");
     };
 
     const animate = (timestamp: number) => {
-      if (timestamp - lastFrame >= 1000 / 30) {
+      if (timestamp - lastFrame >= 1000 / TARGET_FPS) {
         draw(timestamp);
         lastFrame = timestamp;
       }
@@ -99,31 +160,33 @@ export function RotatingEarthSurface({ src }: { src: string }) {
 
     const start = () => {
       cancelAnimationFrame(animationFrame);
-      if (document.hidden) return;
+      if (document.hidden || !texturePixels) return;
       animationFrame = requestAnimationFrame(animate);
     };
 
+    const handleLoad = () => {
+      if (prepareTexture()) start();
+    };
     const handleVisibilityChange = () => {
-      if (image.complete) start();
+      if (!document.hidden) start();
     };
     const handleResize = () => {
       renderSize = 0;
     };
     const resizeObserver =
-      "ResizeObserver" in window
-        ? new ResizeObserver(handleResize)
-        : undefined;
+      "ResizeObserver" in window ? new ResizeObserver(handleResize) : undefined;
 
-    image.addEventListener("load", start);
-    image.src = src;
+    texture.addEventListener("load", handleLoad);
+    texture.src = src;
     document.addEventListener("visibilitychange", handleVisibilityChange);
     if (resizeObserver) resizeObserver.observe(canvas);
     else window.addEventListener("resize", handleResize);
-    if (image.complete) start();
+    if (texture.complete && texture.naturalWidth > 0) handleLoad();
 
     return () => {
       cancelAnimationFrame(animationFrame);
-      image.removeEventListener("load", start);
+      canvas.parentElement?.classList.remove("is-rendered");
+      texture.removeEventListener("load", handleLoad);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       if (resizeObserver) resizeObserver.disconnect();
       else window.removeEventListener("resize", handleResize);
