@@ -13,9 +13,7 @@ describe("TradingSessionsEarth", () => {
     expect(
       container.querySelectorAll(".session-earth-hours > div"),
     ).toHaveLength(4);
-    expect(
-      container.querySelector(".session-earth-canvas"),
-    ).toBeInTheDocument();
+    expect(container.querySelector(".session-earth-canvas")).toBeNull();
     expect(
       screen.getByRole("img", {
         name: "Earth",
