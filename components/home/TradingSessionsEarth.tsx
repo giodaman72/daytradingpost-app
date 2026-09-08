@@ -39,11 +39,7 @@ export function TradingSessionsEarth({ locale }: { locale: "en" | "es" }) {
           <Image
             className="reference-globe-image"
             src={earthImage}
-            alt={
-              spanish
-                ? "La Tierra con las sesiones de Sídney, Tokio, Londres y Nueva York"
-                : "Earth with the Sydney, Tokyo, London, and New York trading sessions"
-            }
+            alt={spanish ? "La Tierra" : "Earth"}
             width={1254}
             height={1254}
             unoptimized
@@ -51,67 +47,6 @@ export function TradingSessionsEarth({ locale }: { locale: "en" | "es" }) {
             fetchPriority="high"
           />
           <RotatingEarthSurface src={earthImage.src} />
-          <svg
-            className="session-earth-route"
-            viewBox="0 0 100 100"
-            aria-hidden="true"
-          >
-            <path
-              d="M31 30 Q47 9 69.5 23 Q86 31 82 50 Q85 70 66 78 Q42 92 31 30"
-              fill="none"
-              stroke="#fbbf3b"
-              strokeWidth=".35"
-              strokeDasharray="1 1"
-            />
-            <circle cx="31" cy="30" r="2.6" fill="#fbbf3b" fillOpacity=".2" />
-            <circle cx="69.5" cy="23" r="2.6" fill="#7dd3fc" fillOpacity=".2" />
-            <circle cx="82" cy="50" r="2.6" fill="#f472b6" fillOpacity=".2" />
-            <circle cx="66" cy="78" r="2.6" fill="#34d399" fillOpacity=".2" />
-            <circle
-              cx="31"
-              cy="30"
-              r=".65"
-              fill="#fbbf3b"
-              stroke="#fff"
-              strokeWidth=".2"
-            />
-            <circle
-              cx="69.5"
-              cy="23"
-              r=".65"
-              fill="#7dd3fc"
-              stroke="#fff"
-              strokeWidth=".2"
-            />
-            <circle
-              cx="82"
-              cy="50"
-              r=".65"
-              fill="#f472b6"
-              stroke="#fff"
-              strokeWidth=".2"
-            />
-            <circle
-              cx="66"
-              cy="78"
-              r=".65"
-              fill="#34d399"
-              stroke="#fff"
-              strokeWidth=".2"
-            />
-          </svg>
-          <span className="session-earth-marker-anchor session-earth-new-york">
-            <span className="session-earth-marker">{newYork}</span>
-          </span>
-          <span className="session-earth-marker-anchor session-earth-london">
-            <span className="session-earth-marker">{london}</span>
-          </span>
-          <span className="session-earth-marker-anchor session-earth-tokyo">
-            <span className="session-earth-marker">{tokyo}</span>
-          </span>
-          <span className="session-earth-marker-anchor session-earth-sydney">
-            <span className="session-earth-marker">{sydney}</span>
-          </span>
         </div>
       </div>
       <figcaption className="session-earth-card">
