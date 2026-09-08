@@ -23,16 +23,16 @@ export function RotatingEarthSurface({ src }: { src: string }) {
     let animationFrame = 0;
     let lastFrame = 0;
     let renderSize = 0;
-    let reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
 
     const syncCanvasSize = () => {
       const nextSize = Math.min(
         MAX_RENDER_SIZE,
         Math.max(
           280,
-          Math.round(canvas.clientWidth * Math.min(devicePixelRatio, 1.25)),
+          Math.round(
+            canvas.clientWidth *
+              Math.min(window.devicePixelRatio || 1, 1.25),
+          ),
         ),
       );
 
@@ -51,11 +51,10 @@ export function RotatingEarthSurface({ src }: { src: string }) {
       const sourceCenterX = image.naturalWidth / 2;
       const sourceCenterY = image.naturalHeight / 2;
       const sourceRadius = image.naturalWidth * 0.455;
-      const rotation = reduceMotion
-        ? 0
-        : ((timestamp % ROTATION_DURATION_MS) / ROTATION_DURATION_MS) *
-          Math.PI *
-          2;
+      const rotation =
+        ((timestamp % ROTATION_DURATION_MS) / ROTATION_DURATION_MS) *
+        Math.PI *
+        2;
 
       context.clearRect(0, 0, size, size);
       context.drawImage(image, 0, 0, size, size);
@@ -91,11 +90,11 @@ export function RotatingEarthSurface({ src }: { src: string }) {
     };
 
     const animate = (timestamp: number) => {
-      if (timestamp - lastFrame >= 1000 / 30 || reduceMotion) {
+      if (timestamp - lastFrame >= 1000 / 30) {
         draw(timestamp);
         lastFrame = timestamp;
       }
-      if (!reduceMotion) animationFrame = requestAnimationFrame(animate);
+      animationFrame = requestAnimationFrame(animate);
     };
 
     const start = () => {
@@ -104,32 +103,30 @@ export function RotatingEarthSurface({ src }: { src: string }) {
       animationFrame = requestAnimationFrame(animate);
     };
 
-    const motionPreference = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    );
-    const handleMotionPreference = (event: MediaQueryListEvent) => {
-      reduceMotion = event.matches;
-      start();
-    };
     const handleVisibilityChange = () => {
       if (image.complete) start();
     };
-    const resizeObserver = new ResizeObserver(() => {
+    const handleResize = () => {
       renderSize = 0;
-    });
+    };
+    const resizeObserver =
+      "ResizeObserver" in window
+        ? new ResizeObserver(handleResize)
+        : undefined;
 
     image.addEventListener("load", start);
     image.src = src;
-    motionPreference.addEventListener("change", handleMotionPreference);
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    resizeObserver.observe(canvas);
+    if (resizeObserver) resizeObserver.observe(canvas);
+    else window.addEventListener("resize", handleResize);
+    if (image.complete) start();
 
     return () => {
       cancelAnimationFrame(animationFrame);
       image.removeEventListener("load", start);
-      motionPreference.removeEventListener("change", handleMotionPreference);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      resizeObserver.disconnect();
+      if (resizeObserver) resizeObserver.disconnect();
+      else window.removeEventListener("resize", handleResize);
     };
   }, [src]);
 
