@@ -730,9 +730,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .session-earth-canvas {
-    display: none;
-  }
   .session-earth-rotor::before,
   .session-earth-marker-anchor,
   .session-earth-marker-anchor::after,
