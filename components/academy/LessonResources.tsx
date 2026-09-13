@@ -37,8 +37,8 @@ export function LessonResources({ resources }: LessonResourcesProps) {
             </div>
             <a
               href={resource.url}
-              target="_blank"
-              rel="noreferrer noopener"
+              target={resource.downloadable ? undefined : "_blank"}
+              rel={resource.downloadable ? undefined : "noreferrer noopener"}
               download={resource.downloadable ? "" : undefined}
             >
               {resource.downloadable ? (
