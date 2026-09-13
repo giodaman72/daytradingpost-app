@@ -737,7 +737,7 @@ export function findBuiltInAcademyLessonByCourseAndSlug(
         downloadable: true,
         fileSize: null,
         id: `${lesson.id}-checklist`,
-        mimeType: "text/plain",
+        mimeType: "application/msword",
         resourceType: "checklist",
         title: `${lesson.title} checklist`,
         url: `/academy/courses/${course.slug}/lessons/${lesson.slug}`,
