@@ -638,7 +638,7 @@ function baseCourse(seed: BuiltInCourseSeed): AcademyCourse {
     category,
     coverImage: null,
     description: block(
-      `${seed.excerpt} This DayTradingPost version condenses the technical-analysis body of knowledge into a direct, guided course focused on practical chart reading, strategy design and risk-aware execution.`,
+      `${seed.excerpt} This DayTradingPost course turns core technical-analysis concepts into a direct, guided path focused on practical chart reading, strategy design and risk-aware execution.`,
     ),
     difficulty: seed.difficulty,
     durationMinutes,
