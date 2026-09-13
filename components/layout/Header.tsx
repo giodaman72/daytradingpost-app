@@ -89,7 +89,14 @@ export async function Header() {
                 <span>{spanish ? "Cuenta" : "Account"}</span>
               </Link>
             </>
-          ) : null}
+          ) : (
+            <Link
+              href={localizeHref(ROUTES.auth.login, locale)}
+              className="account-link reference-header-sign-in"
+            >
+              {spanish ? "Iniciar sesión" : "Sign In"}
+            </Link>
+          )}
           <Link
             href={localizeHref(ROUTES.premium, locale)}
             className="button button-small reference-header-premium"
