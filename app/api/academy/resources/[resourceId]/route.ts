@@ -7,6 +7,16 @@ import { recordAcademyEvent } from "@/lib/academy/academyEventService";
 
 export const dynamic = "force-dynamic";
 
+function getAcademyResourceRedirectUrl(
+  resourceUrl: string,
+  requestUrl: string,
+) {
+  if (!isSafeAcademyResourceUrl(resourceUrl)) return null;
+  if (resourceUrl.startsWith("/")) return new URL(resourceUrl, requestUrl);
+  const url = new URL(resourceUrl);
+  return url.protocol === "https:" ? url : null;
+}
+
 export async function GET(
   request: Request,
   context: { params: Promise<{ resourceId: string }> },
@@ -19,10 +29,11 @@ export async function GET(
       lessonSlug: url.searchParams.get("lessonSlug") ?? "",
       resourceId,
     });
-    if (
-      !isSafeAcademyResourceUrl(resource.url) ||
-      !resource.url.startsWith("https://")
-    )
+    const redirectUrl = getAcademyResourceRedirectUrl(
+      resource.url,
+      request.url,
+    );
+    if (!redirectUrl)
       throw new AcademyError(
         "ACADEMY_FORBIDDEN",
         "This lesson resource is unavailable.",
@@ -33,7 +44,7 @@ export async function GET(
       lessonId: resource.lessonId,
       name: "academy_resource_downloaded",
     }).catch(() => undefined);
-    return NextResponse.redirect(resource.url, {
+    return NextResponse.redirect(redirectUrl, {
       headers: {
         "Cache-Control": "private, no-store",
         "Referrer-Policy": "no-referrer",
