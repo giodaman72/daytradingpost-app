@@ -22,6 +22,13 @@ import type {
 } from "@/types/academy";
 import { AcademyError } from "./academyErrors";
 import {
+  findBuiltInAcademyCourseByLegacySlug,
+  findBuiltInAcademyCourseBySlug,
+  findBuiltInAcademyLessonByCourseAndSlug,
+  listBuiltInAcademyCourses,
+  mergeBuiltInAcademyCourses,
+} from "./academyBuiltInCourses";
+import {
   academyAssessmentForGradingQuery,
   academyCourseByLegacySlugQuery,
   academyCourseBySlugQuery,
@@ -91,14 +98,19 @@ const mapLearningPathEnrollment = (
 });
 
 export async function listPublishedCourses(limit = 20, offset = 0) {
-  return requirePublishedClient().fetch<AcademyCourse[]>(
+  const client = getPublishedClient();
+  if (!client) return listBuiltInAcademyCourses(limit, offset);
+  const courses = await client.fetch<AcademyCourse[]>(
     academyCoursesQuery,
     { end: offset + limit, start: offset },
     { next: { revalidate: 60, tags: ["sanity", "academy-course"] } },
   );
+  return mergeBuiltInAcademyCourses(courses).slice(offset, offset + limit);
 }
 
 export async function findPublishedCourseBySlug(slug: string) {
+  const builtInCourse = findBuiltInAcademyCourseBySlug(slug);
+  if (builtInCourse) return builtInCourse;
   return requirePublishedClient().fetch<AcademyCourseDetail | null>(
     academyCourseBySlugQuery,
     { slug },
@@ -107,6 +119,8 @@ export async function findPublishedCourseBySlug(slug: string) {
 }
 
 export async function findPublishedCourseByLegacySlug(slug: string) {
+  const builtInCourse = findBuiltInAcademyCourseByLegacySlug(slug);
+  if (builtInCourse) return builtInCourse;
   return requirePublishedClient().fetch<AcademyCourseDetail | null>(
     academyCourseByLegacySlugQuery,
     { slug },
@@ -123,6 +137,11 @@ export async function findPublishedLessonByCourseAndSlug(
   courseId: string,
   lessonSlug: string,
 ) {
+  const builtInLesson = findBuiltInAcademyLessonByCourseAndSlug(
+    courseId,
+    lessonSlug,
+  );
+  if (builtInLesson) return builtInLesson;
   return requirePublishedClient().fetch<AcademyLesson | null>(
     academyLessonByCourseAndSlugQuery,
     { courseId, lessonSlug },
