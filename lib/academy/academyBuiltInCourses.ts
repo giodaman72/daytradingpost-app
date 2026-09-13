@@ -734,10 +734,10 @@ export function findBuiltInAcademyLessonByCourseAndSlug(
         copyrightNotice:
           "Original DayTradingPost educational worksheet. Not investment advice.",
         description: `Checklist for ${lesson.title}`,
-        downloadable: false,
+        downloadable: true,
         fileSize: null,
         id: `${lesson.id}-checklist`,
-        mimeType: null,
+        mimeType: "text/plain",
         resourceType: "checklist",
         title: `${lesson.title} checklist`,
         url: `/academy/courses/${course.slug}/lessons/${lesson.slug}`,
