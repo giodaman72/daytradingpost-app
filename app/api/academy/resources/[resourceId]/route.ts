@@ -17,94 +17,141 @@ function getAcademyResourceRedirectUrl(
   return url.protocol === "https:" ? url : null;
 }
 
-function escapeDocumentHtml(value: string) {
+function pdfSafeText(value: string) {
   return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201c\u201d]/g, '"')
+    .replace(/[\u2013\u2014]/g, "-")
+    .replace(/[^\x20-\x7E\n]/g, "")
+    .replace(/\\/g, "\\\\")
+    .replace(/\(/g, "\\(")
+    .replace(/\)/g, "\\)");
 }
 
-function academyResourceFilename(title: string) {
+function wrapPdfLine(text: string, width = 88) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+    if (next.length > width && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = next;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
+function academyPdfFilename(title: string) {
   const safe = title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
     .slice(0, 80);
-  return `${safe || "lesson-resource"}.doc`;
+  return `${safe || "lesson-resource"}.pdf`;
 }
 
-function builtInChecklistDocument(resource: {
+function buildPdf(lines: string[]) {
+  const pages = [];
+  for (let index = 0; index < lines.length; index += 42)
+    pages.push(lines.slice(index, index + 42));
+  const objects: string[] = [];
+  const pageObjectNumbers: number[] = [];
+  objects[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+  objects[3] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+  pages.forEach((pageLines, index) => {
+    const pageObject = 4 + index * 2;
+    const contentObject = pageObject + 1;
+    pageObjectNumbers.push(pageObject);
+    const stream = [
+      "BT",
+      "/F1 12 Tf",
+      "54 760 Td",
+      "15 TL",
+      ...pageLines.map((line) => `(${pdfSafeText(line)}) Tj T*`),
+      "ET",
+    ].join("\n");
+    objects[pageObject] =
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentObject} 0 R >>`;
+    objects[contentObject] =
+      `<< /Length ${Buffer.byteLength(stream, "utf8")} >>\nstream\n${stream}\nendstream`;
+  });
+  objects[2] =
+    `<< /Type /Pages /Kids [${pageObjectNumbers.map((item) => `${item} 0 R`).join(" ")}] /Count ${pageObjectNumbers.length} >>`;
+
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+  for (let index = 1; index < objects.length; index += 1) {
+    offsets[index] = Buffer.byteLength(pdf, "utf8");
+    pdf += `${index} 0 obj\n${objects[index]}\nendobj\n`;
+  }
+  const xrefOffset = Buffer.byteLength(pdf, "utf8");
+  pdf += `xref\n0 ${objects.length}\n0000000000 65535 f \n`;
+  for (let index = 1; index < objects.length; index += 1)
+    pdf += `${String(offsets[index]).padStart(10, "0")} 00000 n \n`;
+  pdf += `trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+  return Buffer.from(pdf, "utf8");
+}
+
+function builtInChecklistPdf(resource: {
   copyrightNotice: string | null;
   description: string | null;
+  lessonSummary?: string;
+  lessonTitle?: string;
   title: string;
 }) {
-  const title = escapeDocumentHtml(resource.title);
-  const description = escapeDocumentHtml(
-    resource.description ?? "Lesson worksheet",
-  );
-  const copyright = escapeDocumentHtml(
-    resource.copyrightNotice ?? "Educational content only.",
-  );
-  return `<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>${title}</title>
-    <style>
-      body { font-family: Arial, sans-serif; color: #111827; line-height: 1.45; }
-      h1 { color: #0f172a; font-size: 26px; margin-bottom: 4px; }
-      h2 { color: #b7791f; font-size: 16px; margin-top: 24px; text-transform: uppercase; }
-      table { border-collapse: collapse; width: 100%; margin-top: 8px; }
-      td, th { border: 1px solid #cbd5e1; padding: 8px; vertical-align: top; }
-      .muted { color: #64748b; font-size: 12px; }
-      .box { border: 1px solid #cbd5e1; min-height: 72px; padding: 8px; }
-    </style>
-  </head>
-  <body>
-    <h1>${title}</h1>
-    <p>${description}</p>
-    <p class="muted">${copyright}</p>
-
-    <h2>Lesson Context</h2>
-    <p>Use this worksheet with one live or recent DayTradingPost market chart. The goal is to turn the lesson idea into a clear trading observation, a rule, and a risk-control decision before taking action.</p>
-
-    <h2>1. Market and Timeframe</h2>
-    <table>
-      <tr><th>Instrument</th><td></td></tr>
-      <tr><th>Timeframe</th><td></td></tr>
-      <tr><th>Trading session</th><td></td></tr>
-      <tr><th>Date</th><td></td></tr>
-    </table>
-
-    <h2>2. Current Market Condition</h2>
-    <table>
-      <tr><th>Trend</th><td></td></tr>
-      <tr><th>Key support</th><td></td></tr>
-      <tr><th>Key resistance</th><td></td></tr>
-      <tr><th>Volatility / momentum</th><td></td></tr>
-    </table>
-
-    <h2>3. Lesson Idea Applied to the Chart</h2>
-    <p><strong>What do you see?</strong></p>
-    <div class="box"></div>
-    <p><strong>What confirms it?</strong></p>
-    <div class="box"></div>
-    <p><strong>What would invalidate it?</strong></p>
-    <div class="box"></div>
-
-    <h2>4. Execution Checklist</h2>
-    <p>[ ] Bias is clear</p>
-    <p>[ ] Entry condition is defined</p>
-    <p>[ ] Stop level is defined before entry</p>
-    <p>[ ] Target or exit rule is defined</p>
-    <p>[ ] Risk per trade is acceptable</p>
-    <p>[ ] No trade if confirmation is missing</p>
-
-    <h2>5. Notes</h2>
-    <div class="box"></div>
-  </body>
-</html>`;
+  const heading = resource.lessonTitle ?? resource.title.replace(/ checklist$/i, "");
+  const intro =
+    resource.lessonSummary ??
+    resource.description ??
+    "Read this lesson resource with one live or recent DayTradingPost market chart.";
+  const rawLines = [
+    "DayTradingPost Academy",
+    heading,
+    "",
+    intro,
+    "",
+    resource.copyrightNotice ?? "Educational content only. Not investment advice.",
+    "",
+    "Lesson Context",
+    "Use this resource to turn the lesson into a clear trading observation, a practical rule, and a risk-control decision before taking action.",
+    "",
+    "1. Market and Timeframe",
+    "Instrument:",
+    "Timeframe:",
+    "Trading session:",
+    "Date:",
+    "",
+    "2. Current Market Condition",
+    "Trend:",
+    "Key support:",
+    "Key resistance:",
+    "Volatility / momentum:",
+    "",
+    "3. Lesson Idea Applied to the Chart",
+    "What do you see?",
+    "",
+    "What confirms it?",
+    "",
+    "What would invalidate it?",
+    "",
+    "4. Execution Checklist",
+    "[ ] Bias is clear",
+    "[ ] Entry condition is defined",
+    "[ ] Stop level is defined before entry",
+    "[ ] Target or exit rule is defined",
+    "[ ] Risk per trade is acceptable",
+    "[ ] No trade if confirmation is missing",
+    "",
+    "5. Notes",
+    "",
+  ];
+  return buildPdf(rawLines.flatMap((line) => wrapPdfLine(line)));
 }
 
 export async function GET(
@@ -126,12 +173,13 @@ export async function GET(
         lessonId: resource.lessonId,
         name: "academy_resource_downloaded",
       }).catch(() => undefined);
-      return new Response(builtInChecklistDocument(resource), {
+      return new Response(builtInChecklistPdf(resource), {
         headers: {
           "Cache-Control": "private, no-store",
-          "Content-Disposition": `attachment; filename="${academyResourceFilename(resource.title)}"`,
-          "Content-Type": "application/msword; charset=utf-8",
+          "Content-Disposition": `inline; filename="${academyPdfFilename(resource.title)}"`,
+          "Content-Type": "application/pdf",
           "Referrer-Policy": "no-referrer",
+          "X-Content-Type-Options": "nosniff",
         },
       });
     }
