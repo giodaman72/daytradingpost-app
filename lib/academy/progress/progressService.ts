@@ -16,6 +16,23 @@ type ProgressLessonState = NonNullable<
   Awaited<ReturnType<typeof findPublishedLessonState>>
 >;
 
+async function findLessonProgressRow(input: {
+  enrollmentId: string;
+  lessonId: string;
+  userId: string;
+}) {
+  const { data, error } = await getSupabaseAdmin()
+    .from("academy_lesson_progress")
+    .select("*")
+    .eq("user_id", input.userId)
+    .eq("enrollment_id", input.enrollmentId)
+    .eq("lesson_id", input.lessonId)
+    .order("created_at", { ascending: true })
+    .limit(1);
+  if (error) throw error;
+  return data?.[0] ?? null;
+}
+
 async function ensureProgressRows(input: {
   enrollmentId: string;
   lesson: ProgressLessonState;
@@ -23,8 +40,16 @@ async function ensureProgressRows(input: {
   userId: string;
 }) {
   const admin = getSupabaseAdmin();
-  await admin.from("academy_module_progress").upsert(
-    {
+  const { data: existingModule } = await admin
+    .from("academy_module_progress")
+    .select("id")
+    .eq("user_id", input.userId)
+    .eq("enrollment_id", input.enrollmentId)
+    .eq("module_id", input.lesson.moduleId)
+    .limit(1);
+  if (!existingModule?.length)
+    await admin.from("academy_module_progress").insert({
+      id: crypto.randomUUID(),
       enrollment_id: input.enrollmentId,
       module_id: input.lesson.moduleId,
       module_version: 1,
@@ -32,26 +57,28 @@ async function ensureProgressRows(input: {
       required_lessons_count: 1,
       status: "available",
       user_id: input.userId,
-    },
-    { onConflict: "user_id,enrollment_id,module_id" },
-  );
+    });
 
-  const rows = [input.lessonId, ...input.lesson.prerequisiteLessonIds].map(
-    (lessonId) => ({
+  const lessonIds = [input.lessonId, ...input.lesson.prerequisiteLessonIds];
+  for (const lessonId of lessonIds) {
+    const existing = await findLessonProgressRow({
+      enrollmentId: input.enrollmentId,
+      lessonId,
+      userId: input.userId,
+    }).catch(() => null);
+    if (existing) continue;
+    await admin.from("academy_lesson_progress").insert({
+      id: crypto.randomUUID(),
       enrollment_id: input.enrollmentId,
       lesson_id: lessonId,
-      lesson_version:
-        lessonId === input.lessonId ? input.lesson.version : 1,
+      lesson_version: lessonId === input.lessonId ? input.lesson.version : 1,
       module_id: input.lesson.moduleId,
       required_for_completion:
         lessonId === input.lessonId ? input.lesson.requiredForCompletion : true,
       status: lessonId === input.lessonId ? "available" : "completed",
       user_id: input.userId,
-    }),
-  );
-  await admin.from("academy_lesson_progress").upsert(rows, {
-    onConflict: "user_id,enrollment_id,lesson_id",
-  });
+    });
+  }
 }
 
 async function context(enrollmentIdInput: string, lessonIdInput: string) {
@@ -72,18 +99,11 @@ async function context(enrollmentIdInput: string, lessonIdInput: string) {
       "ACADEMY_LESSON_NOT_FOUND",
       "Lesson was not found in this enrollment.",
     );
-  let { data: progress, error } = await getSupabaseAdmin()
-    .from("academy_lesson_progress")
-    .select("*")
-    .eq("user_id", access.userId)
-    .eq("enrollment_id", enrollment.id)
-    .eq("lesson_id", lessonId)
-    .maybeSingle();
-  if (error)
-    throw new AcademyError(
-      "ACADEMY_LESSON_LOCKED",
-      "Lesson progress is unavailable.",
-    );
+  let progress = await findLessonProgressRow({
+    enrollmentId: enrollment.id,
+    lessonId,
+    userId: access.userId,
+  }).catch(() => null);
   if (!progress) {
     await ensureProgressRows({
       enrollmentId: enrollment.id,
@@ -91,15 +111,12 @@ async function context(enrollmentIdInput: string, lessonIdInput: string) {
       lessonId,
       userId: access.userId,
     });
-    const { data: repairedProgress, error: repairError } =
-      await getSupabaseAdmin()
-        .from("academy_lesson_progress")
-        .select("*")
-        .eq("user_id", access.userId)
-        .eq("enrollment_id", enrollment.id)
-        .eq("lesson_id", lessonId)
-        .maybeSingle();
-    if (repairError || !repairedProgress)
+    const repairedProgress = await findLessonProgressRow({
+      enrollmentId: enrollment.id,
+      lessonId,
+      userId: access.userId,
+    }).catch(() => null);
+    if (!repairedProgress)
       throw new AcademyError(
         "ACADEMY_LESSON_LOCKED",
         "Lesson progress is unavailable.",
