@@ -833,8 +833,7 @@ export function findBuiltInAcademyLessonStateById(lessonId: string) {
         if (lesson.id === lessonId)
           return {
             _id: lesson.id,
-            assessmentId:
-              "assessmentId" in lesson ? (lesson.assessmentId ?? null) : null,
+            assessmentId: null,
             completionMode: lesson.completionMode,
             courseId: lesson.courseId,
             durationMinutes: lesson.durationMinutes,
@@ -843,9 +842,7 @@ export function findBuiltInAcademyLessonStateById(lessonId: string) {
             prerequisiteLessonIds: lesson.prerequisiteLessonIds ?? [],
             requiredForCompletion: lesson.requiredForCompletion,
             version: lesson.version,
-            video: lesson.video
-              ? { durationSeconds: lesson.video.durationSeconds }
-              : null,
+            video: null,
           };
   return null;
 }
