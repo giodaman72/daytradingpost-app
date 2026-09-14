@@ -70,12 +70,32 @@ export class AcademyError extends Error {
   }
 }
 
+function describeUnknownError(error: unknown) {
+  if (error instanceof Error)
+    return {
+      message: error.message,
+      name: error.name,
+      stack: error.stack?.split("\n").slice(0, 3).join("\n") ?? null,
+    };
+  if (error && typeof error === "object") {
+    const record = error as Record<string, unknown>;
+    return {
+      code: record.code ?? null,
+      details: record.details ?? null,
+      hint: record.hint ?? null,
+      message: record.message ?? JSON.stringify(record),
+      name: record.name ?? null,
+    };
+  }
+  return { message: String(error) };
+}
+
 export function normalizeAcademyError(error: unknown) {
   if (error instanceof AcademyError) return error;
   console.error(
     JSON.stringify({
       domain: "academy",
-      error: error instanceof Error ? error.message : "unknown",
+      error: describeUnknownError(error),
     }),
   );
   return new AcademyError(
