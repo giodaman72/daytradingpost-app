@@ -28,6 +28,16 @@ import { parseAcademyIdentifier, parseAcademySlug } from "./academyValidation";
 import { deriveAcademyAvailability } from "./learningPaths/academyAvailability";
 import { builtInAcademyResourceTextByLessonId } from "./academyBuiltInResourceText";
 
+function findBuiltInResourceText(lessonId: string, lessonTitle: string) {
+  const direct = builtInAcademyResourceTextByLessonId.get(lessonId);
+  if (direct) return direct;
+  for (const text of builtInAcademyResourceTextByLessonId.values()) {
+    if (text.startsWith(lessonTitle) || text.includes(`\n\n${lessonTitle}\n`))
+      return text;
+  }
+  return undefined;
+}
+
 export function listAcademyCourses(limit = 20, offset = 0) {
   return listPublishedCourses(limit, offset);
 }
@@ -286,7 +296,10 @@ export async function getAuthorizedAcademyResource(input: {
     lessonId: view.currentLesson.id,
     lessonSummary: view.currentLesson.summary,
     lessonTitle: view.currentLesson.title,
-    resourceText: builtInAcademyResourceTextByLessonId.get(view.currentLesson.id),
+    resourceText: findBuiltInResourceText(
+      view.currentLesson.id,
+      view.currentLesson.title,
+    ),
   };
 }
 
