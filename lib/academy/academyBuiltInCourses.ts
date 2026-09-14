@@ -684,18 +684,33 @@ const seeds: BuiltInCourseSeed[] = [
   },
 ];
 
+function builtInModuleId(course: BuiltInCourseSeed, moduleIndex: number) {
+  return `${course.id}-m${moduleIndex + 1}`;
+}
+
+function builtInLessonId(
+  course: BuiltInCourseSeed,
+  moduleIndex: number,
+  lessonIndex: number,
+) {
+  return `${builtInModuleId(course, moduleIndex)}-l${lessonIndex + 1}`;
+}
+
 const builtInLessonBodyById = new Map<string, string>();
 for (const seed of seeds)
-  for (const module of seed.modules)
-    for (const lesson of module.lessons)
+  seed.modules.forEach((module, moduleIndex) => {
+    module.lessons.forEach((lesson, lessonIndex) => {
       builtInLessonBodyById.set(
-        `${seed.id}-${module.slug}-${lesson.slug}`,
+        builtInLessonId(seed, moduleIndex, lessonIndex),
         lesson.body ?? lesson.summary,
       );
+    });
+  });
 
 function makeLessons(
   course: BuiltInCourseSeed,
   module: BuiltInModuleSeed,
+  moduleIndex: number,
 ): AcademyCurriculumLesson[] {
   return module.lessons.map((lesson, lessonIndex) => ({
     accessLevel: course.accessLevel,
@@ -704,20 +719,18 @@ function makeLessons(
     completionMode: "content-viewed",
     courseId: course.id,
     durationMinutes: lesson.minutes,
-    id: `${course.id}-${module.slug}-${lesson.slug}`,
+    id: builtInLessonId(course, moduleIndex, lessonIndex),
     learningObjectives: [
       lesson.summary,
       "Apply the idea to NAS100, S&P 500, gold, crude oil, FX or crypto charts.",
     ],
     lessonType: lesson.type ?? "text",
-    moduleId: `${course.id}-${module.slug}`,
+    moduleId: builtInModuleId(course, moduleIndex),
     order: lessonIndex + 1,
     prerequisiteLessonIds:
       lessonIndex === 0
         ? []
-        : [
-            `${course.id}-${module.slug}-${module.lessons[lessonIndex - 1].slug}`,
-          ],
+        : [builtInLessonId(course, moduleIndex, lessonIndex - 1)],
     requiredForCompletion: true,
     slug: lesson.slug,
     status: "published",
@@ -733,17 +746,15 @@ function makeModules(course: BuiltInCourseSeed): AcademyCurriculumModule[] {
     courseId: course.id,
     description: module.description,
     durationMinutes: module.minutes,
-    id: `${course.id}-${module.slug}`,
+    id: builtInModuleId(course, moduleIndex),
     learningObjectives: module.objectives,
-    lessonIds: module.lessons.map(
-      (lesson) => `${course.id}-${module.slug}-${lesson.slug}`,
+    lessonIds: module.lessons.map((_, lessonIndex) =>
+      builtInLessonId(course, moduleIndex, lessonIndex),
     ),
-    lessons: makeLessons(course, module),
+    lessons: makeLessons(course, module, moduleIndex),
     order: moduleIndex + 1,
     prerequisiteModuleIds:
-      moduleIndex === 0
-        ? []
-        : [`${course.id}-${course.modules[moduleIndex - 1].slug}`],
+      moduleIndex === 0 ? [] : [builtInModuleId(course, moduleIndex - 1)],
     requiredForCompletion: true,
     slug: module.slug,
     status: "published",
@@ -773,7 +784,9 @@ function baseCourse(seed: BuiltInCourseSeed): AcademyCourse {
     instructor,
     learningObjectives: seed.objectives,
     legacySlug: seed.legacySlug ?? null,
-    moduleIds: seed.modules.map((module) => `${seed.id}-${module.slug}`),
+    moduleIds: seed.modules.map((_, moduleIndex) =>
+      builtInModuleId(seed, moduleIndex),
+    ),
     passingRequirements: {
       finalAssessmentId: null,
       minimumAssessmentPercent: null,
