@@ -177,7 +177,7 @@ export async function GET(
       lessonSlug: url.searchParams.get("lessonSlug") ?? "",
       resourceId,
     });
-    if (resource.url.startsWith("/") && resource.resourceType === "checklist") {
+    if (resource.url.startsWith("/") && (resource.resourceType === "checklist" || resource.resourceType === "pdf-guide")) {
       await recordAcademyEvent({
         courseId: resource.courseId,
         idempotencyKey: `resource:${resourceId}:${crypto.randomUUID()}`,
