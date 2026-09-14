@@ -25,6 +25,7 @@ import {
   findBuiltInAcademyCourseByLegacySlug,
   findBuiltInAcademyCourseBySlug,
   findBuiltInAcademyLessonByCourseAndSlug,
+  findBuiltInAcademyLessonStateById,
   listBuiltInAcademyCourses,
   mergeBuiltInAcademyCourses,
 } from "./academyBuiltInCourses";
@@ -184,6 +185,8 @@ export async function findLessonForTutor(lessonId: string) {
 }
 
 export async function findPublishedLessonState(lessonId: string) {
+  const builtInLesson = findBuiltInAcademyLessonStateById(lessonId);
+  if (builtInLesson) return builtInLesson;
   return requirePublishedClient().fetch<{
     _id: string;
     assessmentId: string | null;
