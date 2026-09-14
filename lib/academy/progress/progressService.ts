@@ -81,6 +81,7 @@ async function ensureProgressRows(input: {
       completed_at: isCurrentLesson ? null : now,
       completion_method: isCurrentLesson ? null : "content-viewed",
       content_viewed_at: isCurrentLesson ? null : now,
+      course_id: input.lesson.courseId,
       enrollment_id: input.enrollmentId,
       last_accessed_at: now,
       lesson_id: lessonId,
