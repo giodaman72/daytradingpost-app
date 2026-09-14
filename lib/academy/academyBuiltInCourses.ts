@@ -826,6 +826,30 @@ export function findBuiltInAcademyCourseByLegacySlug(slug: string) {
   );
 }
 
+export function findBuiltInAcademyLessonStateById(lessonId: string) {
+  for (const course of builtInAcademyCourseDetails)
+    for (const module of course.modules)
+      for (const lesson of module.lessons)
+        if (lesson.id === lessonId)
+          return {
+            _id: lesson.id,
+            assessmentId:
+              "assessmentId" in lesson ? (lesson.assessmentId ?? null) : null,
+            completionMode: lesson.completionMode,
+            courseId: lesson.courseId,
+            durationMinutes: lesson.durationMinutes,
+            moduleId: lesson.moduleId,
+            modulePrerequisiteIds: module.prerequisiteModuleIds ?? [],
+            prerequisiteLessonIds: lesson.prerequisiteLessonIds ?? [],
+            requiredForCompletion: lesson.requiredForCompletion,
+            version: lesson.version,
+            video: lesson.video
+              ? { durationSeconds: lesson.video.durationSeconds }
+              : null,
+          };
+  return null;
+}
+
 export function findBuiltInAcademyLessonByCourseAndSlug(
   courseId: string,
   lessonSlug: string,
