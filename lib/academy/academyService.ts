@@ -283,6 +283,8 @@ export async function getAuthorizedAcademyResource(input: {
     ...resource,
     courseId: view.course.id,
     lessonId: view.currentLesson.id,
+    lessonSummary: view.currentLesson.summary,
+    lessonTitle: view.currentLesson.title,
   };
 }
 
