@@ -27,7 +27,6 @@ async function findLessonProgressRow(input: {
     .eq("user_id", input.userId)
     .eq("enrollment_id", input.enrollmentId)
     .eq("lesson_id", input.lessonId)
-    .order("created_at", { ascending: true })
     .limit(1);
   if (error) throw error;
   return data?.[0] ?? null;
@@ -40,24 +39,31 @@ async function ensureProgressRows(input: {
   userId: string;
 }) {
   const admin = getSupabaseAdmin();
-  const { data: existingModule } = await admin
+  const now = new Date().toISOString();
+  const { data: existingModule, error: moduleLookupError } = await admin
     .from("academy_module_progress")
     .select("id")
     .eq("user_id", input.userId)
     .eq("enrollment_id", input.enrollmentId)
     .eq("module_id", input.lesson.moduleId)
     .limit(1);
-  if (!existingModule?.length)
-    await admin.from("academy_module_progress").insert({
+  if (moduleLookupError) throw moduleLookupError;
+  if (!existingModule?.length) {
+    const { error } = await admin.from("academy_module_progress").insert({
       id: crypto.randomUUID(),
+      completed_at: null,
+      completed_required_lessons_count: 0,
       enrollment_id: input.enrollmentId,
       module_id: input.lesson.moduleId,
       module_version: 1,
+      progress_percent: 0,
       required_for_completion: true,
       required_lessons_count: 1,
       status: "available",
       user_id: input.userId,
     });
+    if (error && error.code !== "23505") throw error;
+  }
 
   const lessonIds = [input.lessonId, ...input.lesson.prerequisiteLessonIds];
   for (const lessonId of lessonIds) {
@@ -67,17 +73,28 @@ async function ensureProgressRows(input: {
       userId: input.userId,
     }).catch(() => null);
     if (existing) continue;
-    await admin.from("academy_lesson_progress").insert({
+
+    const isCurrentLesson = lessonId === input.lessonId;
+    const { error } = await admin.from("academy_lesson_progress").insert({
       id: crypto.randomUUID(),
+      completed_at: isCurrentLesson ? null : now,
+      completion_method: isCurrentLesson ? null : "content-viewed",
+      content_viewed_at: isCurrentLesson ? null : now,
       enrollment_id: input.enrollmentId,
+      last_accessed_at: now,
       lesson_id: lessonId,
-      lesson_version: lessonId === input.lessonId ? input.lesson.version : 1,
+      lesson_version: isCurrentLesson ? input.lesson.version : 1,
       module_id: input.lesson.moduleId,
-      required_for_completion:
-        lessonId === input.lessonId ? input.lesson.requiredForCompletion : true,
-      status: lessonId === input.lessonId ? "available" : "completed",
+      progress_percent: isCurrentLesson ? 0 : 100,
+      required_for_completion: isCurrentLesson
+        ? input.lesson.requiredForCompletion
+        : true,
+      status: isCurrentLesson ? "available" : "completed",
       user_id: input.userId,
+      video_duration_seconds: null,
+      video_position_seconds: null,
     });
+    if (error && error.code !== "23505") throw error;
   }
 }
 
