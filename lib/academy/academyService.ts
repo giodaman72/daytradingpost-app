@@ -26,6 +26,7 @@ import {
 import { deliverAcademyDashboardNotification } from "./notifications/academyNotificationService";
 import { parseAcademyIdentifier, parseAcademySlug } from "./academyValidation";
 import { deriveAcademyAvailability } from "./learningPaths/academyAvailability";
+import { builtInAcademyResourceTextByLessonId } from "./academyBuiltInResourceText";
 
 export function listAcademyCourses(limit = 20, offset = 0) {
   return listPublishedCourses(limit, offset);
@@ -285,6 +286,7 @@ export async function getAuthorizedAcademyResource(input: {
     lessonId: view.currentLesson.id,
     lessonSummary: view.currentLesson.summary,
     lessonTitle: view.currentLesson.title,
+    resourceText: builtInAcademyResourceTextByLessonId.get(view.currentLesson.id),
   };
 }
 
