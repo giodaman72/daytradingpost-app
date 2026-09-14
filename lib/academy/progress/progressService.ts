@@ -12,13 +12,16 @@ import {
 } from "../academyValidation";
 import { calculateVideoProgress } from "./progressCalculator";
 
+type ProgressLessonState = NonNullable<
+  Awaited<ReturnType<typeof findPublishedLessonState>>
+>;
+
 async function ensureProgressRows(input: {
   enrollmentId: string;
-  lesson: Awaited<ReturnType<typeof findPublishedLessonState>>;
+  lesson: ProgressLessonState;
   lessonId: string;
   userId: string;
 }) {
-  if (!input.lesson) return;
   const admin = getSupabaseAdmin();
   await admin.from("academy_module_progress").upsert(
     {
@@ -39,7 +42,7 @@ async function ensureProgressRows(input: {
       lesson_id: lessonId,
       lesson_version:
         lessonId === input.lessonId ? input.lesson.version : 1,
-      module_id: input.lesson?.moduleId,
+      module_id: input.lesson.moduleId,
       required_for_completion:
         lessonId === input.lessonId ? input.lesson.requiredForCompletion : true,
       status: lessonId === input.lessonId ? "available" : "completed",
