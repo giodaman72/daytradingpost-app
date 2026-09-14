@@ -103,6 +103,7 @@ function builtInChecklistPdf(resource: {
   description: string | null;
   lessonSummary?: string;
   lessonTitle?: string;
+  resourceText?: string;
   title: string;
 }) {
   const heading = resource.lessonTitle ?? resource.title.replace(/ checklist$/i, "");
@@ -110,7 +111,17 @@ function builtInChecklistPdf(resource: {
     resource.lessonSummary ??
     resource.description ??
     "Read this lesson resource with one live or recent DayTradingPost market chart.";
-  const rawLines = [
+  const sourceText = resource.resourceText?.trim();
+  const rawLines = sourceText
+    ? [
+        "DayTradingPost Academy",
+        heading,
+        "",
+        resource.copyrightNotice ?? "Educational content only. Not investment advice.",
+        "",
+        ...sourceText.split(/\n+/),
+      ]
+    : [
     "DayTradingPost Academy",
     heading,
     "",
