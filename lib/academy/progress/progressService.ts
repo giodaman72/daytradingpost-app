@@ -30,18 +30,40 @@ async function context(enrollmentIdInput: string, lessonIdInput: string) {
       "ACADEMY_LESSON_NOT_FOUND",
       "Lesson was not found in this enrollment.",
     );
-  const { data: progress, error } = await getSupabaseAdmin()
+  let { data: progress, error } = await getSupabaseAdmin()
     .from("academy_lesson_progress")
     .select("*")
     .eq("user_id", access.userId)
     .eq("enrollment_id", enrollment.id)
     .eq("lesson_id", lessonId)
     .maybeSingle();
-  if (error || !progress)
+  if (error)
     throw new AcademyError(
       "ACADEMY_LESSON_LOCKED",
       "Lesson progress is unavailable.",
     );
+  if (!progress) {
+    const { data: repairedProgress, error: repairError } =
+      await getSupabaseAdmin()
+        .from("academy_lesson_progress")
+        .insert({
+          enrollment_id: enrollment.id,
+          lesson_id: lessonId,
+          lesson_version: lesson.version,
+          module_id: lesson.moduleId,
+          required_for_completion: lesson.requiredForCompletion,
+          status: "available",
+          user_id: access.userId,
+        })
+        .select("*")
+        .single();
+    if (repairError || !repairedProgress)
+      throw new AcademyError(
+        "ACADEMY_LESSON_LOCKED",
+        "Lesson progress is unavailable.",
+      );
+    progress = repairedProgress;
+  }
   if (lesson.modulePrerequisiteIds.length) {
     const { data: modulePrerequisites } = await getSupabaseAdmin()
       .from("academy_module_progress")
