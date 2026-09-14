@@ -12,6 +12,45 @@ import {
 } from "../academyValidation";
 import { calculateVideoProgress } from "./progressCalculator";
 
+async function ensureProgressRows(input: {
+  enrollmentId: string;
+  lesson: Awaited<ReturnType<typeof findPublishedLessonState>>;
+  lessonId: string;
+  userId: string;
+}) {
+  if (!input.lesson) return;
+  const admin = getSupabaseAdmin();
+  await admin.from("academy_module_progress").upsert(
+    {
+      enrollment_id: input.enrollmentId,
+      module_id: input.lesson.moduleId,
+      module_version: 1,
+      required_for_completion: true,
+      required_lessons_count: 1,
+      status: "available",
+      user_id: input.userId,
+    },
+    { onConflict: "user_id,enrollment_id,module_id" },
+  );
+
+  const rows = [input.lessonId, ...input.lesson.prerequisiteLessonIds].map(
+    (lessonId) => ({
+      enrollment_id: input.enrollmentId,
+      lesson_id: lessonId,
+      lesson_version:
+        lessonId === input.lessonId ? input.lesson.version : 1,
+      module_id: input.lesson?.moduleId,
+      required_for_completion:
+        lessonId === input.lessonId ? input.lesson.requiredForCompletion : true,
+      status: lessonId === input.lessonId ? "available" : "completed",
+      user_id: input.userId,
+    }),
+  );
+  await admin.from("academy_lesson_progress").upsert(rows, {
+    onConflict: "user_id,enrollment_id,lesson_id",
+  });
+}
+
 async function context(enrollmentIdInput: string, lessonIdInput: string) {
   const access = await requireAcademyUser();
   const enrollmentId = parseAcademyIdentifier(
@@ -43,20 +82,20 @@ async function context(enrollmentIdInput: string, lessonIdInput: string) {
       "Lesson progress is unavailable.",
     );
   if (!progress) {
+    await ensureProgressRows({
+      enrollmentId: enrollment.id,
+      lesson,
+      lessonId,
+      userId: access.userId,
+    });
     const { data: repairedProgress, error: repairError } =
       await getSupabaseAdmin()
         .from("academy_lesson_progress")
-        .insert({
-          enrollment_id: enrollment.id,
-          lesson_id: lessonId,
-          lesson_version: lesson.version,
-          module_id: lesson.moduleId,
-          required_for_completion: lesson.requiredForCompletion,
-          status: "available",
-          user_id: access.userId,
-        })
         .select("*")
-        .single();
+        .eq("user_id", access.userId)
+        .eq("enrollment_id", enrollment.id)
+        .eq("lesson_id", lessonId)
+        .maybeSingle();
     if (repairError || !repairedProgress)
       throw new AcademyError(
         "ACADEMY_LESSON_LOCKED",
