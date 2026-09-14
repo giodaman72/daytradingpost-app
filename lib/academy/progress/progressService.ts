@@ -53,6 +53,7 @@ async function ensureProgressRows(input: {
       id: crypto.randomUUID(),
       completed_at: null,
       completed_required_lessons_count: 0,
+      course_id: input.lesson.courseId,
       enrollment_id: input.enrollmentId,
       module_id: input.lesson.moduleId,
       module_version: 1,
