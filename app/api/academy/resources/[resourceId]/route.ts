@@ -81,8 +81,7 @@ function buildPdf(lines: string[]) {
     objects[contentObject] =
       `<< /Length ${Buffer.byteLength(stream, "utf8")} >>\nstream\n${stream}\nendstream`;
   });
-  objects[2] =
-    `<< /Type /Pages /Kids [${pageObjectNumbers.map((item) => `${item} 0 R`).join(" ")}] /Count ${pageObjectNumbers.length} >>`;
+  objects[2] = `<< /Type /Pages /Kids [${pageObjectNumbers.map((item) => `${item} 0 R`).join(" ")}] /Count ${pageObjectNumbers.length} >>`;
 
   let pdf = "%PDF-1.4\n";
   const offsets = [0];
@@ -106,7 +105,8 @@ function builtInChecklistPdf(resource: {
   resourceText?: string;
   title: string;
 }) {
-  const heading = resource.lessonTitle ?? resource.title.replace(/ checklist$/i, "");
+  const heading =
+    resource.lessonTitle ?? resource.title.replace(/ checklist$/i, "");
   const intro =
     resource.lessonSummary ??
     resource.description ??
@@ -117,51 +117,53 @@ function builtInChecklistPdf(resource: {
         "DayTradingPost Academy",
         heading,
         "",
-        resource.copyrightNotice ?? "Educational content only. Not investment advice.",
+        resource.copyrightNotice ??
+          "Educational content only. Not investment advice.",
         "",
         ...sourceText.split(/\n+/),
       ]
     : [
-    "DayTradingPost Academy",
-    heading,
-    "",
-    intro,
-    "",
-    resource.copyrightNotice ?? "Educational content only. Not investment advice.",
-    "",
-    "Lesson Context",
-    "Use this resource to turn the lesson into a clear trading observation, a practical rule, and a risk-control decision before taking action.",
-    "",
-    "1. Market and Timeframe",
-    "Instrument:",
-    "Timeframe:",
-    "Trading session:",
-    "Date:",
-    "",
-    "2. Current Market Condition",
-    "Trend:",
-    "Key support:",
-    "Key resistance:",
-    "Volatility / momentum:",
-    "",
-    "3. Lesson Idea Applied to the Chart",
-    "What do you see?",
-    "",
-    "What confirms it?",
-    "",
-    "What would invalidate it?",
-    "",
-    "4. Execution Checklist",
-    "[ ] Bias is clear",
-    "[ ] Entry condition is defined",
-    "[ ] Stop level is defined before entry",
-    "[ ] Target or exit rule is defined",
-    "[ ] Risk per trade is acceptable",
-    "[ ] No trade if confirmation is missing",
-    "",
-    "5. Notes",
-    "",
-  ];
+        "DayTradingPost Academy",
+        heading,
+        "",
+        intro,
+        "",
+        resource.copyrightNotice ??
+          "Educational content only. Not investment advice.",
+        "",
+        "Lesson Context",
+        "Use this resource to turn the lesson into a clear trading observation, a practical rule, and a risk-control decision before taking action.",
+        "",
+        "1. Market and Timeframe",
+        "Instrument:",
+        "Timeframe:",
+        "Trading session:",
+        "Date:",
+        "",
+        "2. Current Market Condition",
+        "Trend:",
+        "Key support:",
+        "Key resistance:",
+        "Volatility / momentum:",
+        "",
+        "3. Lesson Idea Applied to the Chart",
+        "What do you see?",
+        "",
+        "What confirms it?",
+        "",
+        "What would invalidate it?",
+        "",
+        "4. Execution Checklist",
+        "[ ] Bias is clear",
+        "[ ] Entry condition is defined",
+        "[ ] Stop level is defined before entry",
+        "[ ] Target or exit rule is defined",
+        "[ ] Risk per trade is acceptable",
+        "[ ] No trade if confirmation is missing",
+        "",
+        "5. Notes",
+        "",
+      ];
   return buildPdf(rawLines.flatMap((line) => wrapPdfLine(line)));
 }
 
@@ -177,7 +179,11 @@ export async function GET(
       lessonSlug: url.searchParams.get("lessonSlug") ?? "",
       resourceId,
     });
-    if (resource.url.startsWith("/") && (resource.resourceType === "checklist" || resource.resourceType === "pdf-guide")) {
+    if (
+      resource.url.startsWith("/") &&
+      (resource.resourceType === "checklist" ||
+        resource.resourceType === "pdf-guide")
+    ) {
       await recordAcademyEvent({
         courseId: resource.courseId,
         idempotencyKey: `resource:${resourceId}:${crypto.randomUUID()}`,
