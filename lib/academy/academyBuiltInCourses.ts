@@ -78,40 +78,46 @@ function block(text: string) {
 
 const levelOneModules: BuiltInModuleSeed[] = [
   {
-    description: "Start with the logic of technical analysis, the role of trend, and the debate between market efficiency and market behavior.",
+    description:
+      "Start with the logic of technical analysis, the role of trend, and the debate between market efficiency and market behavior.",
     lessons: [
       {
         minutes: 18,
         slug: "the-basic-principle-of-technical-analysis-the-trend",
-        summary: "Trend is the first decision. Price action should be read by direction, timeframe, and market condition before any setup is considered.",
+        summary:
+          "Trend is the first decision. Price action should be read by direction, timeframe, and market condition before any setup is considered.",
         title: "The Basic Principle of Technical Analysis: The Trend",
         body: "Core idea: Trend is the first decision. Price action should be read by direction, timeframe, and market condition before any setup is considered.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Define the primary, secondary, short-term, and intraday trend on one current chart.",
       },
       {
         minutes: 18,
         slug: "academic-approaches-to-technical-analysis",
-        summary: "Technical analysis has been studied through market efficiency, behavioral finance, and empirical testing. The lesson is to respect evidence and avoid blind belief.",
+        summary:
+          "Technical analysis has been studied through market efficiency, behavioral finance, and empirical testing. The lesson is to respect evidence and avoid blind belief.",
         title: "Academic Approaches to Technical Analysis",
         body: "Core idea: Technical analysis has been studied through market efficiency, behavioral finance, and empirical testing. The lesson is to respect evidence and avoid blind belief.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Write one chart-based claim and the evidence that would prove or disprove it.",
       },
       {
         minutes: 18,
         slug: "noise-traders-as-technical-traders",
-        summary: "Markets include participants who act on perception, emotion, and patterns. Their behavior can create support, resistance, momentum, and crowd-driven moves.",
+        summary:
+          "Markets include participants who act on perception, emotion, and patterns. Their behavior can create support, resistance, momentum, and crowd-driven moves.",
         title: "Noise Traders as Technical Traders",
         body: "Core idea: Markets include participants who act on perception, emotion, and patterns. Their behavior can create support, resistance, momentum, and crowd-driven moves.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Find one recent move where crowd behavior appears to have accelerated price.",
       },
       {
         minutes: 18,
         slug: "noise-traders-and-the-law-of-one-price",
-        summary: "Similar assets can temporarily trade at different prices because perception, naming, liquidity, and behavior affect demand. Technical traders watch those gaps and adjustments.",
+        summary:
+          "Similar assets can temporarily trade at different prices because perception, naming, liquidity, and behavior affect demand. Technical traders watch those gaps and adjustments.",
         title: "Noise Traders and the Law of One Price",
         body: "Core idea: Similar assets can temporarily trade at different prices because perception, naming, liquidity, and behavior affect demand. Technical traders watch those gaps and adjustments.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Compare two related markets or assets and note whether their movement confirms or diverges.",
       },
       {
         minutes: 18,
         slug: "being-right-or-making-money",
-        summary: "Trading is not about proving an opinion right. The objective is to follow a process that survives mistakes, losses, and changing market conditions.",
+        summary:
+          "Trading is not about proving an opinion right. The objective is to follow a process that survives mistakes, losses, and changing market conditions.",
         title: "Being Right or Making Money",
         body: "Core idea: Trading is not about proving an opinion right. The objective is to follow a process that survives mistakes, losses, and changing market conditions.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Write the rule that would get you out of a trade even if your original opinion still feels correct.",
       },
@@ -126,47 +132,54 @@ const levelOneModules: BuiltInModuleSeed[] = [
     title: "Theory and History of Technical Analysis",
   },
   {
-    description: "Learn the markets and instruments Level 1 traders must recognize before reading charts or managing risk.",
+    description:
+      "Learn the markets and instruments Level 1 traders must recognize before reading charts or managing risk.",
     lessons: [
       {
         minutes: 16,
         slug: "markets-instruments-data-and-the-technical-analyst",
-        summary: "Technical analysis can be applied across liquid markets, but each instrument has its own structure, data, trading hours, and risk behavior.",
+        summary:
+          "Technical analysis can be applied across liquid markets, but each instrument has its own structure, data, trading hours, and risk behavior.",
         title: "Markets, Instruments, Data, and the Technical Analyst",
         body: "Core idea: Technical analysis can be applied across liquid markets, but each instrument has its own structure, data, trading hours, and risk behavior.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Choose one market and list what data, session, and contract details matter before analysis.",
       },
       {
         minutes: 16,
         slug: "indexes",
-        summary: "Indexes summarize groups of securities and help traders read broad market direction, sector rotation, and relative leadership without analyzing every component.",
+        summary:
+          "Indexes summarize groups of securities and help traders read broad market direction, sector rotation, and relative leadership without analyzing every component.",
         title: "Indexes",
         body: "Core idea: Indexes summarize groups of securities and help traders read broad market direction, sector rotation, and relative leadership without analyzing every component.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Compare a major index with one sector or related market and identify which is leading.",
       },
       {
         minutes: 16,
         slug: "foreign-exchange-currencies",
-        summary: "FX is traded in pairs. A currency chart always expresses relative strength between two economies, rates, flows, and risk preferences.",
+        summary:
+          "FX is traded in pairs. A currency chart always expresses relative strength between two economies, rates, flows, and risk preferences.",
         title: "Foreign Exchange: Currencies",
         body: "Core idea: FX is traded in pairs. A currency chart always expresses relative strength between two economies, rates, flows, and risk preferences.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Mark whether the base currency or quote currency is stronger on a current FX chart.",
       },
       {
         minutes: 16,
         slug: "fixed-income-and-bonds",
-        summary: "Bond prices and yields move inversely. Rate expectations, inflation, credit risk, and policy shifts can influence equities, currencies, commodities, and risk appetite.",
+        summary:
+          "Bond prices and yields move inversely. Rate expectations, inflation, credit risk, and policy shifts can influence equities, currencies, commodities, and risk appetite.",
         title: "Fixed Income and Bonds",
         body: "Core idea: Bond prices and yields move inversely. Rate expectations, inflation, credit risk, and policy shifts can influence equities, currencies, commodities, and risk appetite.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Look at a bond yield chart and note whether it supports or pressures risk assets.",
       },
       {
         minutes: 16,
         slug: "options",
-        summary: "Options are derivative contracts affected by underlying price, time, strike, volatility, and demand. They help traders read hedging, leverage, and risk expectations.",
+        summary:
+          "Options are derivative contracts affected by underlying price, time, strike, volatility, and demand. They help traders read hedging, leverage, and risk expectations.",
         title: "Options",
         body: "Core idea: Options are derivative contracts affected by underlying price, time, strike, volatility, and demand. They help traders read hedging, leverage, and risk expectations.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Identify whether options activity or volatility is warning of larger expected movement.",
       },
       {
         minutes: 16,
         slug: "understanding-implied-volatility",
-        summary: "Implied volatility reflects the market price of expected movement. It can rise when traders demand protection or expect uncertainty ahead.",
+        summary:
+          "Implied volatility reflects the market price of expected movement. It can rise when traders demand protection or expect uncertainty ahead.",
         title: "Understanding Implied Volatility",
         body: "Core idea: Implied volatility reflects the market price of expected movement. It can rise when traders demand protection or expect uncertainty ahead.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Compare price direction with volatility direction and describe whether risk is expanding or contracting.",
       },
@@ -181,40 +194,46 @@ const levelOneModules: BuiltInModuleSeed[] = [
     title: "Markets, Instruments, Data and Volatility",
   },
   {
-    description: "Follow the charting section order: trend tools, moving averages, bar patterns, short-term structures, and volume.",
+    description:
+      "Follow the charting section order: trend tools, moving averages, bar patterns, short-term structures, and volume.",
     lessons: [
       {
         minutes: 18,
         slug: "moving-averages",
-        summary: "Moving averages smooth price to reveal trend direction, dynamic support or resistance, and possible regime shifts. They work best as context, not as isolated signals.",
+        summary:
+          "Moving averages smooth price to reveal trend direction, dynamic support or resistance, and possible regime shifts. They work best as context, not as isolated signals.",
         title: "Moving Averages",
         body: "Core idea: Moving averages smooth price to reveal trend direction, dynamic support or resistance, and possible regime shifts. They work best as context, not as isolated signals.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Add two moving averages to a chart and decide whether they confirm trend, range, or transition.",
       },
       {
         minutes: 18,
         slug: "chart-patterns",
-        summary: "Patterns are bounded price structures. They matter only when they clarify context, breakout level, invalidation, and risk-to-reward.",
+        summary:
+          "Patterns are bounded price structures. They matter only when they clarify context, breakout level, invalidation, and risk-to-reward.",
         title: "Chart Patterns",
         body: "Core idea: Patterns are bounded price structures. They matter only when they clarify context, breakout level, invalidation, and risk-to-reward.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Draw the boundary of one pattern and write the exact level that confirms or invalidates it.",
       },
       {
         minutes: 18,
         slug: "bar-chart-patterns",
-        summary: "Classic bar patterns organize price compression, continuation, reversal, and breakout behavior. The pattern is useful only when the entry and exit are clear.",
+        summary:
+          "Classic bar patterns organize price compression, continuation, reversal, and breakout behavior. The pattern is useful only when the entry and exit are clear.",
         title: "Bar Chart Patterns",
         body: "Core idea: Classic bar patterns organize price compression, continuation, reversal, and breakout behavior. The pattern is useful only when the entry and exit are clear.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Find one triangle, double top/bottom, or range and mark the breakout and failure level.",
       },
       {
         minutes: 18,
         slug: "short-term-patterns",
-        summary: "Short-term bars, gaps, wide-range bars, narrow-range bars, and candle behavior can help with timing, but they must be read inside the larger trend.",
+        summary:
+          "Short-term bars, gaps, wide-range bars, narrow-range bars, and candle behavior can help with timing, but they must be read inside the larger trend.",
         title: "Short-Term Patterns",
         body: "Core idea: Short-term bars, gaps, wide-range bars, narrow-range bars, and candle behavior can help with timing, but they must be read inside the larger trend.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Mark one short-term trigger and explain whether it agrees with the higher-timeframe direction.",
       },
       {
         minutes: 18,
         slug: "introduction-to-volume-analysis",
-        summary: "Volume measures participation. Price shows direction, but volume helps judge conviction, confirmation, exhaustion, and potential failure.",
+        summary:
+          "Volume measures participation. Price shows direction, but volume helps judge conviction, confirmation, exhaustion, and potential failure.",
         title: "Introduction to Volume Analysis",
         body: "Core idea: Volume measures participation. Price shows direction, but volume helps judge conviction, confirmation, exhaustion, and potential failure.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Check whether volume expands with the trend or diverges from the latest price move.",
       },
@@ -229,54 +248,62 @@ const levelOneModules: BuiltInModuleSeed[] = [
     title: "Charts, Trends and Patterns",
   },
   {
-    description: "Use wave, cycle, relative strength, internal strength, and sentiment tools to confirm or reject a trade idea.",
+    description:
+      "Use wave, cycle, relative strength, internal strength, and sentiment tools to confirm or reject a trade idea.",
     lessons: [
       {
         minutes: 16,
         slug: "introduction-to-the-wave-principle",
-        summary: "Wave analysis studies rhythm and structure in price movement. It can support scenario planning, but it should be confirmed with other evidence.",
+        summary:
+          "Wave analysis studies rhythm and structure in price movement. It can support scenario planning, but it should be confirmed with other evidence.",
         title: "Introduction to the Wave Principle",
         body: "Core idea: Wave analysis studies rhythm and structure in price movement. It can support scenario planning, but it should be confirmed with other evidence.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Label a simple impulse or corrective move and write the alternate count that would invalidate it.",
       },
       {
         minutes: 16,
         slug: "foundations-of-cycle-theory",
-        summary: "Cycles focus on timing. They can help identify when turns may develop, but should not be used without price and momentum confirmation.",
+        summary:
+          "Cycles focus on timing. They can help identify when turns may develop, but should not be used without price and momentum confirmation.",
         title: "Foundations of Cycle Theory",
         body: "Core idea: Cycles focus on timing. They can help identify when turns may develop, but should not be used without price and momentum confirmation.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Mark a possible cycle low or high and list what price action must confirm it.",
       },
       {
         minutes: 16,
         slug: "measuring-market-strength",
-        summary: "Market strength tools look beneath price to judge internal participation, momentum, confirmation, and divergence.",
+        summary:
+          "Market strength tools look beneath price to judge internal participation, momentum, confirmation, and divergence.",
         title: "Measuring Market Strength",
         body: "Core idea: Market strength tools look beneath price to judge internal participation, momentum, confirmation, and divergence.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Compare price with one strength indicator and decide whether it confirms or diverges.",
       },
       {
         minutes: 16,
         slug: "relative-strength-as-a-criterion-for-investment-selection",
-        summary: "Relative strength helps select where capital is flowing. Stronger markets deserve more attention than laggards when building a watchlist.",
+        summary:
+          "Relative strength helps select where capital is flowing. Stronger markets deserve more attention than laggards when building a watchlist.",
         title: "Relative Strength as a Criterion for Investment Selection",
         body: "Core idea: Relative strength helps select where capital is flowing. Stronger markets deserve more attention than laggards when building a watchlist.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Rank two instruments and select the stronger one based on relative performance.",
       },
       {
         minutes: 16,
         slug: "market-sentiment-and-technical-analysis",
-        summary: "Sentiment influences how far price can move above or below perceived value. Technical analysis watches behavior, not just valuation models.",
+        summary:
+          "Sentiment influences how far price can move above or below perceived value. Technical analysis watches behavior, not just valuation models.",
         title: "Market Sentiment and Technical Analysis",
         body: "Core idea: Sentiment influences how far price can move above or below perceived value. Technical analysis watches behavior, not just valuation models.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Describe whether current price action looks driven by fear, confidence, or uncertainty.",
       },
       {
         minutes: 16,
         slug: "sentiment-measures-from-market-data",
-        summary: "Market-based sentiment uses positioning, open interest, put/call behavior, volatility, and other traded data to infer crowd behavior.",
+        summary:
+          "Market-based sentiment uses positioning, open interest, put/call behavior, volatility, and other traded data to infer crowd behavior.",
         title: "Sentiment Measures from Market Data",
         body: "Core idea: Market-based sentiment uses positioning, open interest, put/call behavior, volatility, and other traded data to infer crowd behavior.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Choose one market-based sentiment input and state whether it supports or warns against the trade.",
       },
       {
         minutes: 16,
         slug: "sentiment-measures-from-external-data",
-        summary: "Survey and external sentiment data can show crowd expectations. Extremes can be useful, especially when combined with price confirmation.",
+        summary:
+          "Survey and external sentiment data can show crowd expectations. Extremes can be useful, especially when combined with price confirmation.",
         title: "Sentiment Measures from External Data",
         body: "Core idea: Survey and external sentiment data can show crowd expectations. Extremes can be useful, especially when combined with price confirmation.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Compare a sentiment reading with price trend and decide whether the crowd is crowded or balanced.",
       },
@@ -291,19 +318,22 @@ const levelOneModules: BuiltInModuleSeed[] = [
     title: "Advanced Confirmation and Market Strength",
   },
   {
-    description: "Finish Level 1 with the probability and statistics needed to think in evidence, sample size, and risk.",
+    description:
+      "Finish Level 1 with the probability and statistics needed to think in evidence, sample size, and risk.",
     lessons: [
       {
         minutes: 18,
         slug: "introduction-to-descriptive-statistics",
-        summary: "Statistics helps traders summarize data, compare outcomes, and avoid being fooled by random noise or isolated examples.",
+        summary:
+          "Statistics helps traders summarize data, compare outcomes, and avoid being fooled by random noise or isolated examples.",
         title: "Introduction to Descriptive Statistics",
         body: "Core idea: Statistics helps traders summarize data, compare outcomes, and avoid being fooled by random noise or isolated examples.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Calculate or estimate average outcome, range, and variability for one repeated setup.",
       },
       {
         minutes: 18,
         slug: "introduction-to-probability",
-        summary: "Markets are uncertain. Probability thinking keeps traders focused on sample size, expectancy, risk, and repeatable decisions instead of certainty.",
+        summary:
+          "Markets are uncertain. Probability thinking keeps traders focused on sample size, expectancy, risk, and repeatable decisions instead of certainty.",
         title: "Introduction to Probability",
         body: "Core idea: Markets are uncertain. Probability thinking keeps traders focused on sample size, expectancy, risk, and repeatable decisions instead of certainty.\n\nPractical use: Apply the concept to one live or recent DayTradingPost market chart. Define the market condition, the evidence, the invalidation level, and the risk control before taking action.\n\nChart exercise: Write the probability-based reason for taking or skipping the next trade setup.",
       },
@@ -841,8 +871,8 @@ export function findBuiltInAcademyCourseByLegacySlug(slug: string) {
 
 export function findBuiltInAcademyLessonStateById(lessonId: string) {
   for (const course of builtInAcademyCourseDetails)
-    for (const module of course.modules)
-      for (const lesson of module.lessons)
+    for (const courseModule of course.modules)
+      for (const lesson of courseModule.lessons)
         if (lesson.id === lessonId)
           return {
             _id: lesson.id,
@@ -851,7 +881,7 @@ export function findBuiltInAcademyLessonStateById(lessonId: string) {
             courseId: lesson.courseId,
             durationMinutes: lesson.durationMinutes,
             moduleId: lesson.moduleId,
-            modulePrerequisiteIds: module.prerequisiteModuleIds ?? [],
+            modulePrerequisiteIds: courseModule.prerequisiteModuleIds ?? [],
             prerequisiteLessonIds: lesson.prerequisiteLessonIds ?? [],
             requiredForCompletion: lesson.requiredForCompletion,
             version: lesson.version,

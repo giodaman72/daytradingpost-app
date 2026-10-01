@@ -39,7 +39,23 @@ export const articleType = defineType({
       title: "Slug",
       type: "slug",
       group: "content",
-      options: { source: "title", maxLength: 96 },
+      options: {
+        source: "title",
+        maxLength: 96,
+        isUnique: async (slug, context) => {
+          const id = context.document?._id?.replace(/^drafts\./, "");
+          return context.getClient({ apiVersion: "2026-07-13" }).fetch<boolean>(
+            '!defined(*[_type == "article" && slug.current == $slug && coalesce(language, "en") == $language && !(_id in [$id, $draftId])][0]._id)',
+            {
+              slug,
+              language: context.document?.language ?? "en",
+              id: id ?? "",
+              draftId: `drafts.${id ?? ""}`,
+            },
+            { perspective: "raw" },
+          );
+        },
+      },
       validation: (rule) => rule.required(),
     }),
     defineField({
