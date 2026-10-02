@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Locale } from "@/lib/i18n/config";
 import { switchLocaleHref } from "@/lib/i18n/config";
 
@@ -14,7 +13,9 @@ export function LanguageSwitcher({
   const shortLabel = targetLocale === "es" ? "ES" : "EN";
 
   return (
-    <Link
+    // Locale routes rewrite to the same App Router route. A document navigation
+    // ensures the server reads the new locale instead of reusing RSC content.
+    <a
       className="language-switcher whitespace-nowrap"
       href={switchLocaleHref(pathname, locale)}
       hrefLang={targetLocale}
@@ -27,6 +28,6 @@ export function LanguageSwitcher({
     >
       <span className="max-[620px]:hidden">{label}</span>
       <span className="hidden max-[620px]:inline">{shortLabel}</span>
-    </Link>
+    </a>
   );
 }
