@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import {
   getNewsletterEmailError,
   normalizeNewsletterEmail,
+  parseNewsletterSource,
 } from "@/lib/validation/newsletter";
 import { insertNewsletterSubscriber } from "@/lib/supabase-newsletter";
 
@@ -22,6 +23,7 @@ type NewsletterRequestBody = {
   company?: unknown;
   consent?: unknown;
   email?: unknown;
+  source?: unknown;
 };
 
 const rateLimitStore = new Map<string, RateLimitEntry>();
@@ -174,18 +176,21 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await insertNewsletterSubscriber(email);
+    const result = await insertNewsletterSubscriber(
+      email,
+      parseNewsletterSource(body.source),
+    );
 
     if (result === "duplicate") {
       return createJsonResponse(
-        "You’re already subscribed to the Daily Market Brief.",
+        "You’re already subscribed. New analysis will arrive in your inbox.",
         200,
         true,
       );
     }
 
     return createJsonResponse(
-      "You’re subscribed. Watch your inbox for the Daily Market Brief.",
+      "You’re subscribed. New analysis and key levels will arrive in your inbox.",
       201,
       true,
     );

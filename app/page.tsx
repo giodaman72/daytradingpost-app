@@ -1,6 +1,7 @@
 import { TradingSessionsEarth } from "@/components/home/TradingSessionsEarth";
 import { HomeMarketCharts } from "@/components/home/HomeMarketCharts";
 import { MarketTickerTape } from "@/components/home/MarketTickerTape";
+import { NewsletterSection } from "@/components/newsletter/NewsletterSection";
 import { getChartConfig } from "@/lib/charts/chartConfig";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
@@ -162,6 +163,8 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      <NewsletterSection locale={locale} source="homepage" />
 
       <Footer />
     </main>

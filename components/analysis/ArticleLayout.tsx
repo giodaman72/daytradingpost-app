@@ -1,3 +1,4 @@
+import { NewsletterSection } from "@/components/newsletter/NewsletterSection";
 import Image from "next/image";
 import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
@@ -377,6 +378,7 @@ export function ArticleLayout(props: ArticleLayoutProps) {
         </div>
       </section>
 
+      <NewsletterSection locale={locale} source="article" />
       <Footer />
     </main>
   );
