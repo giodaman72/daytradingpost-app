@@ -1,4 +1,10 @@
 import { TradingSessionsEarth } from "@/components/home/TradingSessionsEarth";
+import { ForexSessionsPanel } from "@/components/home/ForexSessions";
+import {
+  LatestAnalysisCard,
+  type LatestAnalysis,
+} from "@/components/home/LatestAnalysisCard";
+import { getArticleBySlug, getLatestArticles } from "@/lib/cms";
 import { HomeMarketCharts } from "@/components/home/HomeMarketCharts";
 import { MarketTickerTape } from "@/components/home/MarketTickerTape";
 import { NewsletterSection } from "@/components/newsletter/NewsletterSection";
@@ -8,7 +14,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MarketDataGrid } from "@/components/market-data/MarketDataGrid";
 import { getHomepageQuotes } from "@/lib/market-data/marketDataService";
-import { localizeHref } from "@/lib/i18n/config";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 import { getRequestLocale } from "@/lib/i18n/server";
 
 const HOME_COPY = {
@@ -82,9 +88,26 @@ const HOME_COPY = {
   },
 } as const;
 
+/** Newest analysis with its key levels; null keeps the globe as a fallback. */
+async function getLatestAnalysis(
+  locale: Locale,
+): Promise<LatestAnalysis | null> {
+  try {
+    const [latest] = await getLatestArticles(1, locale);
+    if (!latest) return null;
+    const full = await getArticleBySlug(latest.slug, locale).catch(() => null);
+    return full ? { ...latest, ...full } : latest;
+  } catch {
+    return null;
+  }
+}
+
 export default async function Home() {
   const locale = await getRequestLocale();
-  const quotes = await getHomepageQuotes();
+  const [quotes, latestAnalysis] = await Promise.all([
+    getHomepageQuotes(),
+    getLatestAnalysis(locale),
+  ]);
   const copy = HOME_COPY[locale];
   const tradingViewEnabled = getChartConfig().tradingViewEnabled;
   // Until a first-party quote provider is live, show TradingView's free
@@ -129,7 +152,14 @@ export default async function Home() {
             </div>
           </div>
 
-          <TradingSessionsEarth locale={locale} />
+          {latestAnalysis ? (
+            <div className="reference-hero-side">
+              <LatestAnalysisCard article={latestAnalysis} locale={locale} />
+              <ForexSessionsPanel locale={locale} />
+            </div>
+          ) : (
+            <TradingSessionsEarth locale={locale} />
+          )}
         </div>
       </section>
 
