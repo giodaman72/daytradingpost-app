@@ -1,10 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { initialAuthState } from "@/lib/validation/auth";
 
 const mocks = vi.hoisted(() => ({
   redirect: vi.fn(),
   signInWithPassword: vi.fn(),
   signUp: vi.fn(),
+  resetPasswordForEmail: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({
@@ -28,11 +29,12 @@ vi.mock("@/lib/supabase/server", () => ({
     auth: {
       signInWithPassword: mocks.signInWithPassword,
       signUp: mocks.signUp,
+      resetPasswordForEmail: mocks.resetPasswordForEmail,
     },
   })),
 }));
 
-import { loginAction, registerAction } from "./actions";
+import { forgotPasswordAction, loginAction, registerAction } from "./actions";
 
 function registrationForm(locale?: string) {
   const formData = new FormData();
@@ -114,5 +116,103 @@ describe("registration confirmation locale", () => {
     await loginAction(initialAuthState, loginForm("es", "/account/billing"));
 
     expect(mocks.redirect).toHaveBeenCalledWith("/es/account/billing");
+  });
+});
+
+describe("Turnstile CAPTCHA", () => {
+  beforeEach(() => {
+    vi.stubEnv("NEXT_PUBLIC_TURNSTILE_SITE_KEY", "test-site-key");
+    mocks.redirect.mockReset();
+    mocks.signInWithPassword.mockReset();
+    mocks.signUp.mockReset();
+    mocks.resetPasswordForEmail.mockReset();
+    mocks.signInWithPassword.mockResolvedValue({
+      data: { user: { user_metadata: { language: "en" } } },
+      error: null,
+    });
+    mocks.signUp.mockResolvedValue({ data: { session: null }, error: null });
+    mocks.resetPasswordForEmail.mockResolvedValue({ data: {}, error: null });
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  function withToken(formData: FormData, token = "turnstile-token") {
+    formData.set("cf-turnstile-response", token);
+    return formData;
+  }
+
+  it("rejects sign-up without a token before contacting Supabase", async () => {
+    const result = await registerAction(initialAuthState, registrationForm());
+
+    expect(mocks.signUp).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      status: "error",
+      message: "Complete the security check and try again.",
+    });
+  });
+
+  it("forwards the token to Supabase on sign-up", async () => {
+    await registerAction(initialAuthState, withToken(registrationForm()));
+
+    expect(mocks.signUp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({ captchaToken: "turnstile-token" }),
+      }),
+    );
+  });
+
+  it("forwards the token to Supabase on sign-in", async () => {
+    await loginAction(initialAuthState, withToken(loginForm()));
+
+    expect(mocks.signInWithPassword).toHaveBeenCalledWith({
+      email: "maria@example.com",
+      password: "secure-password",
+      options: { captchaToken: "turnstile-token" },
+    });
+  });
+
+  it("rejects sign-in without a token in the form's language", async () => {
+    const result = await loginAction(initialAuthState, loginForm("es"));
+
+    expect(mocks.signInWithPassword).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      status: "error",
+      message: "Completa la verificación de seguridad e inténtalo de nuevo.",
+    });
+  });
+
+  it("explains a token Supabase refuses instead of a wrong password", async () => {
+    mocks.signInWithPassword.mockResolvedValue({
+      data: { user: null },
+      error: { message: "captcha protection: request disallowed" },
+    });
+
+    const result = await loginAction(initialAuthState, withToken(loginForm()));
+
+    expect(result).toEqual({
+      status: "error",
+      message: "Complete the security check and try again.",
+    });
+  });
+
+  it("forwards the token on password-reset requests", async () => {
+    const formData = new FormData();
+    formData.set("email", "maria@example.com");
+
+    const missing = await forgotPasswordAction(initialAuthState, formData);
+    expect(missing.status).toBe("error");
+    expect(mocks.resetPasswordForEmail).not.toHaveBeenCalled();
+
+    const result = await forgotPasswordAction(
+      initialAuthState,
+      withToken(formData),
+    );
+    expect(mocks.resetPasswordForEmail).toHaveBeenCalledWith(
+      "maria@example.com",
+      expect.objectContaining({ captchaToken: "turnstile-token" }),
+    );
+    expect(result.status).toBe("success");
   });
 });

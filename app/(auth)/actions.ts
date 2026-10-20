@@ -2,6 +2,12 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+  captchaErrorMessage,
+  isCaptchaConfigured,
+  isCaptchaError,
+  readCaptchaToken,
+} from "@/lib/auth/captcha";
 import { getSafeNextPath } from "@/lib/auth/redirects";
 import {
   DEFAULT_LOCALE,
@@ -38,6 +44,18 @@ async function getRequestOrigin() {
   return host ? `${protocol}://${host}` : "http://localhost:3000";
 }
 
+/**
+ * Returns an error state when the CAPTCHA is enabled but the form arrived
+ * without a token, so bots are turned away before Supabase sends any email.
+ */
+function missingCaptcha(
+  captchaToken: string | undefined,
+  spanish: boolean,
+): AuthActionState | null {
+  if (!isCaptchaConfigured() || captchaToken) return null;
+  return { status: "error", message: captchaErrorMessage(spanish) };
+}
+
 function getFormLocale(formData: FormData): Locale {
   const locale = formData.get("locale");
   return typeof locale === "string" && isLocale(locale)
@@ -70,11 +88,20 @@ export async function loginAction(
 
   if (!isSupabaseAuthConfigured()) return configurationError();
 
+  const captchaToken = readCaptchaToken(formData);
+  const captchaProblem = missingCaptcha(captchaToken, spanish);
+  if (captchaProblem) return captchaProblem;
+
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
+    ...(captchaToken ? { options: { captchaToken } } : {}),
   });
+
+  if (isCaptchaError(error)) {
+    return { status: "error", message: captchaErrorMessage(spanish) };
+  }
 
   if (error) {
     return {
@@ -126,6 +153,10 @@ export async function registerAction(
 
   if (!isSupabaseAuthConfigured()) return configurationError();
 
+  const captchaToken = readCaptchaToken(formData);
+  const captchaProblem = missingCaptcha(captchaToken, spanish);
+  if (captchaProblem) return captchaProblem;
+
   const supabase = await createClient();
   const origin = await getRequestOrigin();
   const { data, error } = await supabase.auth.signUp({
@@ -136,8 +167,13 @@ export async function registerAction(
       emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(
         localizeHref("/account", locale),
       )}`,
+      ...(captchaToken ? { captchaToken } : {}),
     },
   });
+
+  if (isCaptchaError(error)) {
+    return { status: "error", message: captchaErrorMessage(spanish) };
+  }
 
   if (error) {
     return {
@@ -169,6 +205,7 @@ export async function forgotPasswordAction(
   _previousState: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  const spanish = getFormLocale(formData) === "es";
   const email = normalizeEmail(formData.get("email"));
   const emailError = validateEmail(email);
 
@@ -182,11 +219,20 @@ export async function forgotPasswordAction(
 
   if (!isSupabaseAuthConfigured()) return configurationError();
 
+  const captchaToken = readCaptchaToken(formData);
+  const captchaProblem = missingCaptcha(captchaToken, spanish);
+  if (captchaProblem) return captchaProblem;
+
   const supabase = await createClient();
   const origin = await getRequestOrigin();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/auth/callback?next=/reset-password`,
+    ...(captchaToken ? { captchaToken } : {}),
   });
+
+  if (isCaptchaError(error)) {
+    return { status: "error", message: captchaErrorMessage(spanish) };
+  }
 
   if (error?.message.toLowerCase().includes("rate")) {
     return {

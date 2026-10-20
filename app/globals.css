@@ -2443,6 +2443,11 @@ button {
   gap: 8px;
 }
 
+/* Reserves the Turnstile widget's height so the form does not jump. */
+.auth-captcha {
+  min-height: 65px;
+}
+
 .auth-field label,
 .auth-label-row a {
   color: var(--text-soft);

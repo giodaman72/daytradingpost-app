@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { HomeSectionOrder } from "@/components/home/HomeSectionOrder";
 import { APP_CONFIG } from "@/lib/config";
@@ -94,6 +95,8 @@ export default async function RootLayout({
       <body className="antialiased">
         {children}
         <HomeSectionOrder />
+        {/* The insights script is served only on Vercel; elsewhere it 404s. */}
+        {process.env.VERCEL ? <Analytics /> : null}
       </body>
     </html>
   );
