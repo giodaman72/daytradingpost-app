@@ -1,5 +1,6 @@
 import { TradingSessionsEarth } from "@/components/home/TradingSessionsEarth";
 import { HomeMarketCharts } from "@/components/home/HomeMarketCharts";
+import { MarketTickerTape } from "@/components/home/MarketTickerTape";
 import { getChartConfig } from "@/lib/charts/chartConfig";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
@@ -84,6 +85,11 @@ export default async function Home() {
   const locale = await getRequestLocale();
   const quotes = await getHomepageQuotes();
   const copy = HOME_COPY[locale];
+  const tradingViewEnabled = getChartConfig().tradingViewEnabled;
+  // Until a first-party quote provider is live, show TradingView's free
+  // ticker tape instead of a row of "Data unavailable" cards.
+  const hasLiveQuotes = quotes.some((quote) => quote.price !== null);
+  const showTickerTape = !hasLiveQuotes && tradingViewEnabled;
 
   return (
     <main className="reference-home">
@@ -128,14 +134,15 @@ export default async function Home() {
 
       <section className="reference-market-strip" id="markets">
         <div className="reference-shell">
-          <MarketDataGrid quotes={quotes} compact locale={locale} />
+          {showTickerTape ? (
+            <MarketTickerTape locale={locale} />
+          ) : (
+            <MarketDataGrid quotes={quotes} compact locale={locale} />
+          )}
         </div>
       </section>
 
-      <HomeMarketCharts
-        locale={locale}
-        enabled={getChartConfig().tradingViewEnabled}
-      />
+      <HomeMarketCharts locale={locale} enabled={tradingViewEnabled} />
 
       <section className="reference-feature-section">
         <div className="reference-shell reference-feature-grid">
