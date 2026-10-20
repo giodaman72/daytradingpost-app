@@ -1,4 +1,5 @@
 import "server-only";
+import type { NewsletterSource } from "@/lib/validation/newsletter";
 
 type SupabaseErrorPayload = {
   code?: string;
@@ -42,6 +43,7 @@ async function readSupabaseError(response: Response) {
 
 export async function insertNewsletterSubscriber(
   email: string,
+  source: NewsletterSource = "homepage",
 ): Promise<NewsletterInsertResult> {
   const { baseUrl, serviceRoleKey } = getSupabaseConfig();
   const response = await fetch(`${baseUrl}/rest/v1/newsletter_subscribers`, {
@@ -55,7 +57,7 @@ export async function insertNewsletterSubscriber(
     body: JSON.stringify({
       email,
       consent: true,
-      source: "homepage",
+      source,
     }),
     cache: "no-store",
     signal: AbortSignal.timeout(8_000),

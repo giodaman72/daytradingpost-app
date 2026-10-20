@@ -7,6 +7,7 @@ import {
   getNewsletterEmailError,
   NEWSLETTER_EMAIL_MAX_LENGTH,
   normalizeNewsletterEmail,
+  type NewsletterSource,
 } from "@/lib/validation/newsletter";
 import { localizeHref, type Locale } from "@/lib/i18n/config";
 
@@ -23,7 +24,13 @@ type NewsletterApiResponse = {
 
 const INITIAL_STATUS: FormStatus = { type: "idle", message: "" };
 
-export function NewsletterForm({ locale = "en" }: { locale?: Locale }) {
+export function NewsletterForm({
+  locale = "en",
+  source = "homepage",
+}: {
+  locale?: Locale;
+  source?: NewsletterSource;
+}) {
   const spanish = locale === "es";
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
@@ -82,6 +89,7 @@ export function NewsletterForm({ locale = "en" }: { locale?: Locale }) {
         body: JSON.stringify({
           email: normalizedEmail,
           consent,
+          source,
           company: formData.get("company") ?? "",
         }),
       });
@@ -101,9 +109,9 @@ export function NewsletterForm({ locale = "en" }: { locale?: Locale }) {
       setStatus({
         type: "success",
         message: spanish
-          ? "Ya estás suscrito. Revisa tu correo para recibir el informe diario de mercados."
+          ? "Ya estás suscrito. Recibirás nuevos análisis y niveles clave en tu correo."
           : (result.message ??
-            "You’re subscribed. Watch your inbox for the Daily Market Brief."),
+            "You’re subscribed. New analysis and key levels will arrive in your inbox."),
       });
     } catch (error) {
       setStatus({
@@ -206,8 +214,10 @@ export function NewsletterForm({ locale = "en" }: { locale?: Locale }) {
           ) : (
             <>
               I agree to receive DayTradingPost emails and accept the{" "}
-              <Link href="/privacy">privacy policy</Link>. I can unsubscribe at
-              any time.
+              <Link href={localizeHref("/privacy", locale)}>
+                privacy policy
+              </Link>
+              . I can unsubscribe at any time.
             </>
           )}
         </label>

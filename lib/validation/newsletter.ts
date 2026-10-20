@@ -21,3 +21,11 @@ export function getNewsletterEmailError(email: string) {
 
   return null;
 }
+
+/** Where a signup came from, stored so the owner can see which pages convert. */
+export const NEWSLETTER_SOURCES = ["homepage", "article"] as const;
+export type NewsletterSource = (typeof NEWSLETTER_SOURCES)[number];
+
+export function parseNewsletterSource(value: unknown): NewsletterSource {
+  return NEWSLETTER_SOURCES.find((source) => source === value) ?? "homepage";
+}
