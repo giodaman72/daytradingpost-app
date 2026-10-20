@@ -11,6 +11,8 @@ import {
 } from "@/app/(auth)/actions";
 import { initialAuthState, type AuthActionState } from "@/lib/validation/auth";
 import { localizeHref, type Locale } from "@/lib/i18n/config";
+import { getCaptchaSiteKey } from "@/lib/auth/captcha";
+import { CaptchaWidget } from "@/components/auth/CaptchaWidget";
 
 type AuthMode = "login" | "register" | "forgot" | "reset";
 
@@ -122,6 +124,8 @@ export function AuthForm({
   const showEmail = mode !== "reset";
   const showPassword =
     mode === "login" || mode === "register" || mode === "reset";
+  // Supabase only checks a CAPTCHA on sign-in, sign-up and reset requests.
+  const captchaSiteKey = mode === "reset" ? undefined : getCaptchaSiteKey();
 
   return (
     <section className="auth-card" aria-labelledby={`${mode}-title`}>
@@ -253,6 +257,15 @@ export function AuthForm({
               </span>
             ) : null}
           </div>
+        ) : null}
+
+        {captchaSiteKey ? (
+          <CaptchaWidget
+            siteKey={captchaSiteKey}
+            action={mode}
+            locale={locale}
+            resetSignal={state}
+          />
         ) : null}
 
         {state.message ? (
