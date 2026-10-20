@@ -815,3 +815,26 @@
     width: 100%;
   }
 }
+
+/* TradingView ticker tape shown while first-party quotes are disabled. */
+.reference-market-strip .market-ticker-tape {
+  padding: 6px 8px 0;
+}
+
+.reference-market-strip .market-ticker-tape .tradingview-widget-container {
+  min-height: 46px;
+}
+
+.reference-market-strip .market-ticker-attribution {
+  margin: 0;
+  padding: 4px 12px 8px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.reference-market-strip .market-ticker-attribution a {
+  color: inherit;
+  text-decoration: underline;
+}
