@@ -95,7 +95,8 @@ export default async function RootLayout({
       <body className="antialiased">
         {children}
         <HomeSectionOrder />
-        <Analytics />
+        {/* The insights script is served only on Vercel; elsewhere it 404s. */}
+        {process.env.VERCEL ? <Analytics /> : null}
       </body>
     </html>
   );
