@@ -1618,6 +1618,8 @@ button {
 }
 
 .newsletter-section {
+  /* Keeps the heading clear of the sticky header on "/#newsletter" jumps. */
+  scroll-margin-top: 110px;
   padding-block: 85px;
   border-block: 1px solid var(--border);
   background:
