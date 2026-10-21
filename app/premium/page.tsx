@@ -94,7 +94,10 @@ export default async function PremiumPage() {
                     : MEMBERSHIP_PLANS[plan].name}
                 </h2>
                 <p className="membership-price-note">
-                  {MEMBERSHIP_PLANS[plan].priceLabel}.{" "}
+                  {spanish
+                    ? MEMBERSHIP_PLANS[plan].priceLabelEs
+                    : MEMBERSHIP_PLANS[plan].priceLabel}
+                  .{" "}
                   {spanish
                     ? `El pago se procesa de forma segura mediante ${providerName}.`
                     : `Checkout is processed securely by ${providerName}.`}
