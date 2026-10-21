@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { DailyVideo } from "@/types/video";
-import { DailyVideoCard } from "./DailyVideoCard";
+import { DailyVideoCard, DailyVideoPlaceholder } from "./DailyVideoCard";
 
 const video: DailyVideo = {
   _id: "v1",
@@ -76,5 +76,30 @@ describe("DailyVideoCard", () => {
       />,
     );
     expect(container).toBeEmptyDOMElement();
+  });
+});
+
+describe("DailyVideoPlaceholder", () => {
+  it("holds the video slot and links to the latest analysis", () => {
+    const { container } = render(
+      <DailyVideoPlaceholder
+        locale="en"
+        latestAnalysis={{ slug: "wti-4h-trade-setup-2026-10-20", title: "WTI" }}
+      />,
+    );
+
+    expect(screen.getByText("Daily video")).toBeInTheDocument();
+    expect(screen.getByText("Coming soon")).toBeInTheDocument();
+    expect(container.querySelector("iframe")).toBeNull();
+    expect(
+      screen.getByRole("link", { name: /Read the latest analysis/ }),
+    ).toHaveAttribute("href", "/analysis/wti-4h-trade-setup-2026-10-20");
+  });
+
+  it("works in Spanish without an analysis link", () => {
+    render(<DailyVideoPlaceholder locale="es" latestAnalysis={null} />);
+
+    expect(screen.getByText("Próximamente")).toBeInTheDocument();
+    expect(screen.queryByRole("link")).toBeNull();
   });
 });

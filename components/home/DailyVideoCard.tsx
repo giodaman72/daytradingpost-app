@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import comingSoonPoster from "@/public/images/daily-video-coming-soon.webp";
 import { localizeHref, type Locale } from "@/lib/i18n/config";
 import { getSanityImageUrl } from "@/lib/sanity/image";
 import {
@@ -88,6 +90,78 @@ export function DailyVideoCard({
             {spanish ? "Ver en YouTube ↗" : "Watch on YouTube ↗"}
           </a>
         </div>
+      </div>
+    </article>
+  );
+}
+
+/**
+ * Shown in the same hero slot until the first daily video is published, so
+ * the video holder is always there. Links to the latest analysis meanwhile.
+ */
+export function DailyVideoPlaceholder({
+  locale,
+  latestAnalysis,
+}: {
+  locale: Locale;
+  latestAnalysis?: { slug: string; title: string } | null;
+}) {
+  const spanish = locale === "es";
+
+  return (
+    <article className="daily-video-card">
+      <header className="daily-video-head">
+        <span className="daily-video-kicker">
+          <span className="daily-video-dot" aria-hidden="true" />
+          {spanish ? "Video diario" : "Daily video"}
+        </span>
+        <span className="daily-video-ep">
+          {spanish ? "Próximamente" : "Coming soon"}
+        </span>
+      </header>
+
+      <div className="daily-video-frame daily-video-soon">
+        <Image
+          src={comingSoonPoster}
+          alt={
+            spanish
+              ? "DayTradingPost: análisis pre-mercado diario de EE. UU."
+              : "DayTradingPost: daily US pre-market analysis"
+          }
+          fill
+          sizes="(max-width: 1080px) 100vw, 640px"
+          loading="eager"
+          fetchPriority="high"
+        />
+      </div>
+
+      <div className="daily-video-body">
+        <p className="daily-video-meta">
+          {spanish
+            ? "Lunes a viernes · 9:00 a. m. ET"
+            : "Monday to Friday · 9:00 AM ET"}
+        </p>
+        <h2>
+          {spanish
+            ? "El análisis pre-mercado en video llega pronto."
+            : "The daily pre-market video is coming soon."}
+        </h2>
+        <p className="daily-video-summary">
+          {spanish
+            ? "Niveles clave, sesgo y el plan de la sesión para ocho mercados, cada día antes de la apertura."
+            : "Key levels, bias and the session game plan for eight markets, every trading day before the open."}
+        </p>
+        {latestAnalysis ? (
+          <div className="daily-video-actions">
+            <Link
+              href={localizeHref(`/analysis/${latestAnalysis.slug}`, locale)}
+              className="daily-video-primary"
+            >
+              {spanish ? "Leer el último análisis" : "Read the latest analysis"}
+              <span aria-hidden="true"> →</span>
+            </Link>
+          </div>
+        ) : null}
       </div>
     </article>
   );

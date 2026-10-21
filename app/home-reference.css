@@ -780,6 +780,9 @@
   height: 100%;
   border: 0;
 }
+.daily-video-soon img {
+  object-fit: cover;
+}
 .daily-video-poster {
   padding: 0;
   border: 0;

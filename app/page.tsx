@@ -1,15 +1,9 @@
-import { TradingSessionsEarth } from "@/components/home/TradingSessionsEarth";
 import { ForexSessionsPanel } from "@/components/home/ForexSessions";
 import {
-  LatestAnalysisCard,
-  type LatestAnalysis,
-} from "@/components/home/LatestAnalysisCard";
-import { DailyVideoCard } from "@/components/home/DailyVideoCard";
-import {
-  getArticleBySlug,
-  getLatestArticles,
-  getLatestDailyVideo,
-} from "@/lib/cms";
+  DailyVideoCard,
+  DailyVideoPlaceholder,
+} from "@/components/home/DailyVideoCard";
+import { getLatestArticles, getLatestDailyVideo } from "@/lib/cms";
 import { parseYouTubeId } from "@/lib/video/youtube";
 import { HomeMarketCharts } from "@/components/home/HomeMarketCharts";
 import { MarketTickerTape } from "@/components/home/MarketTickerTape";
@@ -94,15 +88,13 @@ const HOME_COPY = {
   },
 } as const;
 
-/** Newest analysis with its key levels; null keeps the globe as a fallback. */
+/** Newest analysis, linked from the video holder until a video is published. */
 async function getLatestAnalysis(
   locale: Locale,
-): Promise<LatestAnalysis | null> {
+): Promise<{ slug: string; title: string } | null> {
   try {
     const [latest] = await getLatestArticles(1, locale);
-    if (!latest) return null;
-    const full = await getArticleBySlug(latest.slug, locale).catch(() => null);
-    return full ? { ...latest, ...full } : latest;
+    return latest ? { slug: latest.slug, title: latest.title } : null;
   } catch {
     return null;
   }
@@ -115,8 +107,8 @@ export default async function Home() {
     getLatestDailyVideo(locale).catch(() => null),
     getLatestAnalysis(locale),
   ]);
-  // The daily video leads the hero; the latest analysis fills in until the
-  // first video is published, and the globe only if neither can load.
+  // The hero always holds the daily video; before the first one is
+  // published it shows a "coming soon" poster linking to the latest analysis.
   const showVideo = Boolean(
     dailyVideo && parseYouTubeId(dailyVideo.youtubeUrl),
   );
@@ -164,19 +156,17 @@ export default async function Home() {
             </div>
           </div>
 
-          {showVideo && dailyVideo ? (
-            <div className="reference-hero-side">
+          <div className="reference-hero-side">
+            {showVideo && dailyVideo ? (
               <DailyVideoCard video={dailyVideo} locale={locale} />
-              <ForexSessionsPanel locale={locale} />
-            </div>
-          ) : latestAnalysis ? (
-            <div className="reference-hero-side">
-              <LatestAnalysisCard article={latestAnalysis} locale={locale} />
-              <ForexSessionsPanel locale={locale} />
-            </div>
-          ) : (
-            <TradingSessionsEarth locale={locale} />
-          )}
+            ) : (
+              <DailyVideoPlaceholder
+                locale={locale}
+                latestAnalysis={latestAnalysis}
+              />
+            )}
+            <ForexSessionsPanel locale={locale} />
+          </div>
         </div>
       </section>
 
