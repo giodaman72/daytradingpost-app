@@ -5,6 +5,7 @@ import {
   getArticles as getSanityArticles,
   getArticleSlugs as getSanityArticleSlugs,
   getArticleSummaryBySlug as getSanityArticleSummaryBySlug,
+  getLatestDailyVideo as getSanityLatestDailyVideo,
 } from "@/lib/sanity/client";
 import {
   getAugustArticle,
@@ -59,6 +60,10 @@ export async function getArticleSlugs() {
   return Array.from(
     new Map([...imported, ...sanity].map((item) => [item.slug, item])).values(),
   );
+}
+
+export async function getLatestDailyVideo(locale: Locale = "en") {
+  return getSanityLatestDailyVideo(locale);
 }
 
 export { getSanityImageUrl } from "@/lib/sanity/image";

@@ -14,8 +14,10 @@ import {
   articleSlugsQuery,
   articlesQuery,
   latestArticlesQuery,
+  latestDailyVideoQuery,
 } from "./queries";
 import type { Article, ArticleSummary } from "@/types/article";
+import type { DailyVideo } from "@/types/video";
 import type { Locale } from "@/lib/i18n/config";
 
 let sanityClient: ReturnType<typeof createClient> | null = null;
@@ -96,4 +98,8 @@ export async function getArticleSlugs() {
   );
 
   return results.filter((item) => item.slug);
+}
+
+export function getLatestDailyVideo(locale: Locale = "en") {
+  return safeFetch<DailyVideo | null>(latestDailyVideoQuery, null, { locale });
 }

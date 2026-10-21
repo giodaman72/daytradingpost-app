@@ -107,3 +107,26 @@ export const articleSlugsQuery = defineQuery(`
     "slug": slug.current
   }
 `);
+
+/** Newest published daily video, preferring the page's language. */
+export const latestDailyVideoQuery = defineQuery(`
+  *[
+    _type == "dailyVideo" &&
+    defined(youtubeUrl) &&
+    defined(publishedAt) &&
+    publishedAt <= now()
+  ] | order(coalesce(language, "en") == $locale desc, publishedAt desc) [0] {
+    _id,
+    "language": coalesce(language, "en"),
+    title,
+    episode,
+    youtubeUrl,
+    publishedAt,
+    summary,
+    thumbnail { _type, asset, crop, hotspot, alt },
+    "relatedArticle": relatedArticle-> {
+      "slug": slug.current,
+      "language": coalesce(language, "en")
+    }
+  }
+`);
