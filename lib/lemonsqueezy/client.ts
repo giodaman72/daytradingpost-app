@@ -27,8 +27,33 @@ export type LemonSqueezySubscriptionAttributes = {
 };
 
 export class LemonSqueezyApiError extends Error {
-  constructor(public status: number) {
-    super(`Lemon Squeezy API request failed with status ${status}.`);
+  constructor(
+    public status: number,
+    public detail?: string,
+  ) {
+    super(
+      `Lemon Squeezy API request failed with status ${status}${detail ? `: ${detail}` : "."}`,
+    );
+  }
+}
+
+/**
+ * Lemon Squeezy's JSON:API error text (e.g. which store or variant was not
+ * found), trimmed for logs. Never includes request headers or the API key.
+ */
+async function readErrorDetail(response: Response, path: string) {
+  try {
+    const body = (await response.json()) as {
+      errors?: Array<{ title?: string; detail?: string }>;
+    };
+    const first = body.errors?.[0];
+    const text = [first?.title, first?.detail].filter(Boolean).join(" - ");
+    return `${path.split("/")[1]} request: ${text || "no error detail"}`.slice(
+      0,
+      300,
+    );
+  } catch {
+    return `${path.split("/")[1]} request: no error detail`;
   }
 }
 
@@ -45,7 +70,12 @@ async function lemonSqueezyRequest<T>(path: string, init: RequestInit = {}) {
     },
   });
 
-  if (!response.ok) throw new LemonSqueezyApiError(response.status);
+  if (!response.ok) {
+    throw new LemonSqueezyApiError(
+      response.status,
+      await readErrorDetail(response, path),
+    );
+  }
   return (await response.json()) as T;
 }
 

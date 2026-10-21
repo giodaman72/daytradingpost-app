@@ -104,11 +104,9 @@ export async function startMembershipCheckout(
           redirectUrl: `${getSiteUrl()}/membership/success?reference=${paymentReference}`,
         });
 
-        const { error } = await admin
-          .from("profiles")
-          .update(pendingProfile)
-          .eq("id", user.id);
-        if (error) throw error;
+        // The profile is left as it is: Lemon Squeezy's webhook sets the
+        // membership once payment succeeds, so an abandoned checkout never
+        // leaves the account stuck on "Pending".
         redirectTo = checkoutUrl;
       } else if (mode === "revolut_payment_links") {
         const paymentLink = getPaymentLink(plan);
