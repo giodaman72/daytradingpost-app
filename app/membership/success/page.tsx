@@ -48,8 +48,8 @@ export default async function MembershipSuccessPage() {
             ? "Tu membresía verificada está activa y el análisis Premium ya está disponible."
             : "Your verified membership is active and premium analysis is now available."
           : spanish
-            ? "Revolut te devolvió a DayTradingPost. El acceso permanecerá pendiente hasta que se procese la actualización de pago firmada."
-            : "Revolut returned you to DayTradingPost. Access remains pending until the signed payment update is processed."
+            ? "Gracias. Estamos confirmando el pago; el acceso Premium suele activarse en uno o dos minutos. Actualiza esta página en un momento."
+            : "Thanks. We're confirming your payment; Premium access usually turns on within a minute or two. Refresh this page shortly."
       }
       reference={access.profile?.payment_reference}
       tone={active ? "success" : "pending"}

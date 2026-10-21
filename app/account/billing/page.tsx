@@ -19,13 +19,23 @@ export async function generateMetadata(): Promise<Metadata> {
       locale === "es" ? "Facturación y membresía" : "Billing and membership",
     description:
       locale === "es"
-        ? "Revisa tu membresía Premium y el estado de pago de Revolut."
-        : "Review your DayTradingPost premium membership and Revolut payment status.",
+        ? "Revisa tu membresía Premium y el estado de tu pago."
+        : "Review your DayTradingPost premium membership and payment status.",
     robots: { index: false, follow: false },
   };
 }
 
-export default async function AccountBillingPage() {
+const PROVIDER_NAMES: Record<string, string> = {
+  lemonsqueezy: "Lemon Squeezy",
+  revolut: "Revolut",
+};
+
+export default async function AccountBillingPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const manageError = (await searchParams).manage === "unavailable";
   const locale = await getRequestLocale();
   const spanish = locale === "es";
   const user = await getAuthenticatedUser();
@@ -57,6 +67,8 @@ export default async function AccountBillingPage() {
 
   const profile = profileData as BillingProfile | null;
   const requests = (requestData || []) as MembershipRequest[];
+  const lemonSqueezy = profile?.payment_provider === "lemonsqueezy";
+  const canManage = Boolean(lemonSqueezy && profile?.payment_subscription_id);
   const fullName =
     profile?.full_name ||
     user.user_metadata.full_name ||
@@ -85,8 +97,8 @@ export default async function AccountBillingPage() {
                 </span>
                 <h2>
                   {spanish
-                    ? "Estado de tu membresía de Revolut."
-                    : "Your Revolut membership status."}
+                    ? "Estado de tu membresía."
+                    : "Your membership status."}
                 </h2>
               </div>
               <span
@@ -110,9 +122,10 @@ export default async function AccountBillingPage() {
                 </strong>
                 <p>
                   {spanish ? "Proveedor de pago" : "Payment provider"}:{" "}
-                  {formatLocalizedDisplayLabel(profile?.payment_provider, {
-                    locale,
-                  })}
+                  {PROVIDER_NAMES[profile?.payment_provider ?? ""] ??
+                    formatLocalizedDisplayLabel(profile?.payment_provider, {
+                      locale,
+                    })}
                 </p>
               </article>
               <article>
@@ -162,11 +175,39 @@ export default async function AccountBillingPage() {
                   </dd>
                 </div>
               </dl>
+              {canManage ? (
+                <div className="account-actions">
+                  <Link
+                    className="button"
+                    href="/account/billing/manage"
+                    prefetch={false}
+                    rel="nofollow"
+                  >
+                    {spanish ? "Gestionar suscripción" : "Manage subscription"}
+                  </Link>
+                  <p>
+                    {spanish
+                      ? "Cambia de plan, actualiza tu tarjeta, descarga facturas o cancela en el portal seguro de Lemon Squeezy."
+                      : "Change plan, update your card, download invoices or cancel in Lemon Squeezy's secure portal."}
+                  </p>
+                </div>
+              ) : null}
               {profile?.membership_status === "pending" ? (
                 <div className="account-notice" role="status">
+                  {lemonSqueezy
+                    ? spanish
+                      ? "Estamos esperando la confirmación del pago. Si acabas de pagar, el acceso se activa en uno o dos minutos."
+                      : "We're waiting for payment confirmation. If you just paid, access turns on within a minute or two."
+                    : spanish
+                      ? "Tu solicitud está pendiente de verificación. Las compras mediante enlace de pago requieren que un administrador confirme el pago antes de conceder el acceso."
+                      : "Your request is pending verification. Payment-link purchases require an administrator to confirm payment before access is granted."}
+                </div>
+              ) : null}
+              {manageError ? (
+                <div className="account-notice" role="alert">
                   {spanish
-                    ? "Tu solicitud está pendiente de verificación. Las compras mediante enlace de pago requieren que un administrador confirme el pago antes de conceder el acceso."
-                    : "Your request is pending verification. Payment-link purchases require an administrator to confirm payment before access is granted."}
+                    ? "No pudimos abrir el portal de suscripción. Inténtalo de nuevo en un momento."
+                    : "We couldn't open the subscription portal. Try again in a moment."}
                 </div>
               ) : null}
             </section>

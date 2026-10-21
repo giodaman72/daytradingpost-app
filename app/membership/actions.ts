@@ -3,12 +3,14 @@
 import { randomUUID } from "node:crypto";
 import { redirect } from "next/navigation";
 import {
+  getLemonSqueezyVariantId,
   getPaymentLink,
   getPaymentProviderMode,
   getPlanVariationId,
   getSiteUrl,
 } from "@/lib/membership/config";
 import { hasActiveMembership } from "@/lib/payments/membershipStatus";
+import { createLemonSqueezyCheckout } from "@/lib/lemonsqueezy/client";
 import {
   createRevolutCustomer,
   createRevolutSubscription,
@@ -76,13 +78,39 @@ export async function startMembershipCheckout(
       const pendingProfile = {
         membership_status: "pending",
         membership_plan: plan,
-        payment_provider: "revolut",
+        payment_provider: mode === "lemonsqueezy" ? "lemonsqueezy" : "revolut",
         payment_reference: paymentReference,
         payment_subscription_id: null,
         payment_verified_at: null,
       };
 
-      if (mode === "revolut_payment_links") {
+      if (mode === "lemonsqueezy") {
+        const variantId = getLemonSqueezyVariantId(plan);
+        if (!variantId)
+          throw new Error("The selected Lemon Squeezy plan is not configured.");
+
+        const customerEmail = profile.email || user.email;
+        if (!customerEmail) {
+          throw new Error(
+            "The authenticated account does not have an email address.",
+          );
+        }
+
+        const checkoutUrl = await createLemonSqueezyCheckout({
+          variantId,
+          email: customerEmail,
+          name: profile.full_name,
+          custom: { user_id: user.id, payment_reference: paymentReference },
+          redirectUrl: `${getSiteUrl()}/membership/success?reference=${paymentReference}`,
+        });
+
+        const { error } = await admin
+          .from("profiles")
+          .update(pendingProfile)
+          .eq("id", user.id);
+        if (error) throw error;
+        redirectTo = checkoutUrl;
+      } else if (mode === "revolut_payment_links") {
         const paymentLink = getPaymentLink(plan);
         if (!paymentLink)
           throw new Error(

@@ -8,6 +8,8 @@ export type PurchaseConfirmationContentInput = {
   providerReference: string;
   plan: MembershipPlan;
   verifiedAt: string;
+  /** Payment provider shown in the email. Defaults to Revolut. */
+  providerName?: string;
 };
 
 function escapeHtml(value: string) {
@@ -52,22 +54,24 @@ export function buildPurchaseConfirmationContent(
   const accountUrl = escapeHtml(input.accountUrl);
   const safeName = escapeHtml(buyerName);
   const safeReference = escapeHtml(input.providerReference);
+  const provider = input.providerName?.trim() || "Revolut";
+  const safeProvider = escapeHtml(provider);
 
   const text = [
     `Hello ${buyerName},`,
     "",
-    "Your Revolut payment has been verified and your DayTradingPost Premium access is now active.",
+    `Your ${provider} payment has been verified and your DayTradingPost Premium access is now active.`,
     "",
     `Plan: ${plan.label}`,
     `Amount: ${price}`,
-    "Payment method: Revolut",
+    `Payment method: ${provider}`,
     `Payment confirmed: ${verifiedDate}`,
     ...(accessEnd ? [`Access through: ${accessEnd}`] : []),
-    `Revolut reference: ${input.providerReference}`,
+    `${provider} reference: ${input.providerReference}`,
     "",
     `Manage your membership: ${input.accountUrl}`,
     "",
-    "This confirms your DayTradingPost purchase and access activation. Your Revolut transaction record remains the payment-provider receipt. Contact hello@daytradingpost.com if you need help or a separate invoice.",
+    `This confirms your DayTradingPost purchase and access activation. Your ${provider} receipt remains the payment record. Contact hello@daytradingpost.com if you need help or a separate invoice.`,
   ].join("\n");
 
   const accessEndRow = accessEnd
@@ -91,17 +95,17 @@ export function buildPurchaseConfirmationContent(
             <tr>
               <td style="padding:32px">
                 <p style="font-size:16px;line-height:1.6;margin:0 0 18px">Hello ${safeName},</p>
-                <p style="font-size:16px;line-height:1.6;margin:0 0 24px">Your Revolut payment has been verified and your DayTradingPost Premium access is now active.</p>
+                <p style="font-size:16px;line-height:1.6;margin:0 0 24px">Your ${safeProvider} payment has been verified and your DayTradingPost Premium access is now active.</p>
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-top:1px solid #e5e1d7;border-bottom:1px solid #e5e1d7;margin:0 0 28px">
                   <tr><td style="padding:16px 0 8px;color:#777">Plan</td><td style="padding:16px 0 8px;text-align:right;font-weight:600">${escapeHtml(plan.label)}</td></tr>
                   <tr><td style="padding:8px 0;color:#777">Amount</td><td style="padding:8px 0;text-align:right;font-weight:600">${escapeHtml(price)}</td></tr>
-                  <tr><td style="padding:8px 0;color:#777">Payment method</td><td style="padding:8px 0;text-align:right;font-weight:600">Revolut</td></tr>
+                  <tr><td style="padding:8px 0;color:#777">Payment method</td><td style="padding:8px 0;text-align:right;font-weight:600">${safeProvider}</td></tr>
                   <tr><td style="padding:8px 0;color:#777">Confirmed</td><td style="padding:8px 0;text-align:right;font-weight:600">${escapeHtml(verifiedDate)}</td></tr>
                   ${accessEndRow}
-                  <tr><td style="padding:8px 0 16px;color:#777">Revolut reference</td><td style="padding:8px 0 16px;text-align:right;font-family:monospace;font-size:12px">${safeReference}</td></tr>
+                  <tr><td style="padding:8px 0 16px;color:#777">${safeProvider} reference</td><td style="padding:8px 0 16px;text-align:right;font-family:monospace;font-size:12px">${safeReference}</td></tr>
                 </table>
                 <p style="margin:0 0 28px"><a href="${accountUrl}" style="display:inline-block;background:#b68a2c;color:#fff;text-decoration:none;font-weight:700;padding:13px 20px;border-radius:8px">View membership</a></p>
-                <p style="color:#666;font-size:13px;line-height:1.6;margin:0">This confirms your DayTradingPost purchase and access activation. Your Revolut transaction record remains the payment-provider receipt. Contact <a href="mailto:hello@daytradingpost.com" style="color:#8b671c">hello@daytradingpost.com</a> if you need help or a separate invoice.</p>
+                <p style="color:#666;font-size:13px;line-height:1.6;margin:0">This confirms your DayTradingPost purchase and access activation. Your ${safeProvider} receipt remains the payment record. Contact <a href="mailto:hello@daytradingpost.com" style="color:#8b671c">hello@daytradingpost.com</a> if you need help or a separate invoice.</p>
               </td>
             </tr>
           </table>
