@@ -22,8 +22,8 @@ export default async function MembershipPendingPage() {
       kicker={spanish ? "Verificación pendiente" : "Verification pending"}
       title={
         spanish
-          ? "Estamos verificando tu pago de Revolut."
-          : "We are verifying your Revolut payment."
+          ? "Estamos verificando tu pago."
+          : "We are verifying your payment."
       }
       description={
         spanish

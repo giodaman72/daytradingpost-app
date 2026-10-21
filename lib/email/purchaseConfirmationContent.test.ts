@@ -35,3 +35,32 @@ describe("buildPurchaseConfirmationContent", () => {
     expect(result.text).not.toContain("Access through:");
   });
 });
+
+describe("provider wording", () => {
+  it("does not name a provider unless one is given", () => {
+    const result = buildPurchaseConfirmationContent({
+      accountUrl: "https://daytradingpost.com/account/billing",
+      buyerName: "Ana",
+      currentPeriodEnd: null,
+      providerReference: "ref-1",
+      plan: "monthly",
+      verifiedAt: "2026-10-21T00:00:00.000Z",
+    });
+    expect(result.text).not.toMatch(/revolut/i);
+    expect(result.html).not.toMatch(/revolut/i);
+    expect(result.text).toContain("Payment reference: ref-1");
+  });
+
+  it("names Lemon Squeezy when given", () => {
+    const result = buildPurchaseConfirmationContent({
+      accountUrl: "https://daytradingpost.com/account/billing",
+      buyerName: "Ana",
+      currentPeriodEnd: null,
+      providerReference: "lemonsqueezy-987",
+      plan: "annual",
+      providerName: "Lemon Squeezy",
+      verifiedAt: "2026-10-21T00:00:00.000Z",
+    });
+    expect(result.text).toContain("Payment method: Lemon Squeezy");
+  });
+});

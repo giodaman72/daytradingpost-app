@@ -103,7 +103,7 @@ export const sitePages = {
         heading: "Service providers and payments",
         paragraphs: [
           "Supabase provides authentication and operational storage, Sanity provides editorial content storage, Vercel provides application hosting, and configured AI and market-data providers process bounded requests needed for their features.",
-          "Revolut processes payment details. DayTradingPost stores payment references, subscription identifiers, plan and membership state, but does not store payment-card numbers.",
+          "Our payment provider, Lemon Squeezy, processes payment details. DayTradingPost stores payment references, subscription identifiers, plan and membership state, but does not store payment-card numbers.",
         ],
       },
       {

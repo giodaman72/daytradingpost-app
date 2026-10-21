@@ -119,8 +119,8 @@ export default async function AccountPage() {
                 </strong>
                 <p>
                   {spanish
-                    ? "Gestiona el estado del pago de Revolut desde la página de facturación."
-                    : "Manage Revolut payment status from your billing page."}
+                    ? "Gestiona el estado de tu pago desde la página de facturación."
+                    : "Manage your payment status from your billing page."}
                 </p>
               </article>
             </div>

@@ -62,7 +62,7 @@ export async function deliverPurchaseConfirmation(requestId: string) {
     providerReference,
     plan: request.membership_plan,
     providerName:
-      request.provider_mode === "lemonsqueezy" ? "Lemon Squeezy" : "Revolut",
+      request.provider_mode === "lemonsqueezy" ? "Lemon Squeezy" : undefined,
     verifiedAt: request.verified_at,
   });
   const emailId = await sendTransactionalEmail({

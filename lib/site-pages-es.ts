@@ -90,7 +90,7 @@ export const sitePagesEs = {
         heading: "Proveedores y pagos",
         paragraphs: [
           "Supabase proporciona autenticación y almacenamiento operativo, Sanity almacena contenido editorial, Vercel aloja la aplicación y los proveedores configurados de IA y datos procesan solicitudes limitadas necesarias para sus funciones.",
-          "Revolut procesa los datos de pago. DayTradingPost guarda referencias de pago, identificadores de suscripción, plan y estado de membresía, pero no números de tarjeta.",
+          "Nuestro proveedor de pagos, Lemon Squeezy, procesa los datos de pago. DayTradingPost guarda referencias de pago, identificadores de suscripción, plan y estado de membresía, pero no números de tarjeta.",
         ],
       },
       {

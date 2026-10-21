@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const PROVIDER_NAMES: Record<string, string> = {
   lemonsqueezy: "Lemon Squeezy",
-  revolut: "Revolut",
+  revolut: "Online payment",
 };
 
 export default async function AccountBillingPage({
@@ -122,7 +122,9 @@ export default async function AccountBillingPage({
                 </strong>
                 <p>
                   {spanish ? "Proveedor de pago" : "Payment provider"}:{" "}
-                  {PROVIDER_NAMES[profile?.payment_provider ?? ""] ??
+                  {(spanish && profile?.payment_provider === "revolut"
+                    ? "Pago en línea"
+                    : PROVIDER_NAMES[profile?.payment_provider ?? ""]) ??
                     formatLocalizedDisplayLabel(profile?.payment_provider, {
                       locale,
                     })}
