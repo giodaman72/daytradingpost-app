@@ -115,7 +115,10 @@ export const latestDailyVideoQuery = defineQuery(`
     defined(youtubeUrl) &&
     defined(publishedAt) &&
     publishedAt <= now()
-  ] | order(coalesce(language, "en") == $locale desc, publishedAt desc) [0] {
+  ] {
+    ...,
+    "languageMatch": select(coalesce(language, "en") == $locale => 1, 0)
+  } | order(languageMatch desc, publishedAt desc) [0] {
     _id,
     "language": coalesce(language, "en"),
     title,
