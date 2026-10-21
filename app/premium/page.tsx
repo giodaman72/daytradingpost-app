@@ -48,7 +48,6 @@ export default async function PremiumPage() {
   const isLemonSqueezy = mode === "lemonsqueezy";
   const savings = annualSavingsPercent();
   const perMonth = annualMonthlyEquivalent();
-  const providerName = isLemonSqueezy ? "Lemon Squeezy" : "Revolut";
 
   return (
     <main className="membership-page">
@@ -116,8 +115,12 @@ export default async function PremiumPage() {
                     : MEMBERSHIP_PLANS[plan].priceLabel}
                   .{" "}
                   {spanish
-                    ? `El pago se procesa de forma segura mediante ${providerName}.`
-                    : `Checkout is processed securely by ${providerName}.`}
+                    ? isLemonSqueezy
+                      ? "El pago se procesa de forma segura mediante Lemon Squeezy."
+                      : "El pago se procesa de forma segura."
+                    : isLemonSqueezy
+                      ? "Checkout is processed securely by Lemon Squeezy."
+                      : "Checkout is processed securely."}
                 </p>
                 {plan === "annual" && savings > 0 ? (
                   <p className="membership-equivalent">
@@ -174,8 +177,8 @@ export default async function PremiumPage() {
                     ? "Pago seguro con Lemon Squeezy"
                     : "Secure checkout with Lemon Squeezy"
                   : spanish
-                    ? "Pago con Revolut Merchant"
-                    : "Revolut Merchant checkout"}
+                    ? "Pago seguro"
+                    : "Secure checkout"}
             </strong>
             <p>
               {isPaymentLinks
@@ -187,8 +190,8 @@ export default async function PremiumPage() {
                     ? "Paga con tarjeta, Apple Pay, Google Pay o PayPal. Lemon Squeezy gestiona el pago y los impuestos y te envía el recibo. Puedes cancelar cuando quieras desde tu cuenta."
                     : "Pay by card, Apple Pay, Google Pay or PayPal. Lemon Squeezy handles payment and sales tax and emails your receipt. Cancel anytime from your account."
                   : spanish
-                    ? "Revolut gestiona el pago. El acceso cambia únicamente cuando un webhook firmado confirma el estado de la suscripción."
-                    : "Revolut handles checkout. Membership access changes only after a signed webhook confirms the subscription state."}
+                    ? "Tu pago se procesa de forma segura. El acceso Premium se activa en cuanto se confirma el pago."
+                    : "Your payment is processed securely. Premium access turns on as soon as the payment is confirmed."}
             </p>
           </div>
         </div>
