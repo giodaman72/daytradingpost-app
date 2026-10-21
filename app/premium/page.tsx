@@ -3,7 +3,12 @@ import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { MembershipCheckoutForm } from "@/components/membership/MembershipCheckoutForm";
-import { MEMBERSHIP_PLANS, PREMIUM_BENEFITS } from "@/constants/membership";
+import {
+  annualMonthlyEquivalent,
+  annualSavingsPercent,
+  MEMBERSHIP_PLANS,
+  PREMIUM_BENEFITS,
+} from "@/constants/membership";
 import { getMembershipAccess } from "@/lib/payments";
 import { getPaymentProviderMode } from "@/lib/membership/config";
 import { localizeHref } from "@/lib/i18n/config";
@@ -41,6 +46,8 @@ export default async function PremiumPage() {
   const mode = getPaymentProviderMode();
   const isPaymentLinks = mode === "revolut_payment_links";
   const isLemonSqueezy = mode === "lemonsqueezy";
+  const savings = annualSavingsPercent();
+  const perMonth = annualMonthlyEquivalent();
   const providerName = isLemonSqueezy ? "Lemon Squeezy" : "Revolut";
 
   return (
@@ -78,14 +85,24 @@ export default async function PremiumPage() {
         <div className="container">
           <div className="membership-plan-grid">
             {(["monthly", "annual"] as const).map((plan) => (
-              <article className="membership-plan-card" key={plan}>
-                <span className="pricing-label">
-                  {spanish
-                    ? plan === "monthly"
-                      ? "Membresía mensual"
-                      : "Membresía anual"
-                    : MEMBERSHIP_PLANS[plan].label}
-                </span>
+              <article
+                className={`membership-plan-card${plan === "annual" ? " is-best-value" : ""}`}
+                key={plan}
+              >
+                <div className="membership-plan-top">
+                  <span className="pricing-label">
+                    {spanish
+                      ? plan === "monthly"
+                        ? "Membresía mensual"
+                        : "Membresía anual"
+                      : MEMBERSHIP_PLANS[plan].label}
+                  </span>
+                  {plan === "annual" && savings > 0 ? (
+                    <span className="membership-save-badge">
+                      {spanish ? `Ahorra ${savings}%` : `Save ${savings}%`}
+                    </span>
+                  ) : null}
+                </div>
                 <h2>
                   {spanish
                     ? plan === "monthly"
@@ -94,11 +111,21 @@ export default async function PremiumPage() {
                     : MEMBERSHIP_PLANS[plan].name}
                 </h2>
                 <p className="membership-price-note">
-                  {MEMBERSHIP_PLANS[plan].priceLabel}.{" "}
+                  {spanish
+                    ? MEMBERSHIP_PLANS[plan].priceLabelEs
+                    : MEMBERSHIP_PLANS[plan].priceLabel}
+                  .{" "}
                   {spanish
                     ? `El pago se procesa de forma segura mediante ${providerName}.`
                     : `Checkout is processed securely by ${providerName}.`}
                 </p>
+                {plan === "annual" && savings > 0 ? (
+                  <p className="membership-equivalent">
+                    {spanish
+                      ? `Equivale a ${perMonth.toLocaleString("es-ES", { style: "currency", currency: "EUR" })} al mes, frente a ${MEMBERSHIP_PLANS.monthly.amount.toLocaleString("es-ES", { style: "currency", currency: "EUR" })} con el plan mensual.`
+                      : `Works out to €${perMonth.toFixed(2)} a month, versus €${MEMBERSHIP_PLANS.monthly.amount.toFixed(2)} on the monthly plan.`}
+                  </p>
+                ) : null}
                 <ul className="premium-list">
                   {(spanish
                     ? [

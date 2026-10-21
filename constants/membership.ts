@@ -2,18 +2,20 @@ import type { MembershipPlan, MembershipStatus } from "@/types/membership";
 
 export const MEMBERSHIP_PLANS = {
   annual: {
-    amount: 49.99,
+    amount: 249.99,
     currency: "EUR",
     label: "Annual membership",
     name: "One annual membership",
-    priceLabel: "€49.99 EUR per year",
+    priceLabel: "€249.99 EUR per year",
+    priceLabelEs: "249,99 € al año",
   },
   monthly: {
-    amount: 19.99,
+    amount: 49.99,
     currency: "EUR",
     label: "Monthly membership",
     name: "Flexible monthly access",
-    priceLabel: "€19.99 EUR per month",
+    priceLabel: "€49.99 EUR per month",
+    priceLabelEs: "49,99 € al mes",
   },
 } as const satisfies Record<
   MembershipPlan,
@@ -23,8 +25,20 @@ export const MEMBERSHIP_PLANS = {
     label: string;
     name: string;
     priceLabel: string;
+    priceLabelEs: string;
   }
 >;
+
+/** Percent saved by paying yearly instead of 12 monthly payments, rounded down. */
+export function annualSavingsPercent() {
+  const yearOfMonthly = MEMBERSHIP_PLANS.monthly.amount * 12;
+  return Math.floor((1 - MEMBERSHIP_PLANS.annual.amount / yearOfMonthly) * 100);
+}
+
+/** What the annual plan works out to per month, rounded to cents. */
+export function annualMonthlyEquivalent() {
+  return Math.round((MEMBERSHIP_PLANS.annual.amount / 12) * 100) / 100;
+}
 
 export const PREMIUM_BENEFITS = [
   "Full premium market analysis",

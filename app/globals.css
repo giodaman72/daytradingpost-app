@@ -4647,6 +4647,41 @@ button {
   line-height: 1.65;
 }
 
+.membership-plan-card.is-best-value {
+  border-color: rgba(245, 185, 66, 0.55);
+  background:
+    linear-gradient(145deg, rgba(245, 185, 66, 0.14), transparent 48%),
+    var(--background-soft);
+}
+
+.membership-plan-top {
+  min-height: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.membership-save-badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #070b12;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.membership-equivalent {
+  margin: -14px 0 28px;
+  color: var(--gold-light);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
 .membership-plan-card .premium-list {
   grid-template-columns: 1fr;
   margin-bottom: 34px;
