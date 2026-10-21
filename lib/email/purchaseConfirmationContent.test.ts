@@ -29,7 +29,7 @@ describe("buildPurchaseConfirmationContent", () => {
       verifiedAt: "2026-07-30T12:00:00.000Z",
     });
 
-    expect(result.text).toContain("Amount: €799.99");
+    expect(result.text).toContain("Amount: €699.99");
     expect(result.html).not.toContain("<script>");
     expect(result.html).toContain("&lt;reference&gt;");
     expect(result.text).not.toContain("Access through:");

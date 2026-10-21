@@ -2,12 +2,12 @@ import type { MembershipPlan, MembershipStatus } from "@/types/membership";
 
 export const MEMBERSHIP_PLANS = {
   annual: {
-    amount: 799.99,
+    amount: 699.99,
     currency: "EUR",
     label: "Annual membership",
     name: "One annual membership",
-    priceLabel: "€799.99 EUR per year",
-    priceLabelEs: "799,99 € al año",
+    priceLabel: "€699.99 EUR per year",
+    priceLabelEs: "699,99 € al año",
   },
   monthly: {
     amount: 72.99,
