@@ -29,6 +29,17 @@ export const MEMBERSHIP_PLANS = {
   }
 >;
 
+/** Percent saved by paying yearly instead of 12 monthly payments, rounded down. */
+export function annualSavingsPercent() {
+  const yearOfMonthly = MEMBERSHIP_PLANS.monthly.amount * 12;
+  return Math.floor((1 - MEMBERSHIP_PLANS.annual.amount / yearOfMonthly) * 100);
+}
+
+/** What the annual plan works out to per month, rounded to cents. */
+export function annualMonthlyEquivalent() {
+  return Math.round((MEMBERSHIP_PLANS.annual.amount / 12) * 100) / 100;
+}
+
 export const PREMIUM_BENEFITS = [
   "Full premium market analysis",
   "Detailed scenarios and technical levels",
