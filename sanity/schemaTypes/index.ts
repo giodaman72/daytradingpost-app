@@ -14,12 +14,14 @@ import { academyModuleType } from "./academyModule";
 import { articleType } from "./article";
 import { authorType } from "./author";
 import { categoryType } from "./category";
+import { dailyVideoType } from "./dailyVideo";
 import { instructorType } from "./instructor";
 
 export const schemaTypes = [
   articleType,
   authorType,
   categoryType,
+  dailyVideoType,
   academyVideoType,
   academyResourceType,
   academyAnswerOptionType,

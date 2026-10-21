@@ -4,7 +4,13 @@ import {
   LatestAnalysisCard,
   type LatestAnalysis,
 } from "@/components/home/LatestAnalysisCard";
-import { getArticleBySlug, getLatestArticles } from "@/lib/cms";
+import { DailyVideoCard } from "@/components/home/DailyVideoCard";
+import {
+  getArticleBySlug,
+  getLatestArticles,
+  getLatestDailyVideo,
+} from "@/lib/cms";
+import { parseYouTubeId } from "@/lib/video/youtube";
 import { HomeMarketCharts } from "@/components/home/HomeMarketCharts";
 import { MarketTickerTape } from "@/components/home/MarketTickerTape";
 import { NewsletterSection } from "@/components/newsletter/NewsletterSection";
@@ -104,10 +110,16 @@ async function getLatestAnalysis(
 
 export default async function Home() {
   const locale = await getRequestLocale();
-  const [quotes, latestAnalysis] = await Promise.all([
+  const [quotes, dailyVideo, latestAnalysis] = await Promise.all([
     getHomepageQuotes(),
+    getLatestDailyVideo(locale).catch(() => null),
     getLatestAnalysis(locale),
   ]);
+  // The daily video leads the hero; the latest analysis fills in until the
+  // first video is published, and the globe only if neither can load.
+  const showVideo = Boolean(
+    dailyVideo && parseYouTubeId(dailyVideo.youtubeUrl),
+  );
   const copy = HOME_COPY[locale];
   const tradingViewEnabled = getChartConfig().tradingViewEnabled;
   // Until a first-party quote provider is live, show TradingView's free
@@ -152,7 +164,12 @@ export default async function Home() {
             </div>
           </div>
 
-          {latestAnalysis ? (
+          {showVideo && dailyVideo ? (
+            <div className="reference-hero-side">
+              <DailyVideoCard video={dailyVideo} locale={locale} />
+              <ForexSessionsPanel locale={locale} />
+            </div>
+          ) : latestAnalysis ? (
             <div className="reference-hero-side">
               <LatestAnalysisCard article={latestAnalysis} locale={locale} />
               <ForexSessionsPanel locale={locale} />
