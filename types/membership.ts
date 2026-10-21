@@ -9,7 +9,8 @@ export type MembershipStatus =
   | "cancelled"
   | "failed";
 
-export type PaymentProviderMode = "revolut_api" | "revolut_payment_links";
+export type PaymentProviderMode =
+  "lemonsqueezy" | "revolut_api" | "revolut_payment_links";
 
 export type MembershipRequestStatus =
   "pending" | "verified" | "rejected" | "cancelled" | "failed";

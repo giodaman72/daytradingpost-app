@@ -12,6 +12,7 @@ type ConfirmationRequest = {
   membership_plan: MembershipPlan;
   payment_reference: string;
   payment_subscription_id: string | null;
+  provider_mode: string;
   provider_transaction_reference: string | null;
   status: string;
   user_id: string;
@@ -29,7 +30,7 @@ export async function deliverPurchaseConfirmation(requestId: string) {
   const { data: request, error: requestError } = await admin
     .from("membership_requests")
     .select(
-      "id,user_id,membership_plan,status,payment_reference,payment_subscription_id,provider_transaction_reference,verified_at,confirmation_email_sent_at",
+      "id,user_id,membership_plan,status,payment_reference,payment_subscription_id,provider_mode,provider_transaction_reference,verified_at,confirmation_email_sent_at",
     )
     .eq("id", requestId)
     .maybeSingle<ConfirmationRequest>();
@@ -60,6 +61,8 @@ export async function deliverPurchaseConfirmation(requestId: string) {
     currentPeriodEnd: profile.current_period_end,
     providerReference,
     plan: request.membership_plan,
+    providerName:
+      request.provider_mode === "lemonsqueezy" ? "Lemon Squeezy" : "Revolut",
     verifiedAt: request.verified_at,
   });
   const emailId = await sendTransactionalEmail({

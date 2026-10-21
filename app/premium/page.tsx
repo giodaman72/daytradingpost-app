@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
     ? {
         title: "Membresía Premium",
         description:
-          "Elige una membresía Premium mensual o anual de DayTradingPost con pago seguro mediante Revolut.",
+          "Elige una membresía Premium mensual o anual de DayTradingPost con pago seguro.",
         alternates: {
           canonical: "/es/premium",
           languages: {
@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
     : {
         title: "Premium membership",
         description:
-          "Choose a monthly or annual DayTradingPost premium membership secured by Revolut.",
+          "Choose a monthly or annual DayTradingPost premium membership with secure checkout.",
       };
 }
 
@@ -40,6 +40,8 @@ export default async function PremiumPage() {
   const spanish = locale === "es";
   const mode = getPaymentProviderMode();
   const isPaymentLinks = mode === "revolut_payment_links";
+  const isLemonSqueezy = mode === "lemonsqueezy";
+  const providerName = isLemonSqueezy ? "Lemon Squeezy" : "Revolut";
 
   return (
     <main className="membership-page">
@@ -56,8 +58,8 @@ export default async function PremiumPage() {
           </h1>
           <p>
             {spanish
-              ? "Desbloquea informes premium completos con pagos y estado de cuenta protegidos mediante Revolut y Supabase."
-              : "Unlock complete premium briefings while keeping payment and account status secured through Revolut and Supabase."}
+              ? "Desbloquea informes premium completos con un pago seguro y acceso que se activa al instante."
+              : "Unlock complete premium briefings with secure checkout and access that turns on right away."}
           </p>
           {hasPremiumAccess ? (
             <div className="membership-callout success" role="status">
@@ -94,8 +96,8 @@ export default async function PremiumPage() {
                 <p className="membership-price-note">
                   {MEMBERSHIP_PLANS[plan].priceLabel}.{" "}
                   {spanish
-                    ? "El pago se procesa de forma segura mediante Revolut."
-                    : "Checkout is processed securely by Revolut."}
+                    ? `El pago se procesa de forma segura mediante ${providerName}.`
+                    : `Checkout is processed securely by ${providerName}.`}
                 </p>
                 <ul className="premium-list">
                   {(spanish
@@ -140,18 +142,26 @@ export default async function PremiumPage() {
                 ? spanish
                   ? "Verificación mediante enlace de pago"
                   : "Payment-link verification"
-                : spanish
-                  ? "Pago con Revolut Merchant"
-                  : "Revolut Merchant checkout"}
+                : isLemonSqueezy
+                  ? spanish
+                    ? "Pago seguro con Lemon Squeezy"
+                    : "Secure checkout with Lemon Squeezy"
+                  : spanish
+                    ? "Pago con Revolut Merchant"
+                    : "Revolut Merchant checkout"}
             </strong>
             <p>
               {isPaymentLinks
                 ? spanish
                   ? "Antes del pago se crea una solicitud de membresía pendiente. El pago no concede acceso automáticamente; primero debe verificarlo un administrador. Conserva tu referencia de pago."
                   : "A pending membership request is created before checkout. Payment does not grant access automatically; an administrator verifies it first. Keep your payment reference."
-                : spanish
-                  ? "Revolut gestiona el pago. El acceso cambia únicamente cuando un webhook firmado confirma el estado de la suscripción."
-                  : "Revolut handles checkout. Membership access changes only after a signed webhook confirms the subscription state."}
+                : isLemonSqueezy
+                  ? spanish
+                    ? "Paga con tarjeta, Apple Pay, Google Pay o PayPal. Lemon Squeezy gestiona el pago y los impuestos y te envía el recibo. Puedes cancelar cuando quieras desde tu cuenta."
+                    : "Pay by card, Apple Pay, Google Pay or PayPal. Lemon Squeezy handles payment and sales tax and emails your receipt. Cancel anytime from your account."
+                  : spanish
+                    ? "Revolut gestiona el pago. El acceso cambia únicamente cuando un webhook firmado confirma el estado de la suscripción."
+                    : "Revolut handles checkout. Membership access changes only after a signed webhook confirms the subscription state."}
             </p>
           </div>
         </div>
