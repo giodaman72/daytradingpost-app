@@ -2,20 +2,20 @@ import type { MembershipPlan, MembershipStatus } from "@/types/membership";
 
 export const MEMBERSHIP_PLANS = {
   annual: {
-    amount: 249.99,
+    amount: 799.99,
     currency: "EUR",
     label: "Annual membership",
     name: "One annual membership",
-    priceLabel: "€249.99 EUR per year",
-    priceLabelEs: "249,99 € al año",
+    priceLabel: "€799.99 EUR per year",
+    priceLabelEs: "799,99 € al año",
   },
   monthly: {
-    amount: 49.99,
+    amount: 72.99,
     currency: "EUR",
     label: "Monthly membership",
     name: "Flexible monthly access",
-    priceLabel: "€49.99 EUR per month",
-    priceLabelEs: "49,99 € al mes",
+    priceLabel: "€72.99 EUR per month",
+    priceLabelEs: "72,99 € al mes",
   },
 } as const satisfies Record<
   MembershipPlan,

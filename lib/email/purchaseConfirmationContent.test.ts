@@ -13,7 +13,7 @@ describe("buildPurchaseConfirmationContent", () => {
     });
 
     expect(result.subject).toBe("Payment confirmed — Monthly membership");
-    expect(result.text).toContain("Amount: €49.99");
+    expect(result.text).toContain("Amount: €72.99");
     expect(result.text).toContain("Access through: 30 August 2026");
     expect(result.html).toContain("revolut-123");
     expect(result.html).toContain("https://daytradingpost.com/account/billing");
@@ -29,7 +29,7 @@ describe("buildPurchaseConfirmationContent", () => {
       verifiedAt: "2026-07-30T12:00:00.000Z",
     });
 
-    expect(result.text).toContain("Amount: €249.99");
+    expect(result.text).toContain("Amount: €799.99");
     expect(result.html).not.toContain("<script>");
     expect(result.html).toContain("&lt;reference&gt;");
     expect(result.text).not.toContain("Access through:");
