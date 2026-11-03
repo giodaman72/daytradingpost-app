@@ -20,7 +20,7 @@ const {
 describe("Academy course locale", () => {
   const english = { id: "en", language: "en" as const };
   const spanish = { id: "es", language: "es" as const };
-  const legacy = { id: "legacy" };
+  const legacy: { id: string; language?: "en" | "es" } = { id: "legacy" };
 
   it("treats courses without a language as English", () => {
     expect(academyCourseLocale(legacy)).toBe("en");
