@@ -74,7 +74,7 @@ export function AcademyCourseCard({
           </Link>
         </div>
       </div>
-      {spanish ? (
+      {spanish && course.language !== "es" ? (
         <span className="sr-only" lang="es">
           El contenido editorial de este curso se conserva en su idioma fuente.
         </span>
