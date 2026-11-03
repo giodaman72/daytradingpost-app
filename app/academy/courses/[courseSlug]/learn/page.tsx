@@ -11,19 +11,34 @@ import { AcademyViewEvent } from "@/components/academy/AcademyViewEvent";
 import { CourseCurriculum } from "@/components/academy/CourseCurriculum";
 import { AcademyError } from "@/lib/academy/academyErrors";
 import { getAcademyLearningState } from "@/lib/academy/academyService";
+import {
+  academyLessonText,
+  academyStatusLabel,
+} from "@/lib/academy/academyLessonText";
+import { localizeHref } from "@/lib/i18n/config";
+import { getRequestLocale } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Course Curriculum",
-  description: "Your private DayTradingPost Academy course curriculum.",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const spanish = (await getRequestLocale()) === "es";
+  return {
+    title: spanish ? "Temario del curso" : "Course Curriculum",
+    description: spanish
+      ? "Tu temario privado del curso en la Academia DayTradingPost."
+      : "Your private DayTradingPost Academy course curriculum.",
+    robots: { index: false, follow: false },
+  };
+}
 
 type LearnPageProps = {
   params: Promise<{ courseSlug: string }>;
 };
 
 export default async function LearnPage({ params }: LearnPageProps) {
-  const { courseSlug } = await params;
+  const [{ courseSlug }, locale] = await Promise.all([
+    params,
+    getRequestLocale(),
+  ]);
+  const tr = academyLessonText(locale);
   let result;
   try {
     result = await getAcademyLearningState(courseSlug);
@@ -41,9 +56,12 @@ export default async function LearnPage({ params }: LearnPageProps) {
             <div className="container">
               <AcademyLockedState
                 courseSlug={courseSlug}
-                message="An active Premium membership is required to continue this course."
+                locale={locale}
+                message={tr(
+                  "An active Premium membership is required to continue this course.",
+                )}
                 premium
-                title="Premium course access is paused."
+                title={tr("Premium course access is paused.")}
               />
             </div>
           </section>
@@ -97,29 +115,34 @@ export default async function LearnPage({ params }: LearnPageProps) {
       <AcademyViewEvent courseId={course.id} name="academy_course_resumed" />
       <section className="academy-learn-header">
         <div className="container">
-          <Link href={`/academy/courses/${course.slug}`} className="text-link">
+          <Link
+            href={localizeHref(`/academy/courses/${course.slug}`, locale)}
+            className="text-link"
+          >
             <ArrowLeft size={15} aria-hidden="true" />
-            Course overview
+            {tr("Course overview")}
           </Link>
           <div>
             <div>
-              <span className="section-kicker">Your curriculum</span>
+              <span className="section-kicker">{tr("Your curriculum")}</span>
               <h1>{course.title}</h1>
               <p>
-                {Math.round(learningState.enrollment.progressPercent)}% complete
-                · {learningState.enrollment.status.replace("_", " ")}
+                {Math.round(learningState.enrollment.progressPercent)}%{" "}
+                {tr("complete")} ·{" "}
+                {academyStatusLabel(learningState.enrollment.status, locale)}
               </p>
             </div>
             <span className="academy-locked-note">
               <CirclePlay size={17} aria-hidden="true" />
-              No lesson is currently available. Review the prerequisite states
-              below.
+              {tr(
+                "No lesson is currently available. Review the prerequisite states below.",
+              )}
             </span>
           </div>
           <div
             className="academy-course-progress"
             role="progressbar"
-            aria-label={`${course.title} progress`}
+            aria-label={`${course.title} ${tr("progress")}`}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={Math.round(learningState.enrollment.progressPercent)}
@@ -134,7 +157,11 @@ export default async function LearnPage({ params }: LearnPageProps) {
       </section>
       <section className="academy-section academy-learning-curriculum">
         <div className="container">
-          <CourseCurriculum course={course} learningState={learningState} />
+          <CourseCurriculum
+            course={course}
+            learningState={learningState}
+            locale={locale}
+          />
         </div>
       </section>
     </>

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { academyLessonText } from "@/lib/academy/academyLessonText";
+import { localizeHref, type Locale } from "@/lib/i18n/config";
 import type { AcademyTutorMode } from "@/types/ai-assistant";
 
 const ACTIONS: Array<{
@@ -36,22 +38,33 @@ const ACTIONS: Array<{
 export function AcademyTutorLessonActions({
   courseSlug,
   lessonSlug,
+  locale = "en",
 }: {
   courseSlug: string;
   lessonSlug: string;
+  locale?: Locale;
 }) {
-  const route = `/academy/courses/${encodeURIComponent(courseSlug)}/tutor`;
+  const tr = academyLessonText(locale);
+  const route = localizeHref(
+    `/academy/courses/${encodeURIComponent(courseSlug)}/tutor`,
+    locale,
+  );
   return (
     <section
       className="academy-tutor-entry"
       aria-labelledby="lesson-tutor-title"
     >
       <div>
-        <span className="section-kicker">Optional learning support</span>
-        <h2 id="lesson-tutor-title">Ask the AI Tutor about this lesson</h2>
+        <span className="section-kicker">
+          {tr("Optional learning support")}
+        </span>
+        <h2 id="lesson-tutor-title">
+          {tr("Ask the AI Tutor about this lesson")}
+        </h2>
         <p>
-          Nothing is sent until you choose an action and submit. Private notes
-          and assessment answers are excluded.
+          {tr(
+            "Nothing is sent until you choose an action and submit. Private notes and assessment answers are excluded.",
+          )}
         </p>
       </div>
       <div className="academy-tutor-actions">
@@ -59,9 +72,9 @@ export function AcademyTutorLessonActions({
           <Link
             className="button button-secondary"
             key={action.mode}
-            href={`${route}?lesson=${encodeURIComponent(lessonSlug)}&action=${action.mode}&prompt=${encodeURIComponent(action.prompt)}`}
+            href={`${route}?lesson=${encodeURIComponent(lessonSlug)}&action=${action.mode}&prompt=${encodeURIComponent(tr(action.prompt))}`}
           >
-            {action.label}
+            {tr(action.label)}
           </Link>
         ))}
       </div>

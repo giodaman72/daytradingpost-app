@@ -1,14 +1,21 @@
 "use client";
 
+import type { Locale } from "@/lib/i18n/config";
+import { academyLessonText } from "@/lib/academy/academyLessonText";
 import { Download, ExternalLink, FileText } from "lucide-react";
 import type { AcademyResource } from "@/types/academy";
 import { isSafeAcademyResourceUrl } from "@/lib/academy/academyPresentation";
 
 type LessonResourcesProps = {
+  locale?: Locale;
   resources: AcademyResource[];
 };
 
-export function LessonResources({ resources }: LessonResourcesProps) {
+export function LessonResources({
+  locale = "en",
+  resources,
+}: LessonResourcesProps) {
+  const tr = academyLessonText(locale);
   const safeResources = resources.filter((resource) =>
     isSafeAcademyResourceUrl(resource.url),
   );
@@ -19,8 +26,8 @@ export function LessonResources({ resources }: LessonResourcesProps) {
       aria-labelledby="lesson-resources-title"
     >
       <div>
-        <span className="section-kicker">Course materials</span>
-        <h2 id="lesson-resources-title">Lesson resources</h2>
+        <span className="section-kicker">{tr("Course materials")}</span>
+        <h2 id="lesson-resources-title">{tr("Lesson resources")}</h2>
       </div>
       <ul>
         {safeResources.map((resource) => (
@@ -46,7 +53,7 @@ export function LessonResources({ resources }: LessonResourcesProps) {
               ) : (
                 <ExternalLink size={17} aria-hidden="true" />
               )}
-              <span>{resource.downloadable ? "Download" : "Open"}</span>
+              <span>{resource.downloadable ? tr("Download") : tr("Open")}</span>
             </a>
           </li>
         ))}

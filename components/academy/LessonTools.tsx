@@ -1,5 +1,7 @@
 "use client";
 
+import type { Locale } from "@/lib/i18n/config";
+import { academyLessonText } from "@/lib/academy/academyLessonText";
 import { useEffect, useState } from "react";
 import { Bookmark, NotebookPen, Pencil, Trash2, X } from "lucide-react";
 import type { AcademyBookmark, AcademyLearnerNote } from "@/types/academy";
@@ -10,6 +12,7 @@ type LessonToolsProps = {
   initialBookmarks: AcademyBookmark[];
   initialNotes: AcademyLearnerNote[];
   lessonId: string;
+  locale?: Locale;
   moduleId: string;
   positionSeconds?: number | null;
 };
@@ -28,9 +31,11 @@ export function LessonTools({
   initialBookmarks,
   initialNotes,
   lessonId,
+  locale = "en",
   moduleId,
   positionSeconds = null,
 }: LessonToolsProps) {
+  const tr = academyLessonText(locale);
   const [bookmarks, setBookmarks] = useState(initialBookmarks);
   const [notes, setNotes] = useState(initialNotes);
   const [noteText, setNoteText] = useState("");
@@ -89,7 +94,7 @@ export function LessonTools({
       );
       setBookmarks((current) => [bookmark, ...current]);
       setLabel("");
-      showStatus("Bookmark saved.");
+      showStatus(tr("Bookmark saved."));
       recordAcademyClientEvent({
         courseId,
         lessonId,
@@ -97,7 +102,7 @@ export function LessonTools({
         name: "academy_bookmark_created",
       });
     } catch (error) {
-      showError(error, "Bookmark could not be saved.");
+      showError(error, tr("Bookmark could not be saved."));
     } finally {
       setPendingAction(null);
     }
@@ -117,9 +122,9 @@ export function LessonTools({
         current.map((item) => (item.id === id ? bookmark : item)),
       );
       setEditingBookmarkId(null);
-      showStatus("Bookmark label updated.");
+      showStatus(tr("Bookmark label updated."));
     } catch (error) {
-      showError(error, "Bookmark could not be updated.");
+      showError(error, tr("Bookmark could not be updated."));
     } finally {
       setPendingAction(null);
     }
@@ -128,7 +133,9 @@ export function LessonTools({
   async function removeBookmark(bookmark: AcademyBookmark) {
     if (
       !window.confirm(
-        `Delete bookmark “${bookmark.label || "Lesson bookmark"}”?`,
+        locale === "es"
+          ? `¿Eliminar el marcador “${bookmark.label || tr("Lesson bookmark")}”?`
+          : `Delete bookmark “${bookmark.label || tr("Lesson bookmark")}”?`,
       )
     )
       return;
@@ -140,9 +147,9 @@ export function LessonTools({
       setBookmarks((current) =>
         current.filter((item) => item.id !== bookmark.id),
       );
-      showStatus("Bookmark removed.");
+      showStatus(tr("Bookmark removed."));
     } catch (error) {
-      showError(error, "Bookmark could not be deleted.");
+      showError(error, tr("Bookmark could not be deleted."));
     } finally {
       setPendingAction(null);
     }
@@ -168,7 +175,7 @@ export function LessonTools({
       );
       setNotes((current) => [note, ...current]);
       setNoteText("");
-      showStatus("Private note saved.");
+      showStatus(tr("Private note saved."));
       recordAcademyClientEvent({
         courseId,
         lessonId,
@@ -176,7 +183,7 @@ export function LessonTools({
         name: "academy_note_created",
       });
     } catch (error) {
-      showError(error, "Private note could not be saved.");
+      showError(error, tr("Private note could not be saved."));
     } finally {
       setPendingAction(null);
     }
@@ -197,16 +204,16 @@ export function LessonTools({
       );
       setEditingNoteId(null);
       setEditingNoteText("");
-      showStatus("Private note updated.");
+      showStatus(tr("Private note updated."));
     } catch (error) {
-      showError(error, "Private note could not be updated.");
+      showError(error, tr("Private note could not be updated."));
     } finally {
       setPendingAction(null);
     }
   }
 
   async function removeNote(note: AcademyLearnerNote) {
-    if (!window.confirm("Delete this private note? This cannot be undone."))
+    if (!window.confirm(tr("Delete this private note? This cannot be undone.")))
       return;
     setPendingAction(`note:delete:${note.id}`);
     try {
@@ -214,29 +221,29 @@ export function LessonTools({
         method: "DELETE",
       });
       setNotes((current) => current.filter((item) => item.id !== note.id));
-      showStatus("Private note removed.");
+      showStatus(tr("Private note removed."));
     } catch (error) {
-      showError(error, "Private note could not be deleted.");
+      showError(error, tr("Private note could not be deleted."));
     } finally {
       setPendingAction(null);
     }
   }
 
   return (
-    <aside className="academy-lesson-tools" aria-label="Lesson tools">
+    <aside className="academy-lesson-tools" aria-label={tr("Lesson tools")}>
       <section>
         <div className="academy-tool-heading">
           <Bookmark size={18} aria-hidden="true" />
-          <h2>Bookmarks</h2>
+          <h2>{tr("Bookmarks")}</h2>
         </div>
-        <label htmlFor="academy-bookmark-label">Optional label</label>
+        <label htmlFor="academy-bookmark-label">{tr("Optional label")}</label>
         <div className="academy-inline-form">
           <input
             id="academy-bookmark-label"
             value={label}
             onChange={(event) => setLabel(event.target.value)}
             maxLength={120}
-            placeholder="Key idea or timestamp"
+            placeholder={tr("Key idea or timestamp")}
           />
           <button
             type="button"
@@ -244,7 +251,7 @@ export function LessonTools({
             onClick={() => void addBookmark()}
             disabled={pendingAction !== null}
           >
-            {pendingAction === "bookmark:create" ? "Saving…" : "Save"}
+            {pendingAction === "bookmark:create" ? tr("Saving…") : tr("Save")}
           </button>
         </div>
         {lessonBookmarks.length ? (
@@ -254,7 +261,7 @@ export function LessonTools({
                 {editingBookmarkId === bookmark.id ? (
                   <div className="academy-edit-item">
                     <label htmlFor={`bookmark-${bookmark.id}`}>
-                      Bookmark label
+                      {tr("Bookmark label")}
                     </label>
                     <input
                       id={`bookmark-${bookmark.id}`}
@@ -269,19 +276,19 @@ export function LessonTools({
                       onClick={() => void saveBookmark(bookmark.id)}
                       disabled={pendingAction !== null}
                     >
-                      Save
+                      {tr("Save")}
                     </button>
                     <button
                       type="button"
                       onClick={() => setEditingBookmarkId(null)}
-                      aria-label="Cancel bookmark editing"
+                      aria-label={tr("Cancel bookmark editing")}
                     >
                       <X size={15} aria-hidden="true" />
                     </button>
                   </div>
                 ) : (
                   <>
-                    <span>{bookmark.label || "Lesson bookmark"}</span>
+                    <span>{bookmark.label || tr("Lesson bookmark")}</span>
                     <div>
                       <button
                         type="button"
@@ -289,7 +296,7 @@ export function LessonTools({
                           setEditingBookmarkId(bookmark.id);
                           setEditingBookmarkLabel(bookmark.label ?? "");
                         }}
-                        aria-label={`Edit bookmark ${bookmark.label || "Lesson bookmark"}`}
+                        aria-label={`${tr("Edit bookmark")} ${bookmark.label || tr("Lesson bookmark")}`}
                       >
                         <Pencil size={15} aria-hidden="true" />
                       </button>
@@ -297,7 +304,7 @@ export function LessonTools({
                         type="button"
                         onClick={() => void removeBookmark(bookmark)}
                         disabled={pendingAction !== null}
-                        aria-label={`Delete bookmark ${bookmark.label || "Lesson bookmark"}`}
+                        aria-label={`${tr("Delete bookmark")} ${bookmark.label || tr("Lesson bookmark")}`}
                       >
                         <Trash2 size={15} aria-hidden="true" />
                       </button>
@@ -308,16 +315,16 @@ export function LessonTools({
             ))}
           </ul>
         ) : (
-          <p>No bookmarks in this lesson yet.</p>
+          <p>{tr("No bookmarks in this lesson yet.")}</p>
         )}
       </section>
       <section>
         <div className="academy-tool-heading">
           <NotebookPen size={18} aria-hidden="true" />
-          <h2>Private notes</h2>
+          <h2>{tr("Private notes")}</h2>
         </div>
         <form onSubmit={addNote}>
-          <label htmlFor="academy-note">Note</label>
+          <label htmlFor="academy-note">{tr("Note")}</label>
           <textarea
             id="academy-note"
             value={noteText}
@@ -325,7 +332,7 @@ export function LessonTools({
             maxLength={5000}
             required
             rows={5}
-            placeholder="Capture your own learning notes…"
+            placeholder={tr("Capture your own learning notes…")}
             aria-describedby="academy-note-limit"
           />
           <small id="academy-note-limit">
@@ -336,7 +343,9 @@ export function LessonTools({
             type="submit"
             disabled={pendingAction !== null}
           >
-            {pendingAction === "note:create" ? "Saving…" : "Save private note"}
+            {pendingAction === "note:create"
+              ? tr("Saving…")
+              : tr("Save private note")}
           </button>
         </form>
         {lessonNotes.length ? (
@@ -345,7 +354,9 @@ export function LessonTools({
               <li key={note.id}>
                 {editingNoteId === note.id ? (
                   <div className="academy-edit-item">
-                    <label htmlFor={`note-${note.id}`}>Edit private note</label>
+                    <label htmlFor={`note-${note.id}`}>
+                      {tr("Edit private note")}
+                    </label>
                     <textarea
                       id={`note-${note.id}`}
                       maxLength={5_000}
@@ -364,13 +375,13 @@ export function LessonTools({
                         onClick={() => void saveNote(note.id)}
                         disabled={pendingAction !== null}
                       >
-                        Save changes
+                        {tr("Save changes")}
                       </button>
                       <button
                         type="button"
                         onClick={() => setEditingNoteId(null)}
                       >
-                        Cancel
+                        {tr("Cancel")}
                       </button>
                     </div>
                   </div>
@@ -392,7 +403,7 @@ export function LessonTools({
                           setEditingNoteId(note.id);
                           setEditingNoteText(note.noteText);
                         }}
-                        aria-label="Edit private note"
+                        aria-label={tr("Edit private note")}
                       >
                         <Pencil size={15} aria-hidden="true" />
                       </button>
@@ -400,7 +411,7 @@ export function LessonTools({
                         type="button"
                         onClick={() => void removeNote(note)}
                         disabled={pendingAction !== null}
-                        aria-label="Delete private note"
+                        aria-label={tr("Delete private note")}
                       >
                         <Trash2 size={15} aria-hidden="true" />
                       </button>
@@ -411,7 +422,7 @@ export function LessonTools({
             ))}
           </ul>
         ) : (
-          <p>Your notes are private and visible only to you.</p>
+          <p>{tr("Your notes are private and visible only to you.")}</p>
         )}
       </section>
       {feedback ? (
