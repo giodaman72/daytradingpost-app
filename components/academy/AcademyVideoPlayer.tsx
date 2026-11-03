@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import type { Locale } from "@/lib/i18n/config";
+import { academyLessonText } from "@/lib/academy/academyLessonText";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AcademyVideo } from "@/types/academy";
 import {
   getAcademyVideoSource,
@@ -13,6 +15,7 @@ type AcademyVideoPlayerProps = {
   enrollmentId: string;
   initialPosition: number;
   lessonId: string;
+  locale?: Locale;
   moduleId: string;
   video: AcademyVideo;
 };
@@ -22,9 +25,11 @@ export function AcademyVideoPlayer({
   enrollmentId,
   initialPosition,
   lessonId,
+  locale = "en",
   moduleId,
   video,
 }: AcademyVideoPlayerProps) {
+  const tr = useMemo(() => academyLessonText(locale), [locale]);
   const resumePosition = normalizeAcademyVideoResumePosition(
     initialPosition,
     video.durationSeconds,
@@ -33,7 +38,7 @@ export function AcademyVideoPlayer({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const lastSentRef = useRef(resumePosition);
   const [position, setPosition] = useState(resumePosition);
-  const [status, setStatus] = useState("Progress is saved as you watch.");
+  const [status, setStatus] = useState(tr("Progress is saved as you watch."));
   const [portrait, setPortrait] = useState(false);
 
   const synchronize = useCallback(
@@ -59,7 +64,7 @@ export function AcademyVideoPlayer({
           method: "PATCH",
         });
         lastSentRef.current = safePosition;
-        setStatus("Progress saved.");
+        setStatus(tr("Progress saved."));
         recordAcademyClientEvent({
           courseId,
           lessonId,
@@ -68,11 +73,11 @@ export function AcademyVideoPlayer({
         });
       } catch {
         setStatus(
-          "Progress could not be saved. Keep this page open and retry.",
+          tr("Progress could not be saved. Keep this page open and retry."),
         );
       }
     },
-    [courseId, enrollmentId, lessonId, moduleId],
+    [courseId, enrollmentId, lessonId, moduleId, tr],
   );
 
   useEffect(() => {
@@ -137,8 +142,9 @@ export function AcademyVideoPlayer({
   if (source.kind === "unavailable")
     return (
       <div className="academy-video-unavailable" role="status">
-        This lesson video is not currently available. The text and resources
-        below remain accessible.
+        {tr(
+          "This lesson video is not currently available. The text and resources below remain accessible.",
+        )}
       </div>
     );
 
@@ -155,7 +161,7 @@ export function AcademyVideoPlayer({
           <iframe
             ref={iframeRef}
             src={source.src}
-            title="Academy lesson video"
+            title={tr("Academy lesson video")}
             allow="accelerometer; autoplay; encrypted-media; picture-in-picture"
             allowFullScreen
           />
@@ -222,7 +228,7 @@ export function AcademyVideoPlayer({
         <span>{status}</span>
         <span>
           {Math.floor(position / 60)}:
-          {String(Math.floor(position % 60)).padStart(2, "0")} watched
+          {String(Math.floor(position % 60)).padStart(2, "0")} {tr("watched")}
         </span>
       </div>
     </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import type { Locale } from "@/lib/i18n/config";
+import { academyLessonText } from "@/lib/academy/academyLessonText";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { AcademyAttempt } from "@/types/academy";
@@ -10,14 +12,17 @@ type AssessmentLauncherProps = {
   courseId: string;
   label?: string;
   lessonId?: string;
+  locale?: Locale;
 };
 
 export function AssessmentLauncher({
   assessmentId,
   courseId,
-  label = "Start assessment",
+  label,
   lessonId,
+  locale = "en",
 }: AssessmentLauncherProps) {
+  const tr = academyLessonText(locale);
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -41,7 +46,7 @@ export function AssessmentLauncher({
       setError(
         requestError instanceof Error
           ? requestError.message
-          : "The assessment could not be started.",
+          : tr("The assessment could not be started."),
       );
     } finally {
       setLoading(false);
@@ -56,7 +61,9 @@ export function AssessmentLauncher({
         onClick={start}
         disabled={loading}
       >
-        {loading ? "Preparing assessment…" : label}
+        {loading
+          ? tr("Preparing assessment…")
+          : (label ?? tr("Start assessment"))}
       </button>
       {error ? (
         <p className="academy-form-error" role="alert">

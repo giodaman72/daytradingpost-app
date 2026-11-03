@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import type { Locale } from "@/lib/i18n/config";
+import { academyLessonText } from "@/lib/academy/academyLessonText";
+import { useEffect, useMemo, useState } from "react";
 import type {
   AcademyCompletionMode,
   AcademyProgressStatus,
@@ -14,6 +16,7 @@ type LessonProgressControlsProps = {
   courseId: string;
   enrollmentId: string;
   lessonId: string;
+  locale?: Locale;
   moduleId: string;
   status: AcademyProgressStatus;
 };
@@ -24,9 +27,11 @@ export function LessonProgressControls({
   courseId,
   enrollmentId,
   lessonId,
+  locale = "en",
   moduleId,
   status: initialStatus,
 }: LessonProgressControlsProps) {
+  const tr = useMemo(() => academyLessonText(locale), [locale]);
   const [status, setStatus] = useState(initialStatus);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -50,10 +55,10 @@ export function LessonProgressControls({
         setError(
           requestError instanceof Error
             ? requestError.message
-            : "Lesson progress could not be started.",
+            : tr("Lesson progress could not be started."),
         );
       });
-  }, [courseId, enrollmentId, initialStatus, lessonId, moduleId]);
+  }, [courseId, enrollmentId, initialStatus, lessonId, moduleId, tr]);
 
   async function complete() {
     setLoading(true);
@@ -74,7 +79,7 @@ export function LessonProgressControls({
       setError(
         requestError instanceof Error
           ? requestError.message
-          : "Lesson completion could not be saved.",
+          : tr("Lesson completion could not be saved."),
       );
     } finally {
       setLoading(false);
@@ -90,20 +95,24 @@ export function LessonProgressControls({
       aria-labelledby="lesson-progress-title"
     >
       <div>
-        <span className="section-kicker">Lesson progress</span>
+        <span className="section-kicker">{tr("Lesson progress")}</span>
         <h2 id="lesson-progress-title">
           {status === "completed"
-            ? "Lesson completed"
-            : "Keep your progress moving"}
+            ? tr("Lesson completed")
+            : tr("Keep your progress moving")}
         </h2>
         <p aria-live="polite">
           {status === "completed"
-            ? "Your course progress has been updated."
+            ? tr("Your course progress has been updated.")
             : completionMode === "video-threshold"
-              ? "Watch the required portion of the video. Progress saves automatically."
+              ? tr(
+                  "Watch the required portion of the video. Progress saves automatically.",
+                )
               : assessmentRequired
-                ? "Pass the assessment to complete this lesson."
-                : "Mark this lesson complete when you have finished the material."}
+                ? tr("Pass the assessment to complete this lesson.")
+                : tr(
+                    "Mark this lesson complete when you have finished the material.",
+                  )}
         </p>
       </div>
       {status !== "completed" && assessmentRequired && assessmentId ? (
@@ -111,6 +120,7 @@ export function LessonProgressControls({
           assessmentId={assessmentId}
           courseId={courseId}
           lessonId={lessonId}
+          locale={locale}
         />
       ) : null}
       {status !== "completed" &&
@@ -123,7 +133,7 @@ export function LessonProgressControls({
           onClick={complete}
           disabled={loading}
         >
-          {loading ? "Saving…" : "Mark lesson complete"}
+          {loading ? tr("Saving…") : tr("Mark lesson complete")}
         </button>
       ) : null}
       {error ? (
