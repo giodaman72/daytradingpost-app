@@ -6475,6 +6475,12 @@ button {
   background: #03060a;
 }
 
+.academy-video-frame--portrait {
+  aspect-ratio: 9 / 16;
+  width: min(100%, calc(80vh * 9 / 16));
+  margin-inline: auto;
+}
+
 .academy-video-frame iframe,
 .academy-video-frame video {
   width: 100%;
