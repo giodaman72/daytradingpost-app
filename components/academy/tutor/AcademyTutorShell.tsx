@@ -1,6 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  academyErrorText,
+  academyLessonText,
+} from "@/lib/academy/academyLessonText";
+import type { Locale } from "@/lib/i18n/config";
 import { useRouter } from "next/navigation";
 import { AssistantHistorySidebar } from "@/components/assistant/AssistantHistorySidebar";
 import { parseAssistantEventBuffer } from "@/lib/ai/streamParser";
@@ -44,6 +49,7 @@ export function AcademyTutorShell({
   premium,
   initialContext,
   basePath,
+  locale = "en",
 }: {
   initialConversations: AssistantConversation[];
   initialMessages: AssistantMessage[];
@@ -52,7 +58,9 @@ export function AcademyTutorShell({
   premium: boolean;
   initialContext: AcademyTutorInitialContext;
   basePath: string;
+  locale?: Locale;
 }) {
+  const tr = academyLessonText(locale);
   const router = useRouter();
   const [messages, setMessages] = useState(initialMessages);
   const [conversationId, setConversationId] = useState(initialConversationId);
@@ -120,9 +128,13 @@ export function AcademyTutorShell({
       });
       if (!response.ok || !response.body) {
         const body = (await response.json().catch(() => null)) as {
+          code?: string;
           message?: string;
         } | null;
-        throw new Error(body?.message ?? "The Academy Tutor is unavailable.");
+        throw Object.assign(
+          new Error(body?.message ?? "The Academy Tutor is unavailable."),
+          { code: body?.code },
+        );
       }
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -137,6 +149,7 @@ export function AcademyTutorShell({
           const item = raw as {
             type: string;
             text?: string;
+            code?: string;
             conversationId?: string;
             response?: AssistantResponse;
             message?: string;
@@ -160,8 +173,9 @@ export function AcademyTutorShell({
           if (item.type === "complete" && item.response)
             complete = item.response;
           if (item.type === "error")
-            throw new Error(
-              item.message ?? "The Academy Tutor is unavailable.",
+            throw Object.assign(
+              new Error(item.message ?? "The Academy Tutor is unavailable."),
+              { code: item.code },
             );
         }
         if (chunk.done) break;
@@ -200,10 +214,12 @@ export function AcademyTutorShell({
       );
       setError(
         controller.signal.aborted
-          ? "Generation stopped. Any partial response has been preserved."
-          : caught instanceof Error
-            ? caught.message
-            : "The Academy Tutor is unavailable.",
+          ? tr("Generation stopped. Any partial response has been preserved.")
+          : academyErrorText(
+              caught,
+              "The Academy Tutor is unavailable.",
+              locale,
+            ),
       );
     } finally {
       setStreaming(false);
@@ -218,16 +234,21 @@ export function AcademyTutorShell({
         activeId={conversationId}
         onNew={startNew}
         basePath={basePath}
+        locale={locale}
       />
       <section className="assistant-workspace">
         <div className="assistant-workspace-bar">
-          <AcademyTutorUsageMeter usage={usage} premium={premium} />
+          <AcademyTutorUsageMeter
+            usage={usage}
+            premium={premium}
+            locale={locale}
+          />
           <span
             className={premium ? "assistant-plan premium" : "assistant-plan"}
           >
             {initialContext.lessonTitle
-              ? `Lesson context: ${initialContext.lessonTitle}`
-              : "Published Academy context"}
+              ? `${tr("Lesson context")}: ${initialContext.lessonTitle}`
+              : tr("Published Academy context")}
           </span>
         </div>
         <AcademyTutorConversation
@@ -235,10 +256,12 @@ export function AcademyTutorShell({
           streamingId={streaming ? messages.at(-1)?.id : null}
           courseTitle={initialContext.courseTitle}
           lessonTitle={initialContext.lessonTitle}
+          locale={locale}
         />
         {error ? <AcademyTutorErrorState message={error} /> : null}
         <AcademyTutorSuggestedPrompts
-          prompts={SUGGESTED_PROMPTS}
+          prompts={SUGGESTED_PROMPTS.map((prompt) => tr(prompt))}
+          locale={locale}
           onSelect={setQuestion}
           disabled={streaming}
         />
@@ -251,8 +274,9 @@ export function AcademyTutorShell({
           onTutorMode={setTutorMode}
           onSubmit={() => void submit()}
           onStop={() => abortRef.current?.abort()}
+          locale={locale}
         />
-        <AcademyTutorDisclaimer />
+        <AcademyTutorDisclaimer locale={locale} />
       </section>
     </div>
   );

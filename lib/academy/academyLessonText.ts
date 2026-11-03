@@ -157,9 +157,200 @@ const SPANISH: Record<string, string> = {
   "Private note could not be deleted.": "No se pudo eliminar la nota privada.",
   "Delete this private note? This cannot be undone.":
     "¿Eliminar esta nota privada? Esta acción no se puede deshacer.",
+  // AI tutor page
+  "Course AI Tutor": "Tutor de IA del curso",
+  "Private, source-grounded AI Tutor for an Academy course.":
+    "Tutor de IA privado, basado en las fuentes de un curso de la Academia.",
+  "Private Academy workspace": "Espacio privado de la Academia",
+  Tutor: "Tutor",
+  "Context is limited to content your account can access. Private notes, answer keys, drafts, and other learners are excluded.":
+    "El contexto se limita al contenido al que tu cuenta tiene acceso. Se excluyen las notas privadas, las claves de respuestas, los borradores y otros estudiantes.",
+  "This course Tutor could not load.": "No se pudo cargar el tutor del curso.",
+  "Try again": "Intentar de nuevo",
+  "Loading course Tutor…": "Cargando el tutor del curso…",
+  "Lesson context": "Contexto de la lección",
+  "Published Academy context": "Contexto publicado de la Academia",
+  "Explain the key ideas in this lesson.":
+    "Explica las ideas clave de esta lección.",
+  "Simplify this concept with an educational example.":
+    "Simplifica este concepto con un ejemplo educativo.",
+  "Give me three AI-generated review questions.":
+    "Dame tres preguntas de repaso generadas por IA.",
+  "Create a study checklist for this topic.":
+    "Crea una lista de estudio para este tema.",
+  "What educational topic should I study next?":
+    "¿Qué tema debería estudiar a continuación?",
+  "Generation stopped. Any partial response has been preserved.":
+    "Generación detenida. Se conservó la respuesta parcial.",
+  "The Academy Tutor is unavailable.":
+    "El tutor de la Academia no está disponible.",
+  "Learning action": "Acción de aprendizaje",
+  "Explain lesson": "Explicar la lección",
+  "Simplify concept": "Simplificar un concepto",
+  "Summarize lesson": "Resumir la lección",
+  "Lesson question": "Pregunta sobre la lección",
+  "Practice questions": "Preguntas de práctica",
+  "Explain quiz feedback": "Explicar la retroalimentación del cuestionario",
+  "Glossary help": "Ayuda con el glosario",
+  "Compare concepts": "Comparar conceptos",
+  "Study checklist": "Lista de estudio",
+  "Recommend next topic": "Recomendar el siguiente tema",
+  "Ask the Academy Tutor": "Pregúntale al tutor de la Academia",
+  "Ask about this lesson, a glossary term, or request ungraded practice…":
+    "Pregunta sobre esta lección, un término del glosario o pide práctica sin calificación…",
+  "Stop generating": "Detener",
+  "Ask Tutor": "Preguntar al tutor",
+  "Academy Tutor conversation": "Conversación con el tutor de la Academia",
+  "DTP Academy Tutor": "Tutor de la Academia DTP",
+  You: "Tú",
+  Academy: "Academia",
+  "Academy Tutor": "Tutor de la Academia",
+  "Educational Tutor with assessment boundaries":
+    "Tutor educativo con límites en las evaluaciones",
+  "AI explanations may be incomplete or mistaken. The Tutor cannot answer graded assessments, reveal answer keys, issue certificates, give personalized investment advice, or promise trading results. Check every cited lesson and source.":
+    "Las explicaciones de la IA pueden ser incompletas o tener errores. El tutor no puede responder evaluaciones calificadas, revelar claves de respuestas, emitir certificados, dar asesoría de inversión personalizada ni prometer resultados en el trading. Verifica cada lección y fuente citada.",
+  "Study from authorized Academy sources.":
+    "Estudia con fuentes autorizadas de la Academia.",
+  "Ask about": "Pregunta sobre",
+  "Choose a learning action or write a question. The Tutor runs only after you submit and never receives private notes by default.":
+    "Elige una acción de aprendizaje o escribe una pregunta. El tutor solo se ejecuta cuando envías y nunca recibe tus notas privadas por defecto.",
+  // Shared assistant components
+  "Conversation history": "Historial de conversaciones",
+  New: "Nueva",
+  Rename: "Renombrar",
+  Archive: "Archivar",
+  Restore: "Restaurar",
+  Delete: "Eliminar",
+  "No saved conversations yet.": "Aún no hay conversaciones guardadas.",
+  "Delete this conversation and its messages permanently?":
+    "¿Eliminar esta conversación y sus mensajes de forma permanente?",
+  "Conversation title": "Título de la conversación",
+  "Daily usage": "Uso diario",
+  "questions left": "preguntas restantes",
+  "daily questions used": "preguntas diarias usadas",
+  of: "de",
+  "Premium allowance": "Cupo Premium",
+  "Free allowance": "Cupo gratuito",
+  "DayTradingPost source": "fuente de DayTradingPost",
+  "DayTradingPost sources": "fuentes de DayTradingPost",
+  "Source date unavailable": "Fecha de la fuente no disponible",
+  "Delayed data": "Datos con retraso",
+  "Development fixture": "Dato de prueba",
+  "Rate this answer": "Califica esta respuesta",
+  "Was this useful?": "¿Te fue útil?",
+  "Feedback reason": "Motivo de la valoración",
+  Helpful: "Útil",
+  "Not helpful": "No fue útil",
+  Incorrect: "Incorrecta",
+  Outdated: "Desactualizada",
+  "Missing citation": "Falta una cita",
+  Unsafe: "Insegura",
+  Other: "Otro",
+  "Optional feedback comment": "Comentario opcional",
+  "Optional comment": "Comentario opcional",
+  "Mark answer helpful": "Marcar la respuesta como útil",
+  "Mark answer not helpful": "Marcar la respuesta como no útil",
+  Yes: "Sí",
+  No: "No",
+  "Feedback saved": "Valoración guardada",
+  "Could not save feedback": "No se pudo guardar la valoración",
+  "Copy assistant answer": "Copiar la respuesta",
+  Copied: "Copiado",
+  Copy: "Copiar",
+  "Suggested questions": "Preguntas sugeridas",
+  "Premium source": "Fuente Premium",
+  Citation: "Cita",
+  article: "artículo",
+  market_intelligence: "inteligencia de mercado",
+  market_data: "datos de mercado",
+  economic_event: "evento económico",
+  academy: "Academia",
+  watchlist: "lista de seguimiento",
 };
 
+/** Spanish messages for server error codes (Academy and AI assistant). */
+const ERROR_CODE_ES: Record<string, string> = {
+  ACADEMY_UNAUTHENTICATED: "Inicia sesión para continuar.",
+  ACADEMY_FORBIDDEN: "No tienes permiso para realizar esta acción.",
+  ACADEMY_COURSE_NOT_FOUND: "Este curso no está disponible.",
+  ACADEMY_LESSON_NOT_FOUND: "Esta lección no está disponible.",
+  ACADEMY_NOT_ENROLLED: "Inscríbete en el curso para continuar.",
+  ACADEMY_ALREADY_ENROLLED: "Ya estás inscrito en este curso.",
+  ACADEMY_REVIEW_EXISTS: "Ya publicaste una reseña de este curso.",
+  ACADEMY_REVIEW_NOT_ELIGIBLE:
+    "Aún no cumples los requisitos para reseñar este curso.",
+  ACADEMY_REVIEW_NOT_FOUND: "No se encontró la reseña.",
+  ACADEMY_PREMIUM_REQUIRED:
+    "Se requiere una membresía Premium activa para continuar este curso.",
+  ACADEMY_PREREQUISITE_NOT_MET:
+    "Primero completa los requisitos previos de esta lección.",
+  ACADEMY_LESSON_LOCKED:
+    "Completa las lecciones anteriores para desbloquear esta.",
+  ACADEMY_ASSESSMENT_NOT_AVAILABLE: "Esta evaluación no está disponible.",
+  ACADEMY_ATTEMPT_LIMIT_REACHED:
+    "Alcanzaste el número máximo de intentos de esta evaluación.",
+  ACADEMY_ATTEMPT_EXPIRED: "El tiempo de este intento terminó.",
+  ACADEMY_ATTEMPT_ALREADY_SUBMITTED: "Este intento ya fue enviado.",
+  ACADEMY_INVALID_RESPONSE: "Revisa tu respuesta e inténtalo de nuevo.",
+  ACADEMY_COMPLETION_REQUIREMENTS_NOT_MET:
+    "Aún no cumples los requisitos para completar esto.",
+  ACADEMY_CERTIFICATE_NOT_ELIGIBLE:
+    "Aún no cumples los requisitos para el certificado.",
+  ACADEMY_CERTIFICATE_REVOKED: "Este certificado fue revocado.",
+  ACADEMY_RATE_LIMITED:
+    "Demasiadas solicitudes. Espera un momento e inténtalo de nuevo.",
+  ACADEMY_VALIDATION_FAILED: "La solicitud no es válida.",
+  ACADEMY_PROVIDER_UNAVAILABLE:
+    "El servicio no está disponible por ahora. Inténtalo más tarde.",
+  ACADEMY_REQUEST_FAILED: "No se pudo completar la solicitud.",
+  AUTH_REQUIRED: "Inicia sesión para usar el tutor.",
+  FORBIDDEN: "No tienes permiso para realizar esta acción.",
+  INVALID_REQUEST: "La solicitud no es válida.",
+  LIMIT_REACHED: "Alcanzaste tu límite diario de preguntas.",
+  RATE_LIMITED:
+    "Demasiadas solicitudes. Espera un momento e inténtalo de nuevo.",
+  CONFLICT: "La solicitud entra en conflicto con otra en curso.",
+  NOT_FOUND: "No se encontró lo que buscas.",
+  PROVIDER_UNAVAILABLE:
+    "El tutor no está disponible por ahora. Inténtalo más tarde.",
+  PROVIDER_TIMEOUT:
+    "El tutor tardó demasiado en responder. Inténtalo de nuevo.",
+  PROVIDER_ERROR: "El tutor no pudo generar una respuesta. Inténtalo de nuevo.",
+  NO_CONTEXT:
+    "No hay suficiente material publicado para responder esa pregunta.",
+  INTERNAL_ERROR: "Ocurrió un error inesperado. Inténtalo de nuevo.",
+};
+
+/**
+ * User-facing text for a failed request. English shows the server message;
+ * Spanish maps the error code to Spanish copy, falling back to the
+ * translated generic message.
+ */
+export function academyErrorText(
+  error: unknown,
+  fallback: string,
+  locale: Locale = "en",
+  code?: string | null,
+) {
+  const errorCode =
+    code ??
+    (error && typeof error === "object" && "code" in error
+      ? String((error as { code: unknown }).code)
+      : null);
+  if (locale === "es")
+    return (
+      (errorCode ? ERROR_CODE_ES[errorCode] : undefined) ??
+      academyLessonText("es")(fallback)
+    );
+  return error instanceof Error && error.message ? error.message : fallback;
+}
+
 export type AcademyLessonTranslate = (english: string) => string;
+
+/** True when the Spanish dictionary has an entry for this English string. */
+export function academyHasSpanish(english: string) {
+  return Object.hasOwn(SPANISH, english);
+}
 
 /** Returns a translator for lesson-workspace copy in the given locale. */
 export function academyLessonText(

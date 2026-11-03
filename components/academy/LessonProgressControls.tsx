@@ -1,7 +1,10 @@
 "use client";
 
 import type { Locale } from "@/lib/i18n/config";
-import { academyLessonText } from "@/lib/academy/academyLessonText";
+import {
+  academyErrorText,
+  academyLessonText,
+} from "@/lib/academy/academyLessonText";
 import { useEffect, useMemo, useState } from "react";
 import type {
   AcademyCompletionMode,
@@ -53,12 +56,14 @@ export function LessonProgressControls({
       })
       .catch((requestError: unknown) => {
         setError(
-          requestError instanceof Error
-            ? requestError.message
-            : tr("Lesson progress could not be started."),
+          academyErrorText(
+            requestError,
+            tr("Lesson progress could not be started."),
+            locale,
+          ),
         );
       });
-  }, [courseId, enrollmentId, initialStatus, lessonId, moduleId, tr]);
+  }, [courseId, enrollmentId, initialStatus, lessonId, locale, moduleId, tr]);
 
   async function complete() {
     setLoading(true);
@@ -77,9 +82,11 @@ export function LessonProgressControls({
       });
     } catch (requestError) {
       setError(
-        requestError instanceof Error
-          ? requestError.message
-          : tr("Lesson completion could not be saved."),
+        academyErrorText(
+          requestError,
+          tr("Lesson completion could not be saved."),
+          locale,
+        ),
       );
     } finally {
       setLoading(false);

@@ -1,7 +1,10 @@
 "use client";
 
 import type { Locale } from "@/lib/i18n/config";
-import { academyLessonText } from "@/lib/academy/academyLessonText";
+import {
+  academyErrorText,
+  academyLessonText,
+} from "@/lib/academy/academyLessonText";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { AcademyAttempt } from "@/types/academy";
@@ -44,9 +47,11 @@ export function AssessmentLauncher({
       router.push(`/academy/assessments/attempts/${result.attempt.id}`);
     } catch (requestError) {
       setError(
-        requestError instanceof Error
-          ? requestError.message
-          : tr("The assessment could not be started."),
+        academyErrorText(
+          requestError,
+          tr("The assessment could not be started."),
+          locale,
+        ),
       );
     } finally {
       setLoading(false);

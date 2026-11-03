@@ -1,5 +1,8 @@
 "use client";
 
+import { academyLessonText } from "@/lib/academy/academyLessonText";
+import type { Locale } from "@/lib/i18n/config";
+
 import Link from "next/link";
 import type { AssistantConversation } from "@/types/ai-assistant";
 
@@ -8,15 +11,20 @@ export function AssistantHistorySidebar({
   activeId,
   onNew,
   basePath = "/assistant",
+  locale = "en",
 }: {
   conversations: AssistantConversation[];
   activeId: string | null;
   onNew: () => void;
   basePath?: string;
+  locale?: Locale;
 }) {
+  const tr = academyLessonText(locale);
   async function remove(id: string) {
     if (
-      !window.confirm("Delete this conversation and its messages permanently?")
+      !window.confirm(
+        tr("Delete this conversation and its messages permanently?"),
+      )
     )
       return;
     const response = await fetch(`/api/assistant/conversations/${id}`, {
@@ -33,7 +41,7 @@ export function AssistantHistorySidebar({
     window.location.reload();
   }
   async function rename(id: string, currentTitle: string) {
-    const title = window.prompt("Conversation title", currentTitle)?.trim();
+    const title = window.prompt(tr("Conversation title"), currentTitle)?.trim();
     if (!title || title === currentTitle) return;
     await fetch(`/api/assistant/conversations/${id}`, {
       method: "PATCH",
@@ -43,11 +51,14 @@ export function AssistantHistorySidebar({
     window.location.reload();
   }
   return (
-    <aside className="assistant-history" aria-label="Conversation history">
+    <aside
+      className="assistant-history"
+      aria-label={tr("Conversation history")}
+    >
       <div>
-        <span>Conversation history</span>
+        <span>{tr("Conversation history")}</span>
         <button type="button" onClick={onNew}>
-          New
+          {tr("New")}
         </button>
       </div>
       {conversations.length ? (
@@ -66,25 +77,25 @@ export function AssistantHistorySidebar({
               <div>
                 <button
                   type="button"
-                  aria-label={`Rename ${conversation.title}`}
+                  aria-label={`${tr("Rename")} ${conversation.title}`}
                   onClick={() =>
                     void rename(conversation.id, conversation.title)
                   }
                 >
-                  Rename
+                  {tr("Rename")}
                 </button>
                 {conversation.status === "active" ? (
                   <button
                     type="button"
-                    aria-label={`Archive ${conversation.title}`}
+                    aria-label={`${tr("Archive")} ${conversation.title}`}
                     onClick={() => void archive(conversation.id)}
                   >
-                    Archive
+                    {tr("Archive")}
                   </button>
                 ) : (
                   <button
                     type="button"
-                    aria-label={`Restore ${conversation.title}`}
+                    aria-label={`${tr("Restore")} ${conversation.title}`}
                     onClick={() =>
                       void fetch(
                         `/api/assistant/conversations/${conversation.id}`,
@@ -96,22 +107,22 @@ export function AssistantHistorySidebar({
                       ).then(() => window.location.reload())
                     }
                   >
-                    Restore
+                    {tr("Restore")}
                   </button>
                 )}
                 <button
                   type="button"
-                  aria-label={`Delete ${conversation.title}`}
+                  aria-label={`${tr("Delete")} ${conversation.title}`}
                   onClick={() => void remove(conversation.id)}
                 >
-                  Delete
+                  {tr("Delete")}
                 </button>
               </div>
             </li>
           ))}
         </ol>
       ) : (
-        <p>No saved conversations yet.</p>
+        <p>{tr("No saved conversations yet.")}</p>
       )}
     </aside>
   );
