@@ -34,6 +34,7 @@ export function AcademyVideoPlayer({
   const lastSentRef = useRef(resumePosition);
   const [position, setPosition] = useState(resumePosition);
   const [status, setStatus] = useState("Progress is saved as you watch.");
+  const [portrait, setPortrait] = useState(false);
 
   const synchronize = useCallback(
     async (nextPosition: number, nextDuration: number, force = false) => {
@@ -143,7 +144,13 @@ export function AcademyVideoPlayer({
 
   return (
     <div className="academy-video-player">
-      <div className="academy-video-frame">
+      <div
+        className={
+          portrait
+            ? "academy-video-frame academy-video-frame--portrait"
+            : "academy-video-frame"
+        }
+      >
         {source.kind === "iframe" ? (
           <iframe
             ref={iframeRef}
@@ -159,6 +166,8 @@ export function AcademyVideoPlayer({
             preload="metadata"
             poster={video.posterImageUrl ?? undefined}
             onLoadedMetadata={(event) => {
+              const { videoHeight, videoWidth } = event.currentTarget;
+              setPortrait(videoHeight > videoWidth);
               if (resumePosition > 0)
                 event.currentTarget.currentTime = resumePosition;
             }}
