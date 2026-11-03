@@ -1,4 +1,8 @@
-import type { AcademyCourse, AcademyDifficulty } from "@/types/academy";
+import type {
+  AcademyCourse,
+  AcademyCourseLanguage,
+  AcademyDifficulty,
+} from "@/types/academy";
 
 export const ACADEMY_COURSES_PER_PAGE = 9;
 
@@ -11,6 +15,7 @@ export type AcademyCatalogFilters = {
   difficulty: "all" | AcademyDifficulty;
   duration: "all" | "under-60" | "60-180" | "over-180";
   instructor: string;
+  language: "all" | AcademyCourseLanguage;
   page: number;
   query: string;
   sort: AcademyCatalogSort;
@@ -25,6 +30,7 @@ const difficultyValues = new Set([
   "advanced",
 ]);
 const accessValues = new Set(["all", "free", "premium"]);
+const languageValues = new Set(["all", "en", "es"]);
 const durationValues = new Set(["all", "under-60", "60-180", "over-180"]);
 const sortValues = new Set([
   "recommended",
@@ -52,8 +58,14 @@ function filterSlug(value: string) {
   return value === "all" || filterSlugPattern.test(value) ? value : "all";
 }
 
+/**
+ * @param defaultLanguage Language applied when the URL has no `language`
+ * parameter, normally the visitor's site locale. Pass "all" to show every
+ * language by default.
+ */
 export function parseAcademyCatalogFilters(
   raw: SearchParams,
+  defaultLanguage: AcademyCatalogFilters["language"] = "all",
 ): AcademyCatalogFilters {
   const parsedPage = Number.parseInt(firstValue(raw.page), 10);
   return {
@@ -62,6 +74,11 @@ export function parseAcademyCatalogFilters(
     difficulty: enumValue(firstValue(raw.difficulty), difficultyValues, "all"),
     duration: enumValue(firstValue(raw.duration), durationValues, "all"),
     instructor: filterSlug(firstValue(raw.instructor) || "all"),
+    language: enumValue(
+      firstValue(raw.language),
+      languageValues,
+      defaultLanguage,
+    ),
     page:
       Number.isSafeInteger(parsedPage) && parsedPage > 0
         ? Math.min(parsedPage, 1_000)
@@ -96,6 +113,11 @@ export function filterAndSortAcademyCourses(
   const query = filters.query.toLowerCase();
   const filtered = courses.filter((course) => {
     if (filters.access !== "all" && course.accessLevel !== filters.access)
+      return false;
+    if (
+      filters.language !== "all" &&
+      (course.language ?? "en") !== filters.language
+    )
       return false;
     if (
       filters.difficulty !== "all" &&
@@ -182,14 +204,19 @@ export function academyCatalogQuery(
   if (filters.instructor !== "all")
     params.set("instructor", filters.instructor);
   if (filters.duration !== "all") params.set("duration", filters.duration);
+  params.set("language", filters.language);
   if (filters.sort !== "recommended") params.set("sort", filters.sort);
   if (page > 1) params.set("page", String(page));
   return params.toString();
 }
 
-export function hasAcademyCatalogFilters(filters: AcademyCatalogFilters) {
+export function hasAcademyCatalogFilters(
+  filters: AcademyCatalogFilters,
+  defaultLanguage: AcademyCatalogFilters["language"] = "all",
+) {
   return Boolean(
     filters.query ||
+    filters.language !== defaultLanguage ||
     filters.access !== "all" ||
     filters.category !== "all" ||
     filters.difficulty !== "all" ||

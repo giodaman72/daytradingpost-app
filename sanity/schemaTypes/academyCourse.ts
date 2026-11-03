@@ -27,6 +27,23 @@ export const academyCourseType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "language",
+      title: "Course language",
+      description:
+        "Language the course content is taught in. Drives the Academy language filter.",
+      type: "string",
+      group: "content",
+      initialValue: "en",
+      options: {
+        layout: "radio",
+        list: [
+          { title: "English", value: "en" },
+          { title: "Español", value: "es" },
+        ],
+      },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: "excerpt",
       type: "text",
       rows: 3,

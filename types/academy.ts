@@ -169,6 +169,8 @@ export type AcademyModule = {
   version: number;
 };
 
+export type AcademyCourseLanguage = "en" | "es";
+
 export type AcademyCourse = {
   accessLevel: AcademyAccessLevel;
   certificateEnabled: boolean;
@@ -181,6 +183,8 @@ export type AcademyCourse = {
   featured: boolean;
   id: string;
   instructor: AcademyInstructor | null;
+  /** Language the course is taught in; missing means English. */
+  language?: AcademyCourseLanguage;
   learningObjectives: string[];
   legacySlug: string | null;
   moduleIds: string[];

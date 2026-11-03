@@ -59,6 +59,22 @@ export function AcademyCatalogFilters({
         </select>
       </div>
       <div>
+        <label htmlFor="academy-language">
+          {spanish ? "Idioma" : "Language"}
+        </label>
+        <select
+          id="academy-language"
+          name="language"
+          defaultValue={filters.language}
+        >
+          <option value="all">
+            {spanish ? "Todos los idiomas" : "All languages"}
+          </option>
+          <option value="en">{spanish ? "Inglés" : "English"}</option>
+          <option value="es">{spanish ? "Español" : "Spanish"}</option>
+        </select>
+      </div>
+      <div>
         <label htmlFor="academy-access">{spanish ? "Acceso" : "Access"}</label>
         <select id="academy-access" name="access" defaultValue={filters.access}>
           <option value="all">

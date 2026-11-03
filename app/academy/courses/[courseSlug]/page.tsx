@@ -257,7 +257,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
             <span className="section-kicker">
               {spanish ? "Resumen del curso" : "Course overview"}
             </span>
-            {spanish ? (
+            {spanish && course.language !== "es" ? (
               <p className="academy-source-language-note">
                 El contenido editorial del curso se conserva en su idioma
                 original; la navegación y los controles están disponibles en

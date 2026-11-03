@@ -3,6 +3,7 @@ import type { AcademyCourse } from "@/types/academy";
 import {
   academyCatalogQuery,
   filterAndSortAcademyCourses,
+  hasAcademyCatalogFilters,
   paginateAcademyCourses,
   parseAcademyCatalogFilters,
 } from "./academyCatalog";
@@ -96,7 +97,35 @@ describe("Academy catalog", () => {
       sort: "shortest",
     });
     expect(academyCatalogQuery(filters, 2)).toBe(
-      "query=risk&difficulty=beginner&sort=shortest&page=2",
+      "query=risk&difficulty=beginner&language=all&sort=shortest&page=2",
+    );
+  });
+
+  it("defaults the language filter to the visitor locale", () => {
+    const courses = [
+      course({ id: "legacy", title: "Legacy" }),
+      course({ id: "en", language: "en", title: "Level 1" }),
+      course({ id: "es", language: "es", title: "Nivel 1" }),
+    ];
+    const spanish = parseAcademyCatalogFilters({}, "es");
+    expect(spanish.language).toBe("es");
+    expect(
+      filterAndSortAcademyCourses(courses, spanish).map((item) => item.id),
+    ).toEqual(["es"]);
+    expect(hasAcademyCatalogFilters(spanish, "es")).toBe(false);
+
+    const english = parseAcademyCatalogFilters({}, "en");
+    expect(
+      filterAndSortAcademyCourses(courses, english)
+        .map((item) => item.id)
+        .toSorted(),
+    ).toEqual(["en", "legacy"]);
+
+    const everything = parseAcademyCatalogFilters({ language: "all" }, "es");
+    expect(filterAndSortAcademyCourses(courses, everything)).toHaveLength(3);
+    expect(hasAcademyCatalogFilters(everything, "es")).toBe(true);
+    expect(parseAcademyCatalogFilters({ language: "fr" }, "en").language).toBe(
+      "en",
     );
   });
 

@@ -39,7 +39,7 @@ export default async function AcademyCoursesPage({
 }: AcademyCoursesPageProps) {
   const [raw, locale] = await Promise.all([searchParams, getRequestLocale()]);
   const spanish = locale === "es";
-  const filters = parseAcademyCatalogFilters(raw);
+  const filters = parseAcademyCatalogFilters(raw, locale);
   const allCourses = await listAcademyCourses(100, 0).catch(() => []);
   const filteredCourses = filterAndSortAcademyCourses(allCourses, filters);
   const currentUser = await getCurrentUser().catch(() => null);
@@ -70,13 +70,28 @@ export default async function AcademyCoursesPage({
         ]),
     ).values(),
   ).toSorted((left, right) => left.name.localeCompare(right.name));
-  const filtered = hasAcademyCatalogFilters(filters);
+  const filtered = hasAcademyCatalogFilters(filters, locale);
   const activeFilterText = [
     filters.query
       ? `${spanish ? "Búsqueda" : "Search"}: ${filters.query}`
       : null,
     filters.difficulty !== "all"
       ? `${spanish ? "Nivel" : "Level"}: ${filters.difficulty}`
+      : null,
+    filters.language !== locale
+      ? `${spanish ? "Idioma" : "Language"}: ${
+          filters.language === "all"
+            ? spanish
+              ? "todos"
+              : "all"
+            : filters.language === "es"
+              ? spanish
+                ? "español"
+                : "Spanish"
+              : spanish
+                ? "inglés"
+                : "English"
+        }`
       : null,
     filters.access !== "all"
       ? `${spanish ? "Acceso" : "Access"}: ${filters.access}`
