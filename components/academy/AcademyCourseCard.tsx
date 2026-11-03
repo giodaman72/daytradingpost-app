@@ -1,9 +1,10 @@
+import { academyCourseHref } from "@/lib/academy/academyCourseLocale";
 import Image from "next/image";
 import Link from "next/link";
 import { Clock3, Crown, Gauge, GraduationCap } from "lucide-react";
 import type { AcademyCourse } from "@/types/academy";
 import { formatAcademyDuration } from "@/lib/academy/academyPresentation";
-import { localizeHref, type Locale } from "@/lib/i18n/config";
+import { type Locale } from "@/lib/i18n/config";
 
 type AcademyCourseCardProps = {
   course: AcademyCourse;
@@ -15,7 +16,10 @@ export function AcademyCourseCard({
   locale = "en",
 }: AcademyCourseCardProps) {
   const spanish = locale === "es";
-  const courseHref = localizeHref(`/academy/courses/${course.slug}`, locale);
+  const courseHref = academyCourseHref(
+    course,
+    `/academy/courses/${course.slug}`,
+  );
   const difficultyLabels: Record<string, string> = {
     beginner: "principiante",
     intermediate: "intermedio",

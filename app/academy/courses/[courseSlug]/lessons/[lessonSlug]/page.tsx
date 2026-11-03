@@ -1,3 +1,4 @@
+import { enforceAcademyCourseLocale } from "@/lib/academy/academyCourseLocale";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -85,6 +86,10 @@ export default async function LessonPage({ params }: LessonPageProps) {
   }
   const { course, currentLesson, learningState, nextLesson, previousLesson } =
     view;
+  await enforceAcademyCourseLocale(
+    course,
+    `/academy/courses/${course.slug}/learn/${currentLesson.slug}`,
+  );
   const progress =
     learningState.lessonProgress.find(
       (item) => item.lessonId === currentLesson.id,

@@ -1,3 +1,7 @@
+import {
+  academyCourseHref,
+  enforceAcademyCourseLocale,
+} from "@/lib/academy/academyCourseLocale";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
@@ -54,6 +58,10 @@ export default async function LearnPage({ params }: LearnPageProps) {
     throw error;
   }
   const { course, learningState } = result;
+  await enforceAcademyCourseLocale(
+    course,
+    `/academy/courses/${course.slug}/learn`,
+  );
   const nextLesson = course.modules
     .flatMap((module) => module.lessons)
     .find((lesson) => {
@@ -63,7 +71,12 @@ export default async function LearnPage({ params }: LearnPageProps) {
       return state && state.status !== "locked" && state.status !== "completed";
     });
   if (nextLesson)
-    redirect(`/academy/courses/${course.slug}/learn/${nextLesson.slug}`);
+    redirect(
+      academyCourseHref(
+        course,
+        `/academy/courses/${course.slug}/learn/${nextLesson.slug}`,
+      ),
+    );
   const lastCompletedLesson = course.modules
     .flatMap((module) => module.lessons)
     .toReversed()
@@ -74,7 +87,10 @@ export default async function LearnPage({ params }: LearnPageProps) {
     );
   if (lastCompletedLesson)
     redirect(
-      `/academy/courses/${course.slug}/learn/${lastCompletedLesson.slug}`,
+      academyCourseHref(
+        course,
+        `/academy/courses/${course.slug}/learn/${lastCompletedLesson.slug}`,
+      ),
     );
   return (
     <>
