@@ -1,13 +1,23 @@
 "use client";
 
+import { academyLessonText } from "@/lib/academy/academyLessonText";
+import type { Locale } from "@/lib/i18n/config";
+
 import { useState } from "react";
 
-export function AssistantCopyButton({ text }: { text: string }) {
+export function AssistantCopyButton({
+  locale = "en",
+  text,
+}: {
+  locale?: Locale;
+  text: string;
+}) {
+  const tr = academyLessonText(locale);
   const [copied, setCopied] = useState(false);
   return (
     <button
       type="button"
-      aria-label="Copy assistant answer"
+      aria-label={tr("Copy assistant answer")}
       onClick={() => {
         void navigator.clipboard.writeText(text).then(() => {
           setCopied(true);
@@ -15,7 +25,7 @@ export function AssistantCopyButton({ text }: { text: string }) {
         });
       }}
     >
-      {copied ? "Copied" : "Copy"}
+      {copied ? tr("Copied") : tr("Copy")}
     </button>
   );
 }

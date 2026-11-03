@@ -1,7 +1,10 @@
 "use client";
 
 import type { Locale } from "@/lib/i18n/config";
-import { academyLessonText } from "@/lib/academy/academyLessonText";
+import {
+  academyErrorText,
+  academyLessonText,
+} from "@/lib/academy/academyLessonText";
 import { useEffect, useState } from "react";
 import { Bookmark, NotebookPen, Pencil, Trash2, X } from "lucide-react";
 import type { AcademyBookmark, AcademyLearnerNote } from "@/types/academy";
@@ -71,7 +74,7 @@ export function LessonTools({
   function showError(error: unknown, fallback: string) {
     setFeedback({
       kind: "error",
-      message: error instanceof Error ? error.message : fallback,
+      message: academyErrorText(error, fallback, locale),
     });
   }
 

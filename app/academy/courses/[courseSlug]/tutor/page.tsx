@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { AcademyTutorShell } from "@/components/academy/tutor/AcademyTutorShell";
 import { AcademyError } from "@/lib/academy/academyErrors";
+import { enforceAcademyCourseLocale } from "@/lib/academy/academyCourseLocale";
+import { academyLessonText } from "@/lib/academy/academyLessonText";
+import { localizeHref } from "@/lib/i18n/config";
+import { getRequestLocale } from "@/lib/i18n/server";
 import { filterAuthorizedTutorMessages } from "@/lib/academy/ai/academyTutorMessages";
 import {
   getAcademyLearningState,
@@ -23,11 +27,17 @@ type Props = {
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { courseSlug } = await params;
+  const [{ courseSlug }, locale] = await Promise.all([
+    params,
+    getRequestLocale(),
+  ]);
+  const tr = academyLessonText(locale);
   return {
-    title: "Course AI Tutor",
-    description: "Private, source-grounded AI Tutor for an Academy course.",
-    alternates: { canonical: `/academy/courses/${courseSlug}/tutor` },
+    title: tr("Course AI Tutor"),
+    description: tr("Private, source-grounded AI Tutor for an Academy course."),
+    alternates: {
+      canonical: localizeHref(`/academy/courses/${courseSlug}/tutor`, locale),
+    },
     robots: { index: false, follow: false },
   };
 }
@@ -36,8 +46,12 @@ const value = (input: string | string[] | undefined) =>
   typeof input === "string" ? input : null;
 
 export default async function CourseTutorPage({ params, searchParams }: Props) {
-  const { courseSlug } = await params;
-  const query = await searchParams;
+  const [{ courseSlug }, query, locale] = await Promise.all([
+    params,
+    searchParams,
+    getRequestLocale(),
+  ]);
+  const tr = academyLessonText(locale);
   const lessonSlug = value(query.lesson);
   const attemptId = value(query.attempt);
   let access;
@@ -45,7 +59,7 @@ export default async function CourseTutorPage({ params, searchParams }: Props) {
     access = await requireAssistantAccess();
   } catch {
     redirect(
-      `/login?next=${encodeURIComponent(`/academy/courses/${courseSlug}/tutor`)}`,
+      `${localizeHref("/login", locale)}?next=${encodeURIComponent(localizeHref(`/academy/courses/${courseSlug}/tutor`, locale))}`,
     );
   }
   let course;
@@ -72,11 +86,14 @@ export default async function CourseTutorPage({ params, searchParams }: Props) {
       )
         notFound();
       if (error.code === "ACADEMY_NOT_ENROLLED")
-        redirect(`/academy/courses/${courseSlug}`);
-      if (error.code === "ACADEMY_PREMIUM_REQUIRED") redirect("/premium");
+        redirect(localizeHref(`/academy/courses/${courseSlug}`, locale));
+      if (error.code === "ACADEMY_PREMIUM_REQUIRED")
+        redirect(localizeHref("/premium", locale));
     }
     throw error;
   }
+  const tutorPath = `/academy/courses/${course.slug}/tutor`;
+  await enforceAcademyCourseLocale(course, tutorPath);
   const conversationId = value(query.conversation);
   const conversations = await listConversations(
     access.userId,
@@ -101,7 +118,7 @@ export default async function CourseTutorPage({ params, searchParams }: Props) {
     requestedMode && ACADEMY_TUTOR_MODES.includes(requestedMode)
       ? requestedMode
       : "lesson_question";
-  const basePath = `/academy/courses/${course.slug}/tutor${
+  const basePath = `${localizeHref(tutorPath, locale)}${
     lesson ? `?lesson=${encodeURIComponent(lesson.slug)}` : ""
   }`;
 
@@ -109,11 +126,18 @@ export default async function CourseTutorPage({ params, searchParams }: Props) {
     <>
       <section className="assistant-hero">
         <div className="container">
-          <span className="section-kicker">Private Academy workspace</span>
-          <h1>{lesson ? `${lesson.title} Tutor` : `${course.title} Tutor`}</h1>
+          <span className="section-kicker">
+            {tr("Private Academy workspace")}
+          </span>
+          <h1>
+            {locale === "es"
+              ? `Tutor: ${lesson ? lesson.title : course.title}`
+              : `${lesson ? lesson.title : course.title} Tutor`}
+          </h1>
           <p>
-            Context is limited to content your account can access. Private
-            notes, answer keys, drafts, and other learners are excluded.
+            {tr(
+              "Context is limited to content your account can access. Private notes, answer keys, drafts, and other learners are excluded.",
+            )}
           </p>
         </div>
       </section>
@@ -128,6 +152,7 @@ export default async function CourseTutorPage({ params, searchParams }: Props) {
           )}
           premium={access.hasPremiumAccess}
           basePath={basePath}
+          locale={locale}
           initialContext={{
             courseSlug: course.slug,
             courseTitle: course.title,

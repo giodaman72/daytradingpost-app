@@ -1,5 +1,7 @@
 "use client";
 
+import { academyErrorText } from "@/lib/academy/academyLessonText";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -82,11 +84,13 @@ export function EnrollmentButton({
       router.refresh();
     } catch (requestError) {
       setError(
-        requestError instanceof Error
-          ? requestError.message
-          : spanish
+        academyErrorText(
+          requestError,
+          spanish
             ? "No se pudo completar la inscripción."
             : "Enrollment could not be completed.",
+          locale,
+        ),
       );
     } finally {
       setLoading(false);

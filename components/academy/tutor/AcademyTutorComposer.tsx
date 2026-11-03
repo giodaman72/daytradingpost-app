@@ -1,5 +1,8 @@
 "use client";
 
+import { academyLessonText } from "@/lib/academy/academyLessonText";
+import type { Locale } from "@/lib/i18n/config";
+
 import type { FormEvent } from "react";
 import {
   ACADEMY_TUTOR_MODES,
@@ -28,6 +31,7 @@ export function AcademyTutorComposer({
   onTutorMode,
   onSubmit,
   onStop,
+  locale = "en",
 }: {
   value: string;
   tutorMode: AcademyTutorMode;
@@ -37,14 +41,16 @@ export function AcademyTutorComposer({
   onTutorMode: (mode: AcademyTutorMode) => void;
   onSubmit: () => void;
   onStop: () => void;
+  locale?: Locale;
 }) {
+  const tr = academyLessonText(locale);
   function submit(event: FormEvent) {
     event.preventDefault();
     onSubmit();
   }
   return (
     <form className="assistant-composer" onSubmit={submit}>
-      <label htmlFor="academy-tutor-mode">Learning action</label>
+      <label htmlFor="academy-tutor-mode">{tr("Learning action")}</label>
       <select
         id="academy-tutor-mode"
         value={tutorMode}
@@ -55,16 +61,20 @@ export function AcademyTutorComposer({
       >
         {ACADEMY_TUTOR_MODES.map((mode) => (
           <option key={mode} value={mode}>
-            {LABELS[mode]}
+            {tr(LABELS[mode])}
           </option>
         ))}
       </select>
-      <label htmlFor="academy-tutor-question">Ask the Academy Tutor</label>
+      <label htmlFor="academy-tutor-question">
+        {tr("Ask the Academy Tutor")}
+      </label>
       <textarea
         id="academy-tutor-question"
         value={value}
         onChange={(event) => onValue(event.target.value)}
-        placeholder="Ask about this lesson, a glossary term, or request ungraded practice…"
+        placeholder={tr(
+          "Ask about this lesson, a glossary term, or request ungraded practice…",
+        )}
         maxLength={4000}
         rows={4}
         disabled={disabled}
@@ -76,14 +86,17 @@ export function AcademyTutorComposer({
         }}
       />
       <div>
-        <small>{value.length.toLocaleString()} / 4,000</small>
+        <small>
+          {value.length.toLocaleString(locale === "es" ? "es-CO" : "en-US")} /{" "}
+          {(4000).toLocaleString(locale === "es" ? "es-CO" : "en-US")}
+        </small>
         {streaming ? (
           <button
             type="button"
             className="button button-secondary"
             onClick={onStop}
           >
-            Stop generating
+            {tr("Stop generating")}
           </button>
         ) : (
           <button
@@ -91,7 +104,7 @@ export function AcademyTutorComposer({
             className="button"
             disabled={disabled || !value.trim()}
           >
-            Ask Tutor
+            {tr("Ask Tutor")}
           </button>
         )}
       </div>

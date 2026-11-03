@@ -20,7 +20,11 @@ import {
 } from "@/lib/academy/academyLessonText";
 import { localizeHref } from "@/lib/i18n/config";
 import { getRequestLocale } from "@/lib/i18n/server";
-import { getAcademyLessonView } from "@/lib/academy/academyService";
+import {
+  getAcademyCourse,
+  getAcademyLessonView,
+} from "@/lib/academy/academyService";
+import { findPublishedLessonByCourseAndSlug } from "@/lib/academy/academyRepository";
 import { listCourseBookmarks } from "@/lib/academy/bookmarks/bookmarkService";
 import { listCourseNotes } from "@/lib/academy/notes/learnerNoteService";
 
@@ -29,6 +33,24 @@ type LessonPageProps = {
 };
 
 export const dynamic = "force-dynamic";
+
+/** Published lesson title for the browser tab, without its "N. " order prefix. */
+async function lessonTitle(courseSlug: string, lessonSlug: string) {
+  try {
+    const course = await getAcademyCourse(courseSlug);
+    const lesson = await findPublishedLessonByCourseAndSlug(
+      course.id,
+      lessonSlug,
+    );
+    if (lesson?.title) return lesson.title.replace(/^\d+\.\s+/, "");
+  } catch {
+    // Fall back to a readable slug below.
+  }
+  return lessonSlug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
 
 export async function generateMetadata({
   params,
@@ -39,13 +61,13 @@ export async function generateMetadata({
   ]);
   const tr = academyLessonText(locale);
   return {
-    title: lessonSlug
-      .split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" "),
+    title: await lessonTitle(courseSlug, lessonSlug),
     description: tr("Private DayTradingPost Academy lesson."),
     alternates: {
-      canonical: `/academy/courses/${courseSlug}/learn/${lessonSlug}`,
+      canonical: localizeHref(
+        `/academy/courses/${courseSlug}/learn/${lessonSlug}`,
+        locale,
+      ),
     },
     robots: { index: false, follow: false },
   };
