@@ -1,3 +1,4 @@
+import { academyCoursesForLocale } from "@/lib/academy/academyCourseLocale";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -43,10 +44,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AcademyPage() {
-  const [locale, courses] = await Promise.all([
+  const [locale, allCourses] = await Promise.all([
     getRequestLocale(),
     listAcademyCourses(100, 0).catch(() => []),
   ]);
+  const courses = academyCoursesForLocale(allCourses, locale);
   const spanish = locale === "es";
   const featured = courses.filter((course) => course.featured);
   const displayed = featured.length ? featured : courses.slice(0, 3);
@@ -87,7 +89,7 @@ export default async function AcademyPage() {
         Date.parse(left.lastAccessedAt ?? left.enrolledAt),
     )[0];
   const activeCourse = activeEnrollment
-    ? courses.find((course) => course.id === activeEnrollment.courseId)
+    ? allCourses.find((course) => course.id === activeEnrollment.courseId)
     : null;
   return (
     <>

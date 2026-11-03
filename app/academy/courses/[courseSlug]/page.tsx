@@ -13,6 +13,10 @@ import {
 import { AcademyPortableText } from "@/components/academy/AcademyPortableText";
 import { AcademyCatalogGrid } from "@/components/academy/AcademyCatalogGrid";
 import { AcademyViewEvent } from "@/components/academy/AcademyViewEvent";
+import {
+  academyCoursesForLocale,
+  enforceAcademyCourseLocale,
+} from "@/lib/academy/academyCourseLocale";
 import { CourseCurriculum } from "@/components/academy/CourseCurriculum";
 import { EnrollmentButton } from "@/components/academy/EnrollmentButton";
 import { AcademyReviewForm } from "@/components/academy/reviews/AcademyReviewForm";
@@ -100,6 +104,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
     }
     throw error;
   }
+  await enforceAcademyCourseLocale(course, `/academy/courses/${course.slug}`);
   const access = isSupabaseAuthConfigured()
     ? await getMembershipAccess().catch(() => ({
         hasPremiumAccess: false,
@@ -124,7 +129,10 @@ export default async function CoursePage({ params }: CoursePageProps) {
     Boolean(access.user) &&
     course.accessLevel === "premium" &&
     !access.hasPremiumAccess;
-  const relatedCourses = (await listAcademyCourses(100, 0).catch(() => []))
+  const relatedCourses = academyCoursesForLocale(
+    await listAcademyCourses(100, 0).catch(() => []),
+    locale,
+  )
     .filter(
       (candidate) =>
         candidate.id !== course.id &&
