@@ -266,6 +266,39 @@ const SPANISH: Record<string, string> = {
   economic_event: "evento económico",
   academy: "Academia",
   watchlist: "lista de seguimiento",
+  // Course reviews
+  "No published learner reviews yet.":
+    "Aún no hay reseñas publicadas de estudiantes.",
+  "out of 5": "de 5",
+  "out of 5 stars": "de 5 estrellas",
+  "Instructor response": "Respuesta del instructor",
+  "Review submitted for moderation. It will appear after approval.":
+    "Reseña enviada a moderación. Aparecerá cuando sea aprobada.",
+  "Review could not be saved.": "No se pudo guardar la reseña.",
+  "Network error. Please try again.": "Error de red. Inténtalo de nuevo.",
+  "Delete your review? This cannot be undone.":
+    "¿Eliminar tu reseña? Esta acción no se puede deshacer.",
+  "Your review was removed.": "Tu reseña fue eliminada.",
+  "Review could not be removed.": "No se pudo eliminar la reseña.",
+  "Edit your review": "Edita tu reseña",
+  "Review this course": "Reseña este curso",
+  "Moderation status:": "Estado de moderación:",
+  Rating: "Calificación",
+  "Course rating": "Calificación del curso",
+  star: "estrella",
+  stars: "estrellas",
+  "Review title": "Título de la reseña",
+  Review: "Reseña",
+  "Update review": "Actualizar reseña",
+  "Submit review": "Enviar reseña",
+  "Delete review": "Eliminar reseña",
+  "Report submitted for moderator review.":
+    "Reporte enviado para revisión de moderación.",
+  "Report could not be submitted.": "No se pudo enviar el reporte.",
+  "Report this review": "Reportar esta reseña",
+  Reason: "Motivo",
+  "Submitting…": "Enviando…",
+  "Submit report": "Enviar reporte",
 };
 
 /** Spanish messages for server error codes (Academy and AI assistant). */
