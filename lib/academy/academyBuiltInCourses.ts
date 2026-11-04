@@ -46,6 +46,8 @@ type BuiltInCourseSeed = {
   featured: boolean;
   id: string;
   legacySlug?: string;
+  /** False keeps the course reachable by URL and for existing learners but out of the catalog. */
+  listed?: boolean;
   objectives: string[];
   slug: string;
   tags: string[];
@@ -630,6 +632,8 @@ const seeds: BuiltInCourseSeed[] = [
     featured: true,
     id: "course-dtp-level-1-foundations",
     legacySlug: "technical-analysis-foundations",
+    // Replaced in the catalog by the "Technical Analysis Level 1" video course.
+    listed: false,
     modules: levelOneModules,
     objectives: [
       "Read a chart through trend, structure and confirmation",
@@ -793,6 +797,9 @@ function makeModules(course: BuiltInCourseSeed): AcademyCurriculumModule[] {
   }));
 }
 
+/** Sanity id of the English video course that is now the catalog's Level 1. */
+const levelOneVideoCourseId = "ta-level1-en";
+
 function baseCourse(seed: BuiltInCourseSeed): AcademyCourse {
   const durationMinutes = seed.modules.reduce(
     (total, module) => total + module.minutes,
@@ -824,7 +831,7 @@ function baseCourse(seed: BuiltInCourseSeed): AcademyCourse {
       requireAllRequiredModules: true,
     },
     prerequisiteCourseIds: seed.slug.includes("level-2")
-      ? ["course-dtp-level-1-foundations"]
+      ? [levelOneVideoCourseId]
       : seed.slug.includes("level-3")
         ? ["course-dtp-level-2-applied-strategy"]
         : [],
@@ -849,7 +856,9 @@ function detailCourse(seed: BuiltInCourseSeed): AcademyCourseDetail {
   };
 }
 
-export const builtInAcademyCourses = seeds.map(baseCourse);
+export const builtInAcademyCourses = seeds
+  .filter((seed) => seed.listed !== false)
+  .map(baseCourse);
 export const builtInAcademyCourseDetails = seeds.map(detailCourse);
 
 export function listBuiltInAcademyCourses(limit = 20, offset = 0) {
