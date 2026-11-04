@@ -18,6 +18,24 @@ describe("chart components", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Delayed")).toBeInTheDocument();
   });
+  it("omits empty price rows when TradingView supplies the prices", () => {
+    render(
+      <ChartAccessibilitySummary
+        name="Oro"
+        timeframe="1h"
+        bars={[]}
+        indicators={[]}
+        delayed
+        locale="es"
+        source="tradingview"
+      />,
+    );
+    expect(screen.queryByText("No disponible")).not.toBeInTheDocument();
+    expect(screen.queryByText("Retrasados")).not.toBeInTheDocument();
+    expect(
+      screen.getByText("Precios y hora mostrados en el gráfico de TradingView"),
+    ).toBeInTheDocument();
+  });
   it("renders a truthful unavailable state without candles", () => {
     render(<ChartCanvas bars={[]} name="Gold" />);
     expect(
