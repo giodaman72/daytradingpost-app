@@ -8,6 +8,7 @@ export function ChartAccessibilitySummary({
   indicators,
   delayed,
   locale = "en",
+  source = "site",
 }: {
   name: string;
   timeframe: ChartTimeframe;
@@ -15,7 +16,10 @@ export function ChartAccessibilitySummary({
   indicators: ChartIndicatorConfig[];
   delayed: boolean;
   locale?: "en" | "es";
+  /** "tradingview": prices live inside the TradingView widget, not here. */
+  source?: "site" | "tradingview";
 }) {
+  const tradingView = source === "tradingview";
   const spanish = locale === "es";
   const latest = bars.at(-1);
   return (
@@ -35,34 +39,44 @@ export function ChartAccessibilitySummary({
           <dt>{spanish ? "Temporalidad" : "Timeframe"}</dt>
           <dd>{timeframe}</dd>
         </div>
-        <div>
-          <dt>
-            {spanish ? "Último cierre disponible" : "Latest available close"}
-          </dt>
-          <dd>
-            {latest?.close ?? (spanish ? "No disponible" : "Unavailable")}
-          </dd>
-        </div>
-        <div>
-          <dt>{spanish ? "Hora de los datos" : "Data timestamp"}</dt>
-          <dd>
-            {latest
-              ? new Date(latest.timestamp * 1_000).toISOString()
-              : spanish
-                ? "No disponible"
-                : "Unavailable"}
-          </dd>
-        </div>
+        {tradingView ? null : (
+          <>
+            <div>
+              <dt>
+                {spanish
+                  ? "Último cierre disponible"
+                  : "Latest available close"}
+              </dt>
+              <dd>
+                {latest?.close ?? (spanish ? "No disponible" : "Unavailable")}
+              </dd>
+            </div>
+            <div>
+              <dt>{spanish ? "Hora de los datos" : "Data timestamp"}</dt>
+              <dd>
+                {latest
+                  ? new Date(latest.timestamp * 1_000).toISOString()
+                  : spanish
+                    ? "No disponible"
+                    : "Unavailable"}
+              </dd>
+            </div>
+          </>
+        )}
         <div>
           <dt>{spanish ? "Estado de los datos" : "Data status"}</dt>
           <dd>
-            {delayed
+            {tradingView
               ? spanish
-                ? "Retrasados"
-                : "Delayed"
-              : spanish
-                ? "Estado del proveedor no disponible"
-                : "Provider status unavailable"}
+                ? "Precios y hora mostrados en el gráfico de TradingView"
+                : "Prices and time shown in the TradingView chart"
+              : delayed
+                ? spanish
+                  ? "Retrasados"
+                  : "Delayed"
+                : spanish
+                  ? "Estado del proveedor no disponible"
+                  : "Provider status unavailable"}
           </dd>
         </div>
         <div>

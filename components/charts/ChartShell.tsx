@@ -290,6 +290,7 @@ export function ChartShell({
         indicators={indicators}
         delayed={meta?.delayed ?? initialInstrument.delayedByDefault}
         locale={locale}
+        source={usesTradingView ? "tradingview" : "site"}
       />
       <p className="chart-risk-disclaimer">
         {spanish
