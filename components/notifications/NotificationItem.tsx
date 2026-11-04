@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Notification } from "@/types/notification";
 import { readNotificationAction } from "@/app/notifications/actions";
 import { localizeHref, type Locale } from "@/lib/i18n/config";
+import { localizeNotificationText } from "@/lib/notifications/localizeNotification";
 export function NotificationItem({
   notification,
   locale = "en",
@@ -10,11 +11,12 @@ export function NotificationItem({
   locale?: Locale;
 }) {
   const spanish = locale === "es";
+  const text = localizeNotificationText(notification, locale);
   return (
     <li className={`notification-item severity-${notification.severity}`}>
       <div>
-        <strong>{notification.title}</strong>
-        <p>{notification.message}</p>
+        <strong>{text.title}</strong>
+        <p>{text.message}</p>
         <time dateTime={notification.createdAt}>
           {new Date(notification.createdAt).toLocaleDateString(
             spanish ? "es-ES" : "en-US",
