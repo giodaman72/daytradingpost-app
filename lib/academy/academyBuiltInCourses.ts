@@ -955,9 +955,31 @@ export function findBuiltInAcademyLessonByCourseAndSlug(
   };
 }
 
+const levelPattern = /\b(?:level|nivel)[\s-]*(\d+)\b/i;
+
+/** Course level from a "level 1" / "nivel 1" tag or title, if it has one. */
+export function academyCourseLevel(
+  course: Pick<AcademyCourse, "tags" | "title">,
+): number | null {
+  for (const text of [...(course.tags ?? []), course.title]) {
+    const match = levelPattern.exec(text ?? "");
+    if (match) return Number(match[1]);
+  }
+  return null;
+}
+
+/** Put levelled courses in Level 1, 2, 3 order; other courses keep their order after them. */
+export function sortAcademyCoursesByLevel<
+  T extends Pick<AcademyCourse, "tags" | "title">,
+>(courses: T[]): T[] {
+  const rank = (course: T) =>
+    academyCourseLevel(course) ?? Number.POSITIVE_INFINITY;
+  return courses.toSorted((left, right) => rank(left) - rank(right));
+}
+
 export function mergeBuiltInAcademyCourses(courses: AcademyCourse[]) {
   const bySlug = new Map<string, AcademyCourse>();
   for (const course of builtInAcademyCourses) bySlug.set(course.slug, course);
   for (const course of courses) bySlug.set(course.slug, course);
-  return Array.from(bySlug.values());
+  return sortAcademyCoursesByLevel(Array.from(bySlug.values()));
 }
