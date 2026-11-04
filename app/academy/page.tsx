@@ -79,9 +79,12 @@ export default async function AcademyPage() {
   const enrollments = currentUser
     ? await listUserEnrollments(20, 0).catch(() => [])
     : [];
+  const localeCourseIds = new Set(courses.map((course) => course.id));
   const activeEnrollment = enrollments
-    .filter((enrollment) =>
-      ["enrolled", "in_progress"].includes(enrollment.status),
+    .filter(
+      (enrollment) =>
+        ["enrolled", "in_progress"].includes(enrollment.status) &&
+        localeCourseIds.has(enrollment.courseId),
     )
     .toSorted(
       (left, right) =>
@@ -89,7 +92,7 @@ export default async function AcademyPage() {
         Date.parse(left.lastAccessedAt ?? left.enrolledAt),
     )[0];
   const activeCourse = activeEnrollment
-    ? allCourses.find((course) => course.id === activeEnrollment.courseId)
+    ? courses.find((course) => course.id === activeEnrollment.courseId)
     : null;
   return (
     <>
