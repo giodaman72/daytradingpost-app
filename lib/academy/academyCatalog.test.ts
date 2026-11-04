@@ -90,6 +90,26 @@ describe("Academy catalog", () => {
     expect(filterAndSortAcademyCourses(courses, filters)).toEqual([courses[1]]);
   });
 
+  it("lists levelled courses in Level 1, 2, 3 order by default", () => {
+    const courses = [
+      course({ featured: true, id: "l2", title: "Level 2: Strategy" }),
+      course({ featured: true, id: "l3", title: "Level 3: Execution" }),
+      course({ id: "guide", title: "A Beginner's Guide" }),
+      course({
+        featured: true,
+        id: "l1",
+        publishedAt: "2026-11-03T00:00:00.000Z",
+        tags: ["level 1"],
+        title: "Technical Analysis Level 1",
+      }),
+    ];
+    const ids = filterAndSortAcademyCourses(
+      courses,
+      parseAcademyCatalogFilters({}),
+    ).map((item) => item.id);
+    expect(ids).toEqual(["l1", "l2", "l3", "guide"]);
+  });
+
   it("preserves filters across pagination links", () => {
     const filters = parseAcademyCatalogFilters({
       difficulty: "beginner",
