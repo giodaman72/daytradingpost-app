@@ -1,8 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { academyLessonText } from "@/lib/academy/academyLessonText";
+import type { Locale } from "@/lib/i18n/config";
 
-export function ReviewReportButton({ reviewId }: { reviewId: string }) {
+export function ReviewReportButton({
+  locale = "en",
+  reviewId,
+}: {
+  locale?: Locale;
+  reviewId: string;
+}) {
+  const tr = useMemo(() => academyLessonText(locale), [locale]);
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
 
@@ -18,11 +27,13 @@ export function ReviewReportButton({ reviewId }: { reviewId: string }) {
       const payload = (await response.json()) as { message?: string };
       setMessage(
         response.ok
-          ? "Report submitted for moderator review."
-          : (payload.message ?? "Report could not be submitted."),
+          ? tr("Report submitted for moderator review.")
+          : locale === "es"
+            ? tr("Report could not be submitted.")
+            : (payload.message ?? "Report could not be submitted."),
       );
     } catch {
-      setMessage("Network error. Please try again.");
+      setMessage(tr("Network error. Please try again."));
     } finally {
       setPending(false);
     }
@@ -30,14 +41,14 @@ export function ReviewReportButton({ reviewId }: { reviewId: string }) {
 
   return (
     <details className="academy-review-report">
-      <summary>Report this review</summary>
+      <summary>{tr("Report this review")}</summary>
       <form action={report}>
         <label>
-          Reason
+          {tr("Reason")}
           <input maxLength={500} name="reason" required />
         </label>
         <button disabled={pending} type="submit">
-          {pending ? "Submitting…" : "Submit report"}
+          {pending ? tr("Submitting…") : tr("Submit report")}
         </button>
         <p aria-live="polite" role="status">
           {message}

@@ -79,6 +79,17 @@ export async function generateMetadata({
   }
 }
 
+const DIFFICULTY_ES: Record<string, string> = {
+  beginner: "principiante",
+  intermediate: "intermedio",
+  advanced: "avanzado",
+};
+
+const ACCESS_ES: Record<string, string> = {
+  free: "gratis",
+  premium: "premium",
+};
+
 export default async function CoursePage({ params }: CoursePageProps) {
   const [{ courseSlug }, locale] = await Promise.all([
     params,
@@ -149,6 +160,12 @@ export default async function CoursePage({ params }: CoursePageProps) {
     ? await getReviewEligibility(course.slug)
     : null;
 
+  const difficultyLabel = spanish
+    ? (DIFFICULTY_ES[course.difficulty] ?? course.difficulty)
+    : course.difficulty;
+  const accessLabel = spanish
+    ? (ACCESS_ES[course.accessLevel] ?? course.accessLevel)
+    : course.accessLevel;
   return (
     <>
       {access.user ? (
@@ -186,7 +203,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
               <div className="academy-course-facts">
                 <span>
                   <Gauge aria-hidden="true" />
-                  {course.difficulty}
+                  {difficultyLabel}
                 </span>
                 <span>
                   <Clock3 aria-hidden="true" />
@@ -330,7 +347,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
             <dl>
               <div>
                 <dt>{spanish ? "Dificultad" : "Difficulty"}</dt>
-                <dd>{course.difficulty}</dd>
+                <dd>{difficultyLabel}</dd>
               </div>
               <div>
                 <dt>{spanish ? "Duración" : "Duration"}</dt>
@@ -338,7 +355,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
               </div>
               <div>
                 <dt>{spanish ? "Acceso" : "Access"}</dt>
-                <dd>{course.accessLevel}</dd>
+                <dd>{accessLabel}</dd>
               </div>
               <div>
                 <dt>{spanish ? "Certificado" : "Certificate"}</dt>
@@ -393,9 +410,13 @@ export default async function CoursePage({ params }: CoursePageProps) {
               </span>
               <h2>{spanish ? "Reseñas del curso" : "Course reviews"}</h2>
             </div>
-            <AcademyReviewSummary aggregate={reviewData.aggregate} />
+            <AcademyReviewSummary
+              aggregate={reviewData.aggregate}
+              locale={locale}
+            />
           </div>
           <AcademyReviewList
+            locale={locale}
             replies={reviewData.replies}
             reviews={reviewData.reviews}
           />
@@ -405,6 +426,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
               courseSlug={course.slug}
               eligible={reviewEligibility.eligible}
               initial={reviewEligibility.review}
+              locale={locale}
               minimumProgressPercent={reviewEligibility.minimumProgressPercent}
             />
           ) : (
