@@ -3,6 +3,10 @@ import type {
   AcademyCourseLanguage,
   AcademyDifficulty,
 } from "@/types/academy";
+import { academyCourseLevel } from "./academyBuiltInCourses";
+
+const levelRank = (course: AcademyCourse) =>
+  academyCourseLevel(course) ?? Number.POSITIVE_INFINITY;
 
 export const ACADEMY_COURSES_PER_PAGE = 9;
 
@@ -164,9 +168,11 @@ export function filterAndSortAcademyCourses(
     if (filters.sort === "difficulty")
       return (
         difficultyOrder[left.difficulty] - difficultyOrder[right.difficulty] ||
+        levelRank(left) - levelRank(right) ||
         left.title.localeCompare(right.title)
       );
     return (
+      levelRank(left) - levelRank(right) ||
       Number(right.featured) - Number(left.featured) ||
       Date.parse(right.publishedAt ?? "") -
         Date.parse(left.publishedAt ?? "") ||

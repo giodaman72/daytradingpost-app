@@ -1,3 +1,4 @@
+import { sortAcademyCoursesByLevel } from "@/lib/academy/academyBuiltInCourses";
 import { academyCoursesForLocale } from "@/lib/academy/academyCourseLocale";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -62,6 +63,7 @@ export default async function AcademyPage() {
         Date.parse(left.publishedAt ?? ""),
     )
     .slice(0, 3);
+  const recentlyAddedInLevelOrder = sortAcademyCoursesByLevel(recentlyAdded);
   const categories = Array.from(
     new Map(
       courses
@@ -326,7 +328,10 @@ export default async function AcademyPage() {
                 </h2>
               </div>
             </div>
-            <AcademyCatalogGrid courses={recentlyAdded} locale={locale} />
+            <AcademyCatalogGrid
+              courses={recentlyAddedInLevelOrder}
+              locale={locale}
+            />
           </div>
         </section>
       ) : null}
